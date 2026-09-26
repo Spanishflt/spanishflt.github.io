@@ -43,7 +43,7 @@ button:focus-visible{outline:3px solid var(--mango);outline-offset:3px}
 /* Top bar */
 .top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:0 0 .6rem}
 .stars{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.15rem;background:var(--mango);color:#3A2600;padding:.3rem .8rem;border-radius:999px;white-space:nowrap}
-.back{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:.35rem .8rem;font-family:"Fredoka",sans-serif;font-weight:600}
+.back{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:.35rem .8rem;font-family:"Fredoka",sans-serif;font-weight:600;white-space:nowrap;font-size:clamp(.85rem,3.8vw,1.05rem)}
 
 /* Home */
 .hero{margin:0 0 1.5rem}
@@ -67,8 +67,8 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .uhead .ic{font-size:2.8rem;line-height:1}
 .uhead h1{font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.05;margin:0;color:var(--teal)}
 .uhead p{margin:.1rem 0 0;color:var(--muted)}
-.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:.3rem;margin-bottom:1rem}
-.tabs button{min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.4rem .15rem;font-family:"Fredoka",sans-serif;font-weight:600;font-size:clamp(.78rem,3.4vw,1rem)}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.6em,1fr));gap:.3rem;margin-bottom:1rem;font-size:clamp(.78rem,3.4vw,1rem)}
+.tabs button{min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.4rem .15rem;font-family:"Fredoka",sans-serif;font-weight:600;font-size:inherit}
 .tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
 .tabs button small{display:block;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:400;font-size:.72rem;opacity:.8;line-height:1}
 .tabs button{line-height:1.15}
@@ -98,6 +98,12 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .btn:active{transform:translateY(3px);box-shadow:none}
 .btn.primary{background:var(--mango);border-color:var(--mango);color:#3A2600}
 .btn:disabled{opacity:.45;cursor:default}
+.cardnav{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:stretch;max-width:360px;margin:1.2rem auto 0}
+.cardnav .btn{padding:.6rem .9rem}
+.listen{display:flex;align-items:center;justify-content:center;gap:.4rem;min-width:0;padding:.5rem .4rem!important;font-size:clamp(.9rem,4vw,1.05rem)!important}
+.listen .l1{display:block;line-height:1.1}
+.listen .l2{display:block;font-size:.78em;line-height:1.1;opacity:.8}
+.cardcount{text-align:center;margin-top:.5rem}
 .counter{font-family:"Fredoka",sans-serif;color:var(--muted);min-width:4.5ch;text-align:center}
 
 /* Phrases */
@@ -147,7 +153,7 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .rules .rr{display:flex;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem;margin:.3rem 0;font-weight:700}
 .rules .rb{color:var(--muted);font-size:.92rem}
 .live{display:flex;justify-content:space-between;font-family:"Fredoka",sans-serif;font-weight:600;color:var(--muted);margin-bottom:.35rem}
-.won{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.3rem;color:var(--lime)}
+.won{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.1rem;color:var(--lime)}
 .stars.pop{animation:pop .6s ease}
 @keyframes pop{40%{transform:scale(1.35)}}
 @media (prefers-reduced-motion: reduce){.stars.pop{animation:none}}
@@ -572,11 +578,11 @@ function viewCards(u,box){
     count.textContent=(i+1)+"/"+d.length;
   }
   box.append(bi("Toca la tarjeta para ver y escuchar la palabra.","Tap the card to see and hear the Spanish word."),chips,stage,
-    h("div",{cls:"controls"},
-      h("button",{cls:"btn","aria-label":"Anterior",on:{click:()=>{const n=deck().length;i=(i-1+n)%n;draw();}}},"◀"),
-      h("button",{cls:"btn primary",on:{click:()=>speak(deck()[i].es)}},"🔊 Escuchar · Listen"),
-      count,
-      h("button",{cls:"btn","aria-label":"Siguiente",on:{click:()=>{i=(i+1)%deck().length;draw();}}},"▶")));
+    h("div",{cls:"cardnav"},
+      h("button",{cls:"btn","aria-label":"Anterior · Previous",on:{click:()=>{const n=deck().length;i=(i-1+n)%n;draw();}}},"◀"),
+      h("button",{cls:"btn primary listen",on:{click:()=>speak(deck()[i].es)}},h("span",{"aria-hidden":"true"},"🔊"),h("span",{},h("span",{cls:"l1"},"Escuchar"),h("span",{cls:"l2"},"Listen"))),
+      h("button",{cls:"btn","aria-label":"Siguiente · Next",on:{click:()=>{i=(i+1)%deck().length;draw();}}},"▶")),
+    h("div",{cls:"cardcount"},count));
   draw();
 }
 
