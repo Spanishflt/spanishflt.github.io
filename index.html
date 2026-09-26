@@ -711,6 +711,14 @@ function richText(text){const span=h("span",{});text.split(/(«[^»]+»)/).forEa
 
 let talkTok=0,teacherEl=null,musicNodes=[],musicTimers=[],clipNode=null;
 function stopMusic(){musicNodes.forEach(n=>{try{n.stop();}catch(e){}});musicNodes=[];musicTimers.forEach(clearTimeout);musicTimers=[];}
+let voiceBus=null;
+function voiceOut(c){
+  if(voiceBus&&voiceBus.context===c)return voiceBus;
+  const g=c.createGain();g.gain.value=2.6;
+  const comp=c.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=8;comp.ratio.value=6;comp.attack.value=.003;comp.release.value=.2;
+  const out=c.createGain();out.gain.value=1.0;
+  g.connect(comp);comp.connect(out);out.connect(c.destination);voiceBus=g;return g;
+}
 function stopClip(){if(clipNode){try{clipNode.onended=null;clipNode.stop();}catch(e){}clipNode=null;}}
 function hush(){talkTok++;if("speechSynthesis" in window)speechSynthesis.cancel();stopClip();if(teacherEl)teacherEl.classList.remove("talk");stopMusic();}
 function sayTTS(s,done){
@@ -751,7 +759,7 @@ function talk(list,onDone){
     const clip=findClip(segKey(s));const c=actx;
     if(clip&&c){
       if(c.state==="suspended")c.resume();
-      const src=c.createBufferSource();src.buffer=clip[0];src.connect(c.destination);
+      const src=c.createBufferSource();src.buffer=clip[0];src.connect(voiceOut(c));
       src.onended=()=>{if(clipNode===src)clipNode=null;done();};clipNode=src;src.start(0,clip[1][0],clip[1][1]+0.08);
     }else sayTTS(s,done);
   };
