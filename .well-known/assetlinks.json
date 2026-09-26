@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.spanishflt.twa",
+        "sha256_cert_fingerprints": ["23:EA:7F:42:C5:B8:92:05:F1:43:D8:54:B5:20:85:1F:93:D6:61:8B:C0:58:47:D7:D3:7E:F3:C9:AF:CB:06:D8"]
+      }
+    }]
