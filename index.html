@@ -100,9 +100,10 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .btn:disabled{opacity:.45;cursor:default}
 .cardnav{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:stretch;max-width:360px;margin:1.2rem auto 0}
 .cardnav .btn{padding:.6rem .9rem}
-.listen{display:flex;align-items:center;justify-content:center;gap:.4rem;min-width:0;padding:.5rem .4rem!important;font-size:clamp(.9rem,4vw,1.05rem)!important}
+.listen{display:flex;align-items:center;justify-content:center;gap:.5rem;min-width:0;padding:.45rem .4rem!important;font-size:clamp(.95rem,5.2vw,1.35rem)!important}
+.listen .ico{font-size:1.25em;line-height:1}
 .listen .l1{display:block;line-height:1.1}
-.listen .l2{display:block;font-size:.78em;line-height:1.1;opacity:.8}
+.listen .l2{display:block;font-size:.8em;line-height:1.1;opacity:.85}
 .cardcount{text-align:center;margin-top:.5rem}
 .counter{font-family:"Fredoka",sans-serif;color:var(--muted);min-width:4.5ch;text-align:center}
 
@@ -580,7 +581,7 @@ function viewCards(u,box){
   box.append(bi("Toca la tarjeta para ver y escuchar la palabra.","Tap the card to see and hear the Spanish word."),chips,stage,
     h("div",{cls:"cardnav"},
       h("button",{cls:"btn","aria-label":"Anterior · Previous",on:{click:()=>{const n=deck().length;i=(i-1+n)%n;draw();}}},"◀"),
-      h("button",{cls:"btn primary listen",on:{click:()=>speak(deck()[i].es)}},h("span",{"aria-hidden":"true"},"🔊"),h("span",{},h("span",{cls:"l1"},"Escuchar"),h("span",{cls:"l2"},"Listen"))),
+      h("button",{cls:"btn primary listen",on:{click:()=>speak(deck()[i].es)}},h("span",{cls:"ico","aria-hidden":"true"},"🔊"),h("span",{},h("span",{cls:"l1"},"Escuchar"),h("span",{cls:"l2"},"Listen"))),
       h("button",{cls:"btn","aria-label":"Siguiente · Next",on:{click:()=>{i=(i+1)%deck().length;draw();}}},"▶")),
     h("div",{cls:"cardcount"},count));
   draw();
