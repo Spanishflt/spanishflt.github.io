@@ -67,9 +67,15 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .uhead .ic{font-size:2.8rem;line-height:1}
 .uhead h1{font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.05;margin:0;color:var(--teal)}
 .uhead p{margin:.1rem 0 0;color:var(--muted)}
-.tabs{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:1rem;scrollbar-width:none}
-.tabs button{flex:0 0 auto;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:.4rem .9rem;font-family:"Fredoka",sans-serif;font-weight:600}
+.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:.3rem;margin-bottom:1rem}
+.tabs button{min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.4rem .15rem;font-family:"Fredoka",sans-serif;font-weight:600;font-size:clamp(.78rem,3.4vw,1rem)}
 .tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.tabs button small{display:block;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:400;font-size:.72rem;opacity:.8;line-height:1}
+.tabs button{line-height:1.15}
+.chips button small{opacity:.7;font-size:.82rem}
+.bi .es2{display:block}
+.bi .en2{display:block;font-size:.9em;opacity:.8;font-style:italic}
+.hero .bi{margin:0;color:var(--muted);max-width:52ch}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -467,6 +473,9 @@ function speak(text,opts={}){
 const sayBtn=text=>h("button",{cls:"say","aria-label":"Escuchar",on:{click:e=>{e.stopPropagation();speak(text);}}},"🔊");
 
 /* ---------- Views ---------- */
+const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
+const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
+
 const credits=()=>h("footer",{},h("div",{},"Old Harbour Primary School, Saint Catherine, Jamaica"));
 const app=$("#app");
 let cur=null, tab="cards";
@@ -486,7 +495,7 @@ function home(focusBook){
     h("div",{cls:"hero"},
       h("h1",{},"Basic Spanish"),
       apkButton(),
-      h("p",{},"Spanish Language Learning for Beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz."),
+      h("p",{cls:"bi"},h("span",{cls:"es2"},"Español para principiantes. Elige una unidad, aprende las palabras, escucha las conversaciones y gana estrellas en la prueba."),h("span",{cls:"en2"},"Spanish for beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz.")),
       h("button",{cls:"promo",on:{click:()=>document.getElementById("books").scrollIntoView({behavior:"smooth"})}},h("span",{cls:"pi","aria-hidden":"true"},"📚"),h("span",{},h("b",{},"The Spanish Workbooks"),"Grades 1 to 6 · see what’s inside each one"))),
     h("h2",{cls:"sec"},"Unidades | Units"),
     h("div",{cls:"grid"},U.map((u,i)=>unitBtn(u,i,String(i+1).padStart(2,"0")))),
@@ -532,15 +541,15 @@ function openUnit(idx,t){
 function render(){
   if("speechSynthesis" in window)speechSynthesis.cancel();
   const u=ALL[cur];app.innerHTML="";
-  const tabs=[["cards","Tarjetas"]];
-  if(u.p.length)tabs.push(["phr","Frases"]);
-  if(u.d.length)tabs.push(["dlg","Diálogo"]);
-  if(items(u).length>=4)tabs.push(["match","Emparejar"]);
-  tabs.push(["quiz","Prueba"]);
+  const tabs=[["cards","Tarjetas","Cards"]];
+  if(u.p.length)tabs.push(["phr","Frases","Phrases"]);
+  if(u.d.length)tabs.push(["dlg","Diálogo","Dialogue"]);
+  if(items(u).length>=4)tabs.push(["match","Emparejar","Match"]);
+  tabs.push(["quiz","Prueba","Quiz"]);
   const body=h("div",{});
   app.append(topbar(true),
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},l))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},l,h("small",{},en)))),
     body, unitBooks(cur), credits());
   ({cards:viewCards,phr:viewPhrases,dlg:viewDialogue,match:viewMatch,quiz:viewQuiz})[tab](u,body);
 }
@@ -553,19 +562,19 @@ function viewCards(u,box){
   function deck(){return u.v[g].map(s=>{const[es,en,e]=s.split("|");return{es,en,e};});}
   function draw(){
     chips.innerHTML="";
-    if(groups.length>1)groups.forEach(x=>chips.append(h("button",{"aria-pressed":String(x===g),on:{click:()=>{g=x;i=0;draw();}}},x)));
+    if(groups.length>1)groups.forEach(x=>chips.append(h("button",{"aria-pressed":String(x===g),on:{click:()=>{g=x;i=0;draw();}}},x,GROUP_EN[x]?h("small",{}," · "+GROUP_EN[x]):null)));
     const d=deck(),w=d[i];
     const card=h("button",{cls:"card","aria-label":"Voltear tarjeta"},
-      h("div",{cls:"face"},w.e?h("div",{cls:"big"},w.e):h("div",{cls:"txt"},w.en),h("div",{cls:"tap"},w.e?w.en:"¿Cómo se dice?")),
+      h("div",{cls:"face"},w.e?h("div",{cls:"big"},w.e):h("div",{cls:"txt"},w.en),h("div",{cls:"tap"},w.e?w.en:"¿Cómo se dice? · How do you say it?")),
       h("div",{cls:"face back2"},h("div",{cls:"word"},w.es),h("div",{cls:"sub"},w.en)));
     card.addEventListener("click",()=>{card.classList.toggle("flipped");if(card.classList.contains("flipped"))speak(w.es);});
     stage.innerHTML="";stage.append(card);
     count.textContent=(i+1)+"/"+d.length;
   }
-  box.append(h("p",{cls:"hint"},"Tap the card to see and hear the Spanish word."),chips,stage,
+  box.append(bi("Toca la tarjeta para ver y escuchar la palabra.","Tap the card to see and hear the Spanish word."),chips,stage,
     h("div",{cls:"controls"},
       h("button",{cls:"btn","aria-label":"Anterior",on:{click:()=>{const n=deck().length;i=(i-1+n)%n;draw();}}},"◀"),
-      h("button",{cls:"btn primary",on:{click:()=>speak(deck()[i].es)}},"🔊 Escuchar"),
+      h("button",{cls:"btn primary",on:{click:()=>speak(deck()[i].es)}},"🔊 Escuchar · Listen"),
       count,
       h("button",{cls:"btn","aria-label":"Siguiente",on:{click:()=>{i=(i+1)%deck().length;draw();}}},"▶")));
   draw();
@@ -573,12 +582,12 @@ function viewCards(u,box){
 
 /* Phrases */
 function viewPhrases(u,box){
-  box.append(h("p",{cls:"hint"},"Study the question and answer patterns. Tap 🔊 to listen."));
+  box.append(bi("Estudia las preguntas y respuestas. Toca 🔊 para escuchar.","Study the question and answer patterns. Tap 🔊 to listen."));
   u.p.forEach(s=>{
     const[q,qe,a,ae]=s.split("|");
     const pat=h("div",{cls:"pat"});
-    if(q)pat.append(h("div",{cls:"row"},sayBtn(q),h("div",{},h("div",{cls:"lab"},"Pregunta"),h("div",{cls:"es"},q),h("div",{cls:"en"},qe))));
-    pat.append(h("div",{cls:"row"},sayBtn(a),h("div",{},h("div",{cls:"lab"},q?"Respuesta":"Ejemplo"),h("div",{cls:"es"},a),h("div",{cls:"en"},ae))));
+    if(q)pat.append(h("div",{cls:"row"},sayBtn(q),h("div",{},h("div",{cls:"lab"},"Pregunta · Question"),h("div",{cls:"es"},q),h("div",{cls:"en"},qe))));
+    pat.append(h("div",{cls:"row"},sayBtn(a),h("div",{},h("div",{cls:"lab"},q?"Respuesta · Answer":"Ejemplo · Example"),h("div",{cls:"es"},a),h("div",{cls:"en"},ae))));
     box.append(pat);
   });
 }
@@ -589,20 +598,20 @@ function viewDialogue(u,box){
   const bubs=lines.map(([who,txt])=>h("button",{cls:"bub"+(who===first?"":" r"),on:{click:()=>speak(txt,{pitch:who===first?1.15:.85})}},h("span",{cls:"who"},who),txt));
   let playing=false;
   const play=h("button",{cls:"btn primary",on:{click:()=>{
-    if(playing){speechSynthesis.cancel();playing=false;bubs.forEach(b=>b.classList.remove("on"));play.textContent="▶ Escuchar el diálogo";return;}
-    playing=true;play.textContent="■ Parar";let k=0;
-    const next=()=>{bubs.forEach(b=>b.classList.remove("on"));if(!playing||k>=lines.length){playing=false;play.textContent="▶ Escuchar el diálogo";return;}
+    if(playing){speechSynthesis.cancel();playing=false;bubs.forEach(b=>b.classList.remove("on"));play.textContent="▶ Escuchar · Listen";return;}
+    playing=true;play.textContent="■ Parar · Stop";let k=0;
+    const next=()=>{bubs.forEach(b=>b.classList.remove("on"));if(!playing||k>=lines.length){playing=false;play.textContent="▶ Escuchar · Listen";return;}
       const[who,txt]=lines[k];bubs[k].classList.add("on");k++;speak(txt,{queue:true,pitch:who===first?1.15:.85,end:()=>setTimeout(next,350)});};
-    speechSynthesis.cancel();next();}}},"▶ Escuchar el diálogo");
-  box.append(h("p",{cls:"hint"},"Listen, then act it out with a friend. Tap a line to hear it again."),
+    speechSynthesis.cancel();next();}}},"▶ Escuchar · Listen");
+  box.append(bi("Escucha y luego practica el diálogo con un amigo. Toca una línea para oírla otra vez.","Listen, then act it out with a friend. Tap a line to hear it again."),
     h("div",{cls:"controls",style:"margin:0 0 1rem"},play),h("div",{cls:"chat"},bubs));
 }
 
 /* Match */
 function viewMatch(u,box){
   const W=h("div",{cls:"col"}),P=h("div",{cls:"col"});
-  const again=h("button",{cls:"btn",on:{click:start}},"Jugar otra vez");
-  box.append(h("p",{cls:"hint"},"Tap a Spanish word, then tap its match."),h("div",{cls:"match"},W,P),h("div",{cls:"controls"},again));
+  const again=h("button",{cls:"btn",on:{click:start}},"Jugar otra vez · Play again");
+  box.append(bi("Toca una palabra en español y luego su pareja.","Tap a Spanish word, then tap its match."),h("div",{cls:"match"},W,P),h("div",{cls:"controls"},again));
   function start(){
     const seen=new Set();const pool=shuffle(items(u)).filter(x=>{const k=x.e||x.en;if(seen.has(k))return false;seen.add(k);return true;});
     const round=pool.slice(0,6);let sel=null,done=0;W.innerHTML="";P.innerHTML="";
@@ -638,13 +647,13 @@ function makeQuiz(u){
       const right=`${nw(a)} ${op} ${nw(b)} es igual a ${nw(r)}`;
       const wrongs=new Set();while(wrongs.size<3){const d=1+Math.floor(Math.random()*3);const t=pick([0,1,2]);
         const aa=t===0?a+d:a,bb=t===1?b+d:b,rr=t===2?r+d:r;wrongs.add(`${nw(aa)} ${op} ${nw(bb)} es igual a ${nw(rr)}`);}
-      qs.push({type:"sym",prompt:"Read it in Spanish",show:`${a} ${add?"+":"−"} ${b} = ${r}`,ans:right,opts:shuffle([right,...wrongs]),long:true,say:right});continue;
+      qs.push({type:"sym",prompt:"Léelo en español · Read it in Spanish",show:`${a} ${add?"+":"−"} ${b} = ${r}`,ans:right,opts:shuffle([right,...wrongs]),long:true,say:right});continue;
     }
     if(u.special==="clock"&&k%2===0){
       const hh=1+Math.floor(Math.random()*12),mm=pick([0,15,30,0,5+Math.floor(Math.random()*20),35+Math.floor(Math.random()*20)]);
       const right=timePhrase(hh,mm);const wrongs=new Set();
       while(wrongs.size<3){const w=timePhrase(1+Math.floor(Math.random()*12),pick([0,10,15,20,30,40,45,50]));if(w!==right)wrongs.add(w);}
-      qs.push({type:"sym",prompt:"¿Qué hora es?",show:`🕐 ${hh}:${String(mm).padStart(2,"0")}`,ans:right,opts:shuffle([right,...wrongs]),long:true,say:right});continue;
+      qs.push({type:"sym",prompt:"¿Qué hora es? · What time is it?",show:`🕐 ${hh}:${String(mm).padStart(2,"0")}`,ans:right,opts:shuffle([right,...wrongs]),long:true,say:right});continue;
     }
     if(u.s.length&&Math.random()<.2){const sent=pick(u.s);qs.push({type:"order",sent});continue;}
     const w=pick(pool);
@@ -660,12 +669,12 @@ function viewQuiz(u,box){
   const bar=h("div",{});const area=h("div",{});
   const best=prog[idx]||0;
   const live=h("div",{cls:"live"});
-  const upd=()=>{live.innerHTML="";live.append(h("span",{},"Pregunta "+Math.min(qi+1,qs.length)+" / "+qs.length),h("span",{},"✔ "+score+" correctas"));};
+  const upd=()=>{live.innerHTML="";live.append(h("span",{},"Pregunta · Question "+Math.min(qi+1,qs.length)+"/"+qs.length),h("span",{},"✔ "+score));};
   box.append(
     h("div",{cls:"rules"},
       h("div",{cls:"rt"},"Gana estrellas · Earn stars"),
       h("div",{cls:"rr"},h("span",{},"⭐⭐⭐ 9–10"),h("span",{},"⭐⭐ 7–8"),h("span",{},"⭐ 4–6")),
-      h("div",{cls:"rb"},best?"Tu mejor resultado: "+"⭐".repeat(best):"Todavía no tienes estrellas en esta unidad.")),
+      h("div",{cls:"rb"},best?"Tu mejor resultado · Your best: "+"⭐".repeat(best):"Todavía no tienes estrellas aquí · No stars here yet.")),
     live,h("div",{cls:"progress"},bar),area);
   function next(){qi++;show();}
   function show(){
@@ -673,33 +682,33 @@ function viewQuiz(u,box){
     if(qi>=qs.length){
       const pct=score/qs.length,st=pct>=.9?3:pct>=.7?2:pct>=.4?1:0;
       if(st>(prog[idx]||0)){prog[idx]=st;save();}
-      area.append(h("div",{cls:"qbox result"},h("p",{cls:"qp"},"Tu resultado"),h("div",{cls:"big"},score+" / "+qs.length),
+      area.append(h("div",{cls:"qbox result"},h("p",{cls:"qp"},"Tu resultado · Your score"),h("div",{cls:"big"},score+" / "+qs.length),
         h("div",{cls:"st","aria-label":st+" stars"},st?"⭐".repeat(st):"💪"),
-        h("p",{},st===3?"¡Excelente!":st>=1?"¡Muy bien! Sigue practicando.":"¡Sigue practicando! Try the cards first."),
-        h("div",{cls:"controls"},h("button",{cls:"btn primary",on:{click:()=>render()}},"Otra vez"),h("button",{cls:"btn",on:{click:()=>home()}},"Unidades | Units"))));
+        h("p",{},st===3?"¡Excelente! · Excellent!":st>=1?"¡Muy bien! · Well done!":"¡Sigue practicando! · Keep practising! Try the cards first."),
+        h("div",{cls:"controls"},h("button",{cls:"btn primary",on:{click:()=>render()}},"Otra vez · Try again"),h("button",{cls:"btn",on:{click:()=>home()}},"Unidades | Units"))));
       if(st)setTimeout(()=>speak("¡Muy bien!"),200);
       const sc=$(".stars");sc.textContent="⭐ "+totalStars();
       if(st>best){sc.classList.remove("pop");void sc.offsetWidth;sc.classList.add("pop");
-        const r=area.querySelector(".result");r.insertBefore(h("p",{cls:"won"},"¡Ganaste "+(st-best)+" "+(st-best===1?"estrella nueva":"estrellas nuevas")+"! ⭐"),r.querySelector(".controls"));
-        box.querySelector(".rules .rb").textContent="Tu mejor resultado: "+"⭐".repeat(st);}
-      else if(st&&st<=best){const r=area.querySelector(".result");r.insertBefore(h("p",{cls:"qp"},"Tu mejor resultado sigue siendo "+"⭐".repeat(best)+". ¡Inténtalo otra vez!"),r.querySelector(".controls"));}
+        const r=area.querySelector(".result");r.insertBefore(h("p",{cls:"won"},"¡Ganaste "+(st-best)+" "+(st-best===1?"estrella nueva":"estrellas nuevas")+"! ⭐ You won "+(st-best)+" new "+(st-best===1?"star!":"stars!")),r.querySelector(".controls"));
+        box.querySelector(".rules .rb").textContent="Tu mejor resultado · Your best: "+"⭐".repeat(st);}
+      else if(st&&st<=best){const r=area.querySelector(".result");r.insertBefore(h("p",{cls:"qp"},"Tu mejor resultado sigue siendo "+"⭐".repeat(best)+". ¡Inténtalo otra vez! · Your best is still "+"⭐".repeat(best)+". Try again!"),r.querySelector(".controls"));}
       return;
     }
     const q=qs[qi];
     if(q.type==="order")return showOrder(q);
     const b=h("div",{cls:"qbox"});
     if(q.type==="pic"){b.append(h("p",{cls:"qp"},"¿Qué es esto? · What is it in Spanish?"),h("div",{cls:"qbig"},q.w.e));}
-    else if(q.type==="en2es"){b.append(h("p",{cls:"qp"},"How do you say it in Spanish?"),h("div",{cls:"qtxt"},q.w.en));}
-    else if(q.type==="es2en"){b.append(h("p",{cls:"qp"},"What does it mean?"),h("div",{cls:"qtxt"},q.w.es),sayBtn(q.w.es));}
-    else if(q.type==="listen"){const l=h("button",{cls:"qlisten","aria-label":"Escuchar",on:{click:()=>speak(q.w.es)}},"🔊");b.append(h("p",{cls:"qp"},"Listen and choose the word you hear."),l);setTimeout(()=>speak(q.w.es),250);}
+    else if(q.type==="en2es"){b.append(h("p",{cls:"qp"},"¿Cómo se dice en español? · How do you say it in Spanish?"),h("div",{cls:"qtxt"},q.w.en));}
+    else if(q.type==="es2en"){b.append(h("p",{cls:"qp"},"¿Qué significa? · What does it mean?"),h("div",{cls:"qtxt"},q.w.es),sayBtn(q.w.es));}
+    else if(q.type==="listen"){const l=h("button",{cls:"qlisten","aria-label":"Escuchar",on:{click:()=>speak(q.w.es)}},"🔊");b.append(h("p",{cls:"qp"},"Escucha y elige · Listen and choose what you hear."),l);setTimeout(()=>speak(q.w.es),250);}
     else if(q.type==="sym"){b.append(h("p",{cls:"qp"},q.prompt),h("div",{cls:"qtxt"},q.show));}
     const fb=h("p",{cls:"fb","aria-live":"polite"});
     const opts=h("div",{cls:"opts"+(q.long||q.opts.some(o=>o.length>18)?" long":"")});
     q.opts.forEach(o=>opts.append(h("button",{cls:"opt",on:{click:e=>{
       opts.querySelectorAll(".opt").forEach(x=>x.disabled=true);
       const ok=o===q.ans;
-      if(ok){e.currentTarget.classList.add("right");score++;fb.textContent="¡Correcto! ⭐";}
-      else{e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es: "+q.ans;}
+      if(ok){e.currentTarget.classList.add("right");score++;fb.textContent="¡Correcto! · Correct! ⭐";}
+      else{e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es · The answer is: "+q.ans;}
       speak(q.say||(q.w?q.w.es:q.ans));setTimeout(next,1600);}}},o)));
     b.append(opts,fb);area.append(b);
   }
@@ -711,12 +720,12 @@ function viewQuiz(u,box){
     const check=h("button",{cls:"btn primary",disabled:"true",on:{click:()=>{
       check.disabled=true;[...bank.children,...line.children].forEach(x=>x.disabled=true);
       const ans=picked.map(x=>x.w).join(" ");
-      if(norm(ans)===norm(q.sent)){score++;fb.textContent="¡Correcto! ⭐";}else fb.textContent="La respuesta es: "+q.sent;
-      speak(q.sent);setTimeout(next,2000);}}},"Comprobar");
+      if(norm(ans)===norm(q.sent)){score++;fb.textContent="¡Correcto! · Correct! ⭐";}else fb.textContent="La respuesta es · The answer is: "+q.sent;
+      speak(q.sent);setTimeout(next,2000);}}},"Comprobar · Check");
     function redraw(){line.innerHTML="";picked.forEach((x,k)=>line.append(h("button",{cls:"w",on:{click:()=>{picked.splice(k,1);x.btn.classList.remove("used");redraw();}}},x.w)));
       check.disabled=picked.length!==words.length;}
     order.forEach(x=>{const b=h("button",{cls:"w",on:{click:()=>{if(b.classList.contains("used"))return;b.classList.add("used");picked.push({w:x.w,btn:b});redraw();}}},x.w);x.btn=b;bank.append(b);});
-    area.append(h("div",{cls:"qbox"},h("p",{cls:"qp"},"Put the words in order · Ordena la frase"),line,bank,h("div",{cls:"controls"},check),fb));
+    area.append(h("div",{cls:"qbox"},h("p",{cls:"qp"},"Ordena la frase · Put the words in order"),line,bank,h("div",{cls:"controls"},check),fb));
   }
   show();
 }
