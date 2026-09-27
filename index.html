@@ -51,7 +51,7 @@ button:focus-visible{outline:3px solid var(--mango);outline-offset:3px}
 .owner{color:var(--muted);font-size:.95rem;line-height:1.3}
 .owner .role{font-size:.78rem}
 .hero small{color:var(--muted);display:block}
-.hero h1{font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(3.4rem,15vw,5.2rem);line-height:.95;margin:0 0 .5rem;color:var(--teal)}
+.hero h1{white-space:nowrap;font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(2.4rem,13vw,5.2rem);line-height:.95;margin:0 0 .5rem;color:var(--teal)}
 .hero p{margin:0;color:var(--muted);max-width:52ch}
 h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:1.75rem 0 .75rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.7rem}
@@ -1256,6 +1256,9 @@ function topbar(back){
 }
 function starStr(n){return n?"⭐".repeat(n):"";}
 
+function fitTitle(){const t=document.querySelector(".hero h1");if(!t)return;t.style.fontSize="";let fs=parseFloat(getComputedStyle(t).fontSize);while(t.scrollWidth>t.clientWidth+1&&fs>22){fs-=1;t.style.fontSize=fs+"px";}}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitTitle());
+window.addEventListener("resize",()=>fitTitle());
 function home(focusBook){
   hush();
   if(typeof focusBook!=="string")focusBook=null;
@@ -1274,6 +1277,7 @@ function home(focusBook){
     h("div",{cls:"grid"},X.map((u,i)=>unitBtn(u,U.length+i,"Extra"))),
     booksSection(),
     credits());
+  fitTitle();
   if(focusBook){const el=document.getElementById("book-"+focusBook);if(el){el.scrollIntoView();el.classList.add("flash");const d=el.querySelector("details");if(d)d.open=true;}}
   else window.scrollTo(0,0);
 }
