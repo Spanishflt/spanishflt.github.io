@@ -47,6 +47,7 @@ button:focus-visible{outline:3px solid var(--mango);outline-offset:3px}
 
 /* Home */
 .hero{margin:0 0 1.5rem}
+.hsub{font-family:"Fredoka",sans-serif;font-weight:600;font-size:clamp(1.1rem,4.5vw,1.4rem);color:var(--muted);margin:-.3rem 0 .6rem;letter-spacing:.02em}
 .owner{color:var(--muted);font-size:.95rem;line-height:1.3}
 .owner .role{font-size:.78rem}
 .hero small{color:var(--muted);display:block}
@@ -116,7 +117,8 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .bigstart:active{transform:translateY(4px);box-shadow:none}
 .blist{display:grid;gap:.45rem}
 .brow{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:#fff;border:2px solid #d6e7ee;border-radius:14px;padding:.55rem .8rem;transition:transform .2s,background .2s}
-.brow.on,.vcard.on,.bub.on{background:#FFF1CC;border-color:#FFB627;transform:scale(1.02)}
+.brow.on,.vcard.on{background:#FFF1CC;border-color:#FFB627;transform:scale(1.02)}
+.bub.on,.screen .chat .bub.on{border-color:#FFB627!important;box-shadow:0 0 0 2px #FFB627;outline:none}
 .bes{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.15rem;color:#12343B;line-height:1.2}
 .ben{color:#4F6D72;font-size:.9rem}
 .bes.big{font-size:1.6rem}.ben.big{font-size:1.4rem;font-family:"Fredoka",sans-serif;font-weight:600}
@@ -325,7 +327,7 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .bub{max-width:85%;border:none;text-align:left;padding:.6rem .9rem;border-radius:18px;background:var(--surface);border:2px solid var(--line)}
 .bub .who{display:block;font-family:"Fredoka",sans-serif;font-size:.8rem;color:var(--teal);font-weight:600}
 .bub.r{align-self:flex-end;background:var(--teal-soft);border-color:var(--teal-soft)}
-.bub.on{outline:3px solid var(--mango)}
+
 
 /* Match */
 .match{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
@@ -1262,6 +1264,7 @@ function home(focusBook){
   app.append(topbar(false),
     h("div",{cls:"hero"},
       h("h1",{},"Basic Spanish"),
+      h("div",{cls:"hsub"},"Extra Lessons"),
       apkButton(),
       h("p",{cls:"bi"},h("span",{cls:"es2"},"Español para principiantes. Elige una unidad, aprende las palabras, escucha las conversaciones y gana estrellas en la prueba."),h("span",{cls:"en2"},"Spanish for beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz.")),
       h("button",{cls:"promo",on:{click:()=>document.getElementById("books").scrollIntoView({behavior:"smooth"})}},h("span",{cls:"pi","aria-hidden":"true"},"📚"),h("span",{},h("b",{},"The Spanish Workbooks"),"Grades 1 to 6 · see what’s inside each one"))),
