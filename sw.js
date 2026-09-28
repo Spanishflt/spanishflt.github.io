@@ -1,4 +1,4 @@
-const CACHE = "basic-spanish-v47";
+const CACHE = "basic-spanish-v49";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
