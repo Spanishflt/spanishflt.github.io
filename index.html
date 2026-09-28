@@ -292,6 +292,35 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .vsec h3{font-family:"Fredoka",sans-serif;margin:.8rem 0 .2rem;color:var(--teal);font-size:1.05rem}
 .dlpill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;background:#12343B;color:#fff;border-radius:999px;padding:.45rem .9rem;font-size:.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);max-width:92vw;text-align:center}
 .dlpill.ok{background:#1C8A4C}
+.topr{display:flex;align-items:center;gap:.4rem}
+.rbadge{border:2px solid var(--mango);background:var(--surface);border-radius:999px;padding:.25rem .6rem;font-size:1rem;line-height:1.2;white-space:nowrap}
+.rintro{color:var(--muted);font-size:.9rem;margin:.3rem 0}
+.dnamebox{margin-top:.6rem}
+.rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin:.6rem 0}
+.rcell{border:2px solid var(--line);border-radius:14px;padding:.5rem;text-align:center;opacity:.6}
+.rcell.got{opacity:1;border-color:var(--mango);background:color-mix(in srgb,var(--mango) 12%,var(--surface))}
+.ric{font-size:1.8rem;line-height:1.2}
+.ric.dim{filter:grayscale(1);opacity:.45}
+.rname{font-weight:700;font-size:.85rem}
+.rneed{color:var(--muted);font-size:.8rem}
+.rrow{display:flex;gap:.6rem;align-items:center;border:2px solid var(--line);border-radius:14px;padding:.5rem .7rem;margin:.5rem 0;opacity:.7;font-size:.92rem}
+.rrow.got{opacity:1;border-color:var(--mango)}
+.code{font-family:ui-monospace,monospace;background:var(--bg);padding:.1rem .35rem;border-radius:6px;letter-spacing:.05em}
+.rlist{display:grid;gap:.35rem;max-height:40vh;overflow:auto;margin:.4rem 0}
+.rpick{text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:.45rem .6rem;font:inherit}
+.celebrate{text-align:center}
+.celebrate .cic{font-size:4rem;line-height:1.1;animation:jump .6s ease 3}
+.cgift{background:var(--bg);border-radius:12px;padding:.5rem;font-weight:700}
+.diploma{background:#FFFDF4;color:#2b2b2b;border:6px double #C8A13A;border-radius:14px;padding:1.2rem 1rem;text-align:center;font-family:Georgia,"Times New Roman",serif}
+.dtop{font-size:2.6rem}
+.dtitle{font-size:1.5rem;font-weight:700;color:#0E6E78}
+.dsub{font-style:italic;color:#7a6a3a;margin-bottom:.6rem}
+.dtext{font-size:.95rem;margin:.3rem 0}
+.dname{font-size:1.6rem;font-weight:700;border-bottom:2px solid #C8A13A;display:inline-block;min-width:60%;padding:.2rem .5rem;margin:.3rem 0}
+.dbig{font-size:1.2rem;font-weight:700;color:#D6284A;margin:.5rem 0}
+.dfoot{display:flex;justify-content:space-between;gap:1rem;margin-top:1.2rem;font-size:.78rem;text-align:center}
+.dline{border-top:1px solid #555;margin-bottom:.2rem;width:100%}
+@media print{body *{visibility:hidden!important}.diploma,.diploma *{visibility:visible!important}.diploma{position:fixed;inset:0;margin:0;border-radius:0}.noprint{display:none!important}}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -1349,6 +1378,98 @@ async function prefetchAllAudio(){
     pill.textContent="✅ Audio ready — works without internet";pill.classList.add("ok");setTimeout(()=>pill.remove(),4000);
   }catch(e){}
 }
+
+/* ---------- Rewards: medals, free-lesson coupon, diploma ---------- */
+const MEDALS=[[10,"🥉","Bronze medal · Medalla de bronce"],[25,"🥈","Silver medal · Medalla de plata"],[50,"🥇","Gold medal · Medalla de oro"],[100,"🏆","Champion trophy · Trofeo de campeón"]];
+const RKEY="bs-rewards-v1";
+let RW={};try{RW=JSON.parse(localStorage.getItem(RKEY))||{};}catch(e){}
+const saveRW=()=>{try{localStorage.setItem(RKEY,JSON.stringify(RW));}catch(e){}};
+function couponCode(){
+  if(!RW.code){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";for(let i=0;i<4;i++)c+=A[Math.floor(Math.random()*A.length)];
+    let sum=0;for(const ch of c)sum=(sum*31+ch.charCodeAt(0))%997;RW.code="BS50-"+c+"-"+String(sum).padStart(3,"0");saveRW();}
+  return RW.code;
+}
+const couponValid=code=>{const m=/^BS50-([A-Z0-9]{4})-(\d{3})$/.exec((code||"").trim().toUpperCase());if(!m)return false;let sum=0;for(const ch of m[1])sum=(sum*31+ch.charCodeAt(0))%997;return String(sum).padStart(3,"0")===m[2];};
+function rewardsState(){const t=totalStars();return{t,medals:MEDALS.filter(m=>t>=m[0]),coupon:t>=50,couponUsed:!!RW.couponUsed,diploma:t>=100};}
+function rewardsBadge(){
+  const r=rewardsState();const parts=r.medals.map(m=>m[1]);
+  if(r.coupon)parts.push(r.couponUsed?"✅":"🎁");if(r.diploma)parts.push("📜");
+  return h("button",{cls:"rbadge","aria-label":"My rewards",title:"My rewards",on:{click:rewardsPanel}},parts.length?parts.join(""):"🏅 Premios");
+}
+function overlay(label,build){
+  const close=()=>{ov.remove();document.removeEventListener("keydown",esc);};const esc=e=>{if(e.key==="Escape")close();};
+  const box=h("div",{cls:"ovbox"},...build(close));
+  const ov=h("div",{cls:"ovl",role:"dialog","aria-modal":"true","aria-label":label,on:{click:e=>{if(e.target===ov)close();}}},box);
+  document.addEventListener("keydown",esc);document.body.append(ov);const b=box.querySelector("button");b&&b.focus({preventScroll:true});return close;
+}
+function rewardsPanel(){
+  const r=rewardsState();
+  overlay("My rewards",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🏅"),h("h2",{},"Mis premios · My rewards")),
+    h("p",{},"Tienes · You have ",h("b",{},"⭐ "+r.t)," estrellas · stars."),
+    h("p",{cls:"rintro"},"Gana estrellas en las pruebas para conseguir estos premios · Win stars in the quizzes to earn these rewards:"),
+    h("div",{cls:"rgrid"},...MEDALS.map(([n,ic,name])=>h("div",{cls:"rcell"+(r.t>=n?" got":"")},h("div",{cls:"ric"+(r.t>=n?"":" dim")},ic),h("div",{cls:"rname"},name),h("div",{cls:"rneed"},n+" ⭐")))),
+    h("div",{cls:"rrow"+(r.coupon?" got":"")},h("div",{cls:"ric"+(r.coupon?"":" dim")},r.coupon&&r.couponUsed?"✅":"🎁"),
+      h("div",{},h("b",{},"Lección gratis · Free lesson (50 ⭐)"),h("br",{}),
+        r.coupon?(r.couponUsed?"Ya la usaste. ¡Felicidades! · Already used. Congratulations!":h("span",{},"Muestra este código a tu maestro de español · Show this code to your Spanish teacher: ",h("b",{cls:"code"},couponCode()))):"Llega a 50 estrellas · Reach 50 stars")),
+    r.coupon&&!r.couponUsed?h("button",{cls:"tkey",on:{click:()=>{close();redeemCoupon();}}},"🔑 Maestro: canjear cupón · Teacher: redeem coupon"):null,
+    h("div",{cls:"rrow"+(r.diploma?" got":"")},h("div",{cls:"ric"+(r.diploma?"":" dim")},"📜"),
+      h("div",{},h("b",{},"Diploma · Certificate (100 ⭐)"),h("br",{}),r.diploma?"Basic Spanish – Excellent Student":"Llega a 100 estrellas · Reach 100 stars")),
+    r.diploma?h("button",{cls:"btn",on:{click:()=>{close();showDiploma();}}},"📜 Ver mi diploma · See my certificate"):null,
+    h("button",{cls:"btn primary",on:{click:close}},"OK")].filter(Boolean));
+}
+function redeemCoupon(){
+  if(RW.couponUsed||totalStars()<50){overlay("Coupon",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎁"),h("h2",{},"Cupón · Coupon")),h("p",{},RW.couponUsed?"Este cupón ya se usó. Solo se puede usar una vez. · This coupon was already used. It can only be used once.":"Todavía no hay cupón. · No coupon yet."),h("button",{cls:"btn primary",on:{click:c}},"OK")]);return;}
+  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const msg=h("p",{cls:"tmsg","aria-live":"polite"});const list=h("div",{cls:"rlist"});
+  overlay("Redeem coupon",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🎁"),h("h2",{},"Canjear cupón · Redeem coupon")),
+    h("p",{},"Código del alumno · Student code: ",h("b",{cls:"code"},couponCode()),couponValid(couponCode())?" ✅":" ❌"),
+    h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{
+      msg.textContent="…";let kek;
+      try{kek=await teacherKey(pw.value);await unwrapKey(kek,0);}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";return;}
+      msg.textContent="Elige la lección gratis · Choose the free lesson:";pw.value="";list.innerHTML="";
+      const locked=U.map((u,i)=>i).filter(i=>i<LESSONS_ENC.L.length&&!unlocked[i]);
+      if(!locked.length){list.append(h("p",{},"Ya tiene todas las lecciones · All lessons are already unlocked."));RW.couponUsed=true;saveRW();return;}
+      locked.forEach(i=>list.append(h("button",{cls:"rpick",on:{click:async()=>{if(RW.couponUsed)return;unlocked[i]=await unwrapKey(kek,i);saveUnlocked();RW.couponUsed=true;RW.freeLesson=i;saveRW();
+        close();overlay("Free lesson",c2=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎉"),h("h2",{},"¡Lección desbloqueada! · Lesson unlocked!")),h("p",{},U[i].i+" "+(i+1)+". "+U[i].t),h("button",{cls:"btn primary",on:{click:()=>{c2();home();}}},"OK")]);}}},U[i].i+" "+(i+1)+". "+U[i].t)));
+    }}},"Entrar · Enter")),msg,list,
+    h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
+}
+function showDiploma(){
+  const nm=h("div",{cls:"dname"},RW.name||"_______________");
+  const nameBox=h("div",{cls:"noprint dnamebox"});
+  const drawName=()=>{nameBox.innerHTML="";
+    if(RW.name){nameBox.append(h("p",{cls:"rintro"},"🔒 El nombre ya está guardado y no se puede cambiar. · The name is saved and can't be changed."));return;}
+    const inp=h("input",{type:"text",placeholder:"Tu nombre completo · Your full name",maxlength:"40"});
+    inp.addEventListener("input",()=>{nm.textContent=inp.value.trim()||"_______________";});
+    const save=h("button",{cls:"btn primary",on:{click:()=>{const v=inp.value.trim();if(v.length<2){inp.focus();return;}
+      if(!confirm("¿Guardar este nombre? No se podrá cambiar después.\nSave this name? It can't be changed later.\n\n"+v))return;
+      RW.name=v;saveRW();nm.textContent=v;drawName();}}},"💾 Guardar nombre · Save name");
+    nameBox.append(h("p",{cls:"rintro"},"Escribe tu nombre. Solo se puede escribir una vez. · Write your name. You can only do it once."),h("div",{cls:"tform"},inp,save));
+  };
+  drawName();
+  const d=new Date();const date=d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const cert=h("div",{cls:"diploma",id:"diploma"},
+    h("div",{cls:"dtop"},"🏆"),h("div",{cls:"dtitle"},"Certificate of Achievement"),h("div",{cls:"dsub"},"Certificado de logro"),
+    h("div",{cls:"dtext"},"This certificate is proudly presented to"),nm,
+    h("div",{cls:"dbig"},"Basic Spanish – Excellent Student"),
+    h("div",{cls:"dtext"},"for earning 100 stars ⭐ learning Spanish."),
+    h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{},h("div",{cls:"dline"}),date)));
+  overlay("Certificate",close=>[cert,nameBox,
+    h("div",{cls:"controls sm noprint"},h("button",{cls:"btn primary",on:{click:()=>{if(!RW.name){alert("Primero guarda tu nombre. · Save your name first.");return;}window.print();}}},"🖨️ Imprimir · Print"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
+}
+function checkRewards(){
+  const r=rewardsState();RW.seen=RW.seen||{};let pop=null;
+  for(const [n,ic,name] of MEDALS){if(r.t>=n&&!RW.seen[n]){RW.seen[n]=1;pop=[n,ic,name];}}
+  if(!pop)return;saveRW();const [n,ic,name]=pop;
+  overlay("New reward",close=>[h("div",{cls:"celebrate"},h("div",{cls:"cic"},ic),h("h2",{},"¡Felicidades! · Congratulations!"),h("p",{},name+" · "+n+" ⭐"),
+    n===50?h("p",{cls:"cgift"},"🎁 ¡Y una lección gratis! Muestra tu código a tu maestro de español: ",h("b",{cls:"code"},couponCode())):null,
+    n===100?h("p",{cls:"cgift"},"📜 ¡Ganaste tu diploma! · You earned your certificate!"):null),
+    n===100?h("button",{cls:"btn",on:{click:()=>{close();showDiploma();}}},"📜 Ver mi diploma · See my certificate"):null,
+    h("button",{cls:"btn primary",on:{click:close}},"¡Genial! · Great!")].filter(Boolean));
+  try{cheer();}catch(e){}
+}
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
@@ -1360,7 +1481,7 @@ let cur=null, tab="cards";
 function topbar(back){
   return h("div",{cls:"top"},
     back?h("button",{cls:"back",on:{click:()=>home()}},"← Unidades | Units"):h("div",{cls:"owner"},h("div",{},"© Alberto Garrido Hernández"),h("div",{cls:"role"},"Spanish teacher at Old Harbour Primary School · Region 6 · Jamaica")),
-    h("div",{cls:"stars","aria-live":"polite"},"⭐ "+totalStars()));
+    h("div",{cls:"topr"},rewardsBadge(),h("div",{cls:"stars","aria-live":"polite"},"⭐ "+totalStars())));
 }
 function starStr(n){return n?"⭐".repeat(n):"";}
 
@@ -1593,6 +1714,7 @@ function viewQuiz(u,box){
         h("div",{cls:"controls"},h("button",{cls:"btn primary",on:{click:()=>render()}},"Otra vez · Try again"),h("button",{cls:"btn",on:{click:()=>home()}},"Unidades | Units"))));
       if(st)setTimeout(()=>speak("¡Muy bien!"),200);
       const sc=$(".stars");sc.textContent="⭐ "+totalStars();
+      {const rb=document.querySelector(".rbadge");if(rb)rb.replaceWith(rewardsBadge());setTimeout(checkRewards,1500);}
       if(st>best){sc.classList.remove("pop");void sc.offsetWidth;sc.classList.add("pop");
         const r=area.querySelector(".result");r.insertBefore(h("p",{cls:"won"},"¡Ganaste "+(st-best)+" "+(st-best===1?"estrella nueva":"estrellas nuevas")+"! ⭐ You won "+(st-best)+" new "+(st-best===1?"star!":"stars!")),r.querySelector(".controls"));
         box.querySelector(".rules .rb").textContent="Tu mejor resultado · Your best: "+"⭐".repeat(st);}
