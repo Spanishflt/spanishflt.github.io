@@ -295,6 +295,7 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .topr{display:flex;align-items:center;gap:.4rem}
 .toprow1{justify-content:flex-end;margin-bottom:.35rem}
 .tophome .owner{margin-bottom:.6rem}
+.toprow2{margin-bottom:.8rem}
 .ownergrid{display:grid;grid-template-columns:auto 1fr;column-gap:.3em;align-items:baseline}
 .rbadge{border:2px solid var(--mango);background:var(--surface);border-radius:999px;padding:.25rem .6rem;font-size:1rem;line-height:1.2;white-space:nowrap}
 .rintro{color:var(--muted);font-size:.9rem;margin:.3rem 0}
@@ -1397,7 +1398,7 @@ function rewardsState(){const t=totalStars();return{t,medals:MEDALS.filter(m=>t>
 function rewardsBadge(){
   const r=rewardsState();const parts=r.medals.map(m=>m[1]);
   if(r.coupon)parts.push(r.couponUsed?"✅":"🎁");if(r.diploma)parts.push("📜");
-  return h("button",{cls:"rbadge","aria-label":"Premios | Rewards",title:"Premios | Rewards",on:{click:rewardsPanel}},(parts.length?parts.join(""):"🏅")+" Premios | Rewards");
+  return h("button",{cls:"rbadge","aria-label":"Premios | Rewards",title:"Premios | Rewards",on:{click:rewardsPanel}},parts.length?parts.join(""):"🏅 Premios | Rewards");
 }
 function overlay(label,build){
   const close=()=>{ov.remove();document.removeEventListener("keydown",esc);};const esc=e=>{if(e.key==="Escape")close();};
@@ -1483,7 +1484,7 @@ let cur=null, tab="cards";
 
 function topbar(back){
   const right=h("div",{cls:"topr"},rewardsBadge(),h("div",{cls:"stars","aria-live":"polite"},"⭐ "+totalStars()));
-  if(back)return h("div",{cls:"top"},h("button",{cls:"back",on:{click:()=>home()}},"← Unidades | Units"),right);
+  if(back)return h("div",{cls:"tophome"},h("div",{cls:"top toprow1"},right),h("div",{cls:"toprow2"},h("button",{cls:"back",on:{click:()=>home()}},"← Unidades | Units")));
   return h("div",{cls:"tophome"},
     h("div",{cls:"top toprow1"},right),
     h("div",{cls:"owner ownergrid"},h("span",{cls:"ocopy"},"©"),h("div",{},"Alberto Garrido Hernández"),h("span",{}),h("div",{cls:"role"},"Spanish teacher at Old Harbour Primary School · Region 6 · Jamaica")));
