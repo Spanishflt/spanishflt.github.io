@@ -325,6 +325,12 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .dfoot{display:flex;justify-content:space-between;gap:1rem;margin-top:1.2rem;font-size:.78rem;text-align:center}
 .dline{border-top:1px solid #555;margin-bottom:.2rem;width:100%}
 @media print{body *{visibility:hidden!important}.diploma,.diploma *{visibility:visible!important}.diploma{position:fixed;inset:0;margin:0;border-radius:0}.noprint{display:none!important}}
+.durs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .6rem;justify-content:center}
+.dlab{width:100%;font-weight:700;font-size:.9rem;text-align:center}
+.dur{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:.35rem .7rem;font:inherit;font-size:.85rem}
+.dur.on{border-color:var(--teal);background:var(--teal);color:#fff}
+.expnote{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;justify-content:space-between;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.5rem .7rem;margin-bottom:.8rem;font-size:.88rem}
+.expnote.soon{border-color:#E0405A;background:color-mix(in srgb,#E0405A 8%,var(--surface))}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -774,6 +780,49 @@ let unlocked={},doneL={};
 try{unlocked=JSON.parse(localStorage.getItem(LKEY))||{};}catch(e){}
 try{doneL=JSON.parse(localStorage.getItem(DKEY))||{};}catch(e){}
 const saveUnlocked=()=>{try{localStorage.setItem(LKEY,JSON.stringify(unlocked));}catch(e){}};
+const EKEY="bs-unlock-exp-v1",TKEY="bs-clock-v1";
+let UEXP={};try{UEXP=JSON.parse(localStorage.getItem(EKEY))||{};}catch(e){}
+const saveExp=()=>{try{localStorage.setItem(EKEY,JSON.stringify(UEXP));}catch(e){}};
+let lastSeen=0;try{lastSeen=+localStorage.getItem(TKEY)||0;}catch(e){}
+function seeTime(t){if(t>lastSeen){lastSeen=t;try{localStorage.setItem(TKEY,String(t));}catch(e){}}}
+const trustedNow=()=>{seeTime(Date.now());return lastSeen;};
+async function syncServerTime(){try{if(!navigator.onLine)return;const r=await fetch("./?t="+Date.now(),{method:"HEAD",cache:"no-store"});const d=Date.parse(r.headers.get("Date"));if(d){seeTime(d);checkExpiry(true);}}catch(e){}}
+const DURATIONS=[["1 mes · 1 month",30],["3 meses · 3 months",91],["6 meses · 6 months",182],["1 año · 1 year",365],["♾️ Para siempre · Forever",0]];
+const expFor=days=>days?trustedNow()+days*864e5:0;
+function setUnlockExp(i,days){if(days)UEXP[i]=expFor(days);else delete UEXP[i];saveExp();}
+const fmtDate=t=>new Date(t).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+const daysLeft=i=>UEXP[i]?Math.ceil((UEXP[i]-trustedNow())/864e5):null;
+function checkExpiry(rerender){
+  const now=trustedNow(),closed=[];
+  for(const k of Object.keys(UEXP)){if(UEXP[k]&&now>UEXP[k]){delete unlocked[k];delete UEXP[k];closed.push(+k);}}
+  if(closed.length){saveUnlocked();saveExp();
+    if(rerender){if(cur==null)home();else render();}
+    setTimeout(()=>overlay("Lessons closed",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"⏰"),h("h2",{},"Lección cerrada · Lesson closed")),
+      h("p",{},"Terminó el tiempo de estas lecciones. Tus estrellas y premios se quedan contigo. · Time is up for these lessons. You keep your stars and rewards."),
+      h("ul",{},...closed.map(i=>h("li",{},U[i].i+" "+(i+1)+". "+U[i].t))),
+      h("p",{},"Pídele a tu maestro de español que las renueve. · Ask your Spanish teacher to renew them."),
+      h("button",{cls:"btn primary",on:{click:c}},"OK")]),300);}
+  return closed;
+}
+function durPicker(){
+  let sel=30;const wrap=h("div",{cls:"durs",role:"radiogroup","aria-label":"Duración · Duration"});
+  const btns=DURATIONS.map(([l,d])=>{const b=h("button",{cls:"dur"+(d===sel?" on":""),role:"radio","aria-checked":String(d===sel),on:{click:()=>{sel=d;btns.forEach((x,j)=>{const on=DURATIONS[j][1]===d;x.classList.toggle("on",on);x.setAttribute("aria-checked",String(on));});}}},l);return b;});
+  wrap.append(h("div",{cls:"dlab"},"⏳ ¿Por cuánto tiempo? · For how long?"),...btns);
+  return {el:wrap,get days(){return sel;}};
+}
+function expiryNote(i){
+  const dl=daysLeft(i);if(dl==null||!isUnlocked(i)||i===DEMO_IDX)return null;
+  const soon=dl<=7;
+  return h("div",{cls:"expnote"+(soon?" soon":"")},
+    h("span",{},(soon?"⏳ ":"📅 ")+(soon?"Esta unidad se cierra el ":"Abierta hasta el ")+fmtDate(UEXP[i])+(soon?" · Closes on ":" · Open until ")+new Date(UEXP[i]).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})+(soon?". Ask your teacher to renew.":"")),
+    h("button",{cls:"tkey",on:{click:()=>renewDialog(i)}},"🔑 Renovar · Renew"));
+}
+function renewDialog(i){
+  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});const dp=durPicker();const msg=h("p",{cls:"tmsg","aria-live":"polite"});
+  overlay("Renew",close=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🔑"),h("h2",{},"Renovar · Renew")),h("p",{},U[i].i+" "+(i+1)+". "+U[i].t),dp.el,
+    h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{msg.textContent="…";try{const kek=await teacherKey(pw.value);unlocked[i]=await unwrapKey(kek,i);saveUnlocked();setUnlockExp(i,dp.days);pw.value="";close();render();}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";}}}},"Renovar · Renew")),msg,
+    h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
+}
 const saveDone=()=>{try{localStorage.setItem(DKEY,JSON.stringify(doneL));}catch(e){}};
 const hasLesson=i=>i<LESSONS_ENC.L.length||i===DEMO_IDX;
 async function teacherKey(pass){
@@ -1035,17 +1084,18 @@ function lockScreen(u,box,idx,unitTab){
   const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password","aria-label":"Contraseña del maestro · Teacher password"});
   const go=h("button",{cls:"btn primary"},"Desbloquear · Unlock");
   const after=h("div",{cls:"tafter",hidden:"true"});
+  const dp=durPicker();
   async function tryUnlock(){
     if(!pw.value)return;go.disabled=true;msg.textContent="…";
-    try{const kek=await teacherKey(pw.value);unlocked[idx]=await unwrapKey(kek,idx);saveUnlocked();pw.value="";msg.textContent="✅ ¡Lección desbloqueada! · Lesson unlocked!";
+    try{const kek=await teacherKey(pw.value);unlocked[idx]=await unwrapKey(kek,idx);saveUnlocked();setUnlockExp(idx,dp.days);pw.value="";msg.textContent="✅ ¡Lección desbloqueada! · Lesson unlocked!";
       form.hidden=true;after.hidden=false;
       after.innerHTML="";after.append(
         h("button",{cls:"btn primary",on:{click:()=>{render();}}},unitTab?"▶ Abrir la unidad · Open unit":"▶ Abrir la lección · Open lesson"),
-        h("button",{cls:"btn",on:{click:async e=>{const bt=e.currentTarget;bt.disabled=true;bt.textContent="…";for(let i=0;i<LESSONS_ENC.L.length;i++){if(!unlocked[i])unlocked[i]=await unwrapKey(kek,i);}saveUnlocked();bt.textContent="✅ Todas desbloqueadas · All unlocked";}}},"🔓 Desbloquear todas (28) · Unlock all"));
+        h("button",{cls:"btn",on:{click:async e=>{const bt=e.currentTarget;bt.disabled=true;bt.textContent="…";for(let i=0;i<LESSONS_ENC.L.length;i++){if(!unlocked[i])unlocked[i]=await unwrapKey(kek,i);setUnlockExp(i,dp.days);}saveUnlocked();bt.textContent="✅ Todas desbloqueadas · All unlocked";}}},"🔓 Desbloquear todas (28) · Unlock all"));
     }catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";go.disabled=false;pw.select();}
   }
   go.addEventListener("click",tryUnlock);pw.addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock();});
-  form.append(pw,go);
+  form.append(dp.el,pw,go);
   box.append(h("div",{cls:"lockcard"},
     h("div",{cls:"lockic","aria-hidden":"true"},"🔒"),
     h("h2",{},(unitTab?"Unidad bloqueada ":"Lección bloqueada "),infoBtn()),h("p",{cls:"en2"},unitTab?"This unit is locked":"This lesson is locked"),
@@ -1425,17 +1475,18 @@ function rewardsPanel(){
 function redeemCoupon(){
   if(RW.couponUsed||totalStars()<50){overlay("Coupon",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎁"),h("h2",{},"Cupón · Coupon")),h("p",{},RW.couponUsed?"Este cupón ya se usó. Solo se puede usar una vez. · This coupon was already used. It can only be used once.":"Todavía no hay cupón. · No coupon yet."),h("button",{cls:"btn primary",on:{click:c}},"OK")]);return;}
   const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
-  const msg=h("p",{cls:"tmsg","aria-live":"polite"});const list=h("div",{cls:"rlist"});
+  const msg=h("p",{cls:"tmsg","aria-live":"polite"});const list=h("div",{cls:"rlist"});const dp=durPicker();
   overlay("Redeem coupon",close=>[
     h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🎁"),h("h2",{},"Canjear cupón · Redeem coupon")),
     h("p",{},"Código del alumno · Student code: ",h("b",{cls:"code"},couponCode()),couponValid(couponCode())?" ✅":" ❌"),
+    dp.el,
     h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{
       msg.textContent="…";let kek;
       try{kek=await teacherKey(pw.value);await unwrapKey(kek,0);}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";return;}
       msg.textContent="Elige la lección gratis · Choose the free lesson:";pw.value="";list.innerHTML="";
       const locked=U.map((u,i)=>i).filter(i=>i<LESSONS_ENC.L.length&&!unlocked[i]);
       if(!locked.length){list.append(h("p",{},"Ya tiene todas las lecciones · All lessons are already unlocked."));RW.couponUsed=true;saveRW();return;}
-      locked.forEach(i=>list.append(h("button",{cls:"rpick",on:{click:async()=>{if(RW.couponUsed)return;unlocked[i]=await unwrapKey(kek,i);saveUnlocked();RW.couponUsed=true;RW.freeLesson=i;saveRW();
+      locked.forEach(i=>list.append(h("button",{cls:"rpick",on:{click:async()=>{if(RW.couponUsed)return;unlocked[i]=await unwrapKey(kek,i);saveUnlocked();setUnlockExp(i,dp.days);RW.couponUsed=true;RW.freeLesson=i;saveRW();
         close();overlay("Free lesson",c2=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎉"),h("h2",{},"¡Lección desbloqueada! · Lesson unlocked!")),h("p",{},U[i].i+" "+(i+1)+". "+U[i].t),h("button",{cls:"btn primary",on:{click:()=>{c2();home();}}},"OK")]);}}},U[i].i+" "+(i+1)+". "+U[i].t)));
     }}},"Entrar · Enter")),msg,list,
     h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
@@ -1540,7 +1591,7 @@ function unitBooks(idx){
 }
 function unitBtn(u,idx,label){
   return h("button",{cls:"unit",on:{click:()=>openUnit(idx)}},
-    h("span",{cls:"num"},label+(unitLocked(idx)?" 🔒":"")),
+    h("span",{cls:"num"},label+(unitLocked(idx)?" 🔒":(daysLeft(idx)!=null&&daysLeft(idx)<=7?" ⏳":""))),
     h("span",{cls:"got","aria-label":(prog[idx]||0)+" stars"},(doneL[idx]?"🎓":"")+starStr(prog[idx]||0)),
     h("span",{cls:"ic","aria-hidden":"true"},u.i),
     h("span",{cls:"es"},u.t),
@@ -1548,6 +1599,7 @@ function unitBtn(u,idx,label){
 }
 
 function openUnit(idx,t){
+  checkExpiry(false);
   cur=idx;tab=t||(hasLesson(idx)&&isUnlocked(idx)?"lesson":"cards");render();window.scrollTo(0,0);
   try{loadAudio("unit-"+pad2(idx+1));}catch(e){}
 }
@@ -1566,6 +1618,7 @@ function render(){
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
     h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},(unitLocked(cur)?"🔒 ":"")+l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
+  {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
   ({lesson:viewLesson,cards:viewCards,phr:viewPhrases,dlg:viewDialogue,match:viewMatch,quiz:viewQuiz})[tab](u,body);
 }
@@ -1763,8 +1816,9 @@ function viewQuiz(u,box){
   show();
 }
 
+checkExpiry(false);
 home();
-setTimeout(()=>{prefetchAllAudio();},3000);
+setTimeout(()=>{prefetchAllAudio();syncServerTime();},3000);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
 </script>
 </body>
