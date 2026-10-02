@@ -706,7 +706,7 @@ function apkButton(){
     h("div",{cls:"apkrow"},
       h("a",{cls:"apkbtn",href:APK_URL,download:"basic-spanish.apk",title:"For Android phones"},dlIcon(),"Download the Android app"),
       h("button",{cls:"apkinfo","aria-label":"How to install the Android app",title:"How to install",on:{click:apkHelp}},"i")),
-    h("p",{cls:"apknote"},"📶 Descárgala y estudia sin internet · Download it and study offline"));
+    h("p",{cls:"apknote"},"📶 Download it and study offline"));
 }
 function apkHelp(){
   const close=()=>{ov.remove();document.removeEventListener("keydown",esc);};
