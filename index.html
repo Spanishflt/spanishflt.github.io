@@ -231,7 +231,8 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .starinfo{display:flex;gap:.6rem;align-items:flex-start;margin-top:.8rem;background:var(--surface);border:2px dashed var(--mango);border-radius:14px;padding:.6rem .8rem;font-size:.92rem;line-height:1.35}
 .starinfo .si{font-size:1.4rem;line-height:1}
 .starinfo i{color:var(--muted)}
-.apkrow{display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .8rem}
+.apkrow{display:flex;align-items:center;gap:.5rem;margin:.1rem 0 .3rem}
+.apknote,.hero .apknote{font-size:.85rem;font-weight:700;color:#1C8A4C;margin:0 0 1rem;line-height:1.35}
 .apkrow .apkbtn{margin:0}
 .apkinfo{width:2rem;height:2rem;border-radius:50%;border:2px solid #2FC873;background:var(--surface);color:#1C8A4C;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:1rem;line-height:1;padding:0;flex:0 0 auto}
 .ovbox ol.steps{padding-left:1.3rem;margin:.4rem 0 .6rem}
@@ -701,9 +702,11 @@ function dlIcon(){const ns="http://www.w3.org/2000/svg";const v=document.createE
   const p=document.createElementNS(ns,"path");p.setAttribute("d","M12 3v12m0 0l-5-5m5 5l5-5M5 20h14");p.setAttribute("fill","none");p.setAttribute("stroke","currentColor");p.setAttribute("stroke-width","2.4");p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");v.append(p);return v;}
 function apkButton(){
   if(isStandalone()||isIOS())return null;
-  return h("div",{cls:"apkrow"},
-    h("a",{cls:"apkbtn",href:APK_URL,download:"basic-spanish.apk",title:"For Android phones"},dlIcon(),"Download the Android app"),
-    h("button",{cls:"apkinfo","aria-label":"How to install the Android app",title:"How to install",on:{click:apkHelp}},"i"));
+  return h("div",{cls:"apkwrap"},
+    h("div",{cls:"apkrow"},
+      h("a",{cls:"apkbtn",href:APK_URL,download:"basic-spanish.apk",title:"For Android phones"},dlIcon(),"Download the Android app"),
+      h("button",{cls:"apkinfo","aria-label":"How to install the Android app",title:"How to install",on:{click:apkHelp}},"i")),
+    h("p",{cls:"apknote"},"📶 Descárgala y estudia sin internet · Download it and study offline"));
 }
 function apkHelp(){
   const close=()=>{ov.remove();document.removeEventListener("keydown",esc);};
