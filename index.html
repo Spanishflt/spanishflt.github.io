@@ -1975,6 +1975,13 @@ function dailyGreeting(){
 
 function backArrow(){const sp=document.createElement("span");sp.className="barrow";sp.setAttribute("aria-hidden","true");
   sp.innerHTML='<svg viewBox="0 0 24 24" width="1.1em" height="1.1em"><path d="M19 12H6M11.5 5.5 5 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';return sp;}
+
+/* When a new version takes over, reload once so the student sees it straight away */
+(function(){if(!("serviceWorker" in navigator))return;const had=!!navigator.serviceWorker.controller;let done=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had||done)return;done=true;location.reload();});
+  navigator.serviceWorker.getRegistration().then(r=>{if(r)r.update().catch(()=>{});}).catch(()=>{});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")navigator.serviceWorker.getRegistration().then(r=>{if(r)r.update().catch(()=>{});}).catch(()=>{});});
+})();
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
