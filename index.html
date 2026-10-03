@@ -372,20 +372,37 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 @keyframes pulse{0%,100%{box-shadow:0 5px 0 rgba(0,0,0,.18),0 0 0 0 rgba(20,151,163,.5)}50%{box-shadow:0 5px 0 rgba(0,0,0,.18),0 0 0 10px rgba(20,151,163,0)}}
 @keyframes shine{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 @keyframes pbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.sharebtn{display:block;width:100%;margin:.2rem 0 .8rem;border:2px solid #E0405A;background:var(--surface);color:#D6284A;border-radius:14px;padding:.6rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:1rem}
+.sharebtn{display:block;width:100%;margin:.2rem 0 .8rem;border:none;background:linear-gradient(120deg,#7B4FD6,#B04FD6);color:#fff;box-shadow:0 4px 0 #5a35a8;border-radius:14px;padding:.6rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:1rem}
 .shareprev{display:block;width:100%;max-width:300px;margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 .toprow1{justify-content:space-between!important;gap:.45rem;flex-wrap:wrap}
 .toprow1 .topr{margin-left:auto}
-.namechip{flex:1 1 auto;min-width:0;max-width:100%;text-align:left;border:2px solid var(--teal);background:var(--surface);color:var(--teal);border-radius:999px;padding:.3rem .7rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.namechip.empty{border-style:dashed;color:#D6284A;border-color:#E0405A}
+.namechip{flex:1 1 auto;min-width:0;max-width:100%;text-align:left;border:2px solid #7B4FD6;background:#F3EEFF;color:#2A1B4F;border-radius:999px;padding:.3rem .7rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.namechip.empty{border-style:dashed;border-color:#7B4FD6;background:#F3EEFF;color:#2A1B4F}
 .namewrap{display:flex;align-items:center;gap:.4rem;flex:1 1 auto;min-width:0}
 @media (max-width:520px){.namewrap{flex:1 1 100%}}
-.avatarbtn{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:2px solid var(--teal);background:var(--surface);padding:0;overflow:hidden;font-size:1.2rem;line-height:38px}
+.avatarbtn{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:2px solid #7B4FD6;background:var(--surface);padding:0;overflow:hidden;font-size:1.2rem;line-height:38px}
 .avatarbtn img{width:100%;height:100%;object-fit:cover;display:block}
 .bigavatar{display:block;width:160px;height:160px;border-radius:50%;object-fit:cover;margin:.4rem auto;border:4px solid var(--teal)}
 .bigavatar.empty{font-size:4.5rem;line-height:150px;text-align:center;background:var(--bg)}
 .photorow{display:flex;align-items:center;gap:.4rem;justify-content:center;font-weight:700;margin:.3rem 0}
 .bonusrow{align-items:flex-start}.bl{flex:1}.blist{margin:.3rem 0 0 1rem;padding:0;font-size:.85rem}.blist li{margin:.15rem 0}
+.guidebtn{display:block;width:100%;margin:0 0 .8rem;border:2px solid var(--teal);background:var(--surface);color:var(--teal);border-radius:14px;padding:.6rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:1rem}
+.guide{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:1rem 1.1rem;margin-bottom:1rem;line-height:1.5}
+.guide h1{font-family:"Fredoka",sans-serif;color:var(--teal);font-size:1.5rem;margin:0 0 .2rem}
+.guide .gintro{color:var(--muted);font-size:.9rem;margin:0 0 .8rem}
+.gtoc{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.6rem}
+.gtoc a{font-size:.82rem;border:2px solid var(--line);border-radius:999px;padding:.2rem .6rem;color:var(--ink);text-decoration:none;background:var(--bg)}
+.guide section{border-top:2px dashed var(--line);padding-top:.6rem;margin-top:.8rem;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 12px)}
+.guide h2{font-family:"Fredoka",sans-serif;color:var(--teal);font-size:1.15rem;margin:0 0 .3rem}
+.guide ul{margin:0;padding-left:1.2rem}.guide li{margin:.35rem 0}
+@media print{.guide,.guide *{visibility:visible!important}.guide{position:static}}
+.hang{display:flex;align-items:flex-start;gap:.35em}
+button.hang,a.hang{display:inline-flex;justify-content:center}
+.btn.hang,.sharebtn.hang,.guidebtn.hang,.tkey.hang{display:flex;justify-content:center;width:auto}
+.sharebtn.hang,.guidebtn.hang{width:100%}
+.hang>.hic{flex:0 0 auto}
+.hang>.htx{min-width:0;text-align:left}
+h1.hang,h2.hang,h3.hang,p.hang,li.hang,label.hang{display:flex}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -1838,6 +1855,36 @@ function bonusList(){
     h("div",{cls:"bl"},h("b",{},"Premios del maestro · Teacher's rewards: +"+bonusStars()+" ⭐"),
       B.length?h("ul",{cls:"blist"},...B.slice(-5).reverse().map(b=>h("li",{},"+"+b.n+" ⭐ "+(b.r||"")+" · "+new Date(b.d).toLocaleDateString("en-GB")))):h("div",{cls:"rneed"},"Tu maestro puede darte estrellas extra. · Your teacher can give you extra stars.")));
 }
+
+/* ---------- User guide ---------- */
+const GUIDE=[["🚀", "Primeros pasos · Getting started", ["<b>Android:</b> on the home screen tap the green button <b>Download the Android app</b>, then follow the steps in the <b>ⓘ</b> button next to it (allow the installation and tap <b>Install</b>).", "<b>iPhone or computer:</b> open <b>spanishflt.github.io</b> in the browser. On iPhone you can tap <b>Share → Add to Home Screen</b> to get an icon.", "<b>Open the app the first time with Wi-Fi.</b> A message at the bottom shows <i>Downloading audio for offline use…</i>. Wait until you see <b>✅ Audio ready</b>. After that the app works <b>without internet</b>.", "Turn up the <b>media volume</b> of your phone to hear the teacher."]], ["👤", "Tu nombre y tu foto · Your name and photo", ["At the top, tap <b>✏️ Tu nombre · Your name</b> and write your <b>first and last name</b>. It appears on your progress card and your certificate. <b>You can only write it once</b>, so check it carefully.", "Tap the round <b>📷</b> button next to your name to add a photo from your gallery or camera. You can change or remove it any time. Your photo stays <b>only on your phone</b>.", "If your name has a mistake, ask your Spanish teacher to fix it."]], ["🏠", "La pantalla principal · The home screen", ["<b>⭐ Stars</b> and <b>🏅 Rewards</b> are at the top. Tap the rewards box to open <b>My rewards</b>.", "<b>🎁 Free demo:</b> <i>Los números del 1 al 10</i> is completely open so you can try everything.", "<b>🗺️ My learning path</b> shows all your lessons and rewards on a map.", "<b>📤 Share my progress</b> creates a card to send to your family and friends.", "<b>Units:</b> 28 units from the Spanish workbooks, plus extra units of vocabulary and grammar, which are always open.", "<b>The Books:</b> the Spanish workbooks for grades 1 to 6, available at Old Harbour Primary School."]], ["📚", "Dentro de una unidad · Inside a unit", ["<b>👨‍🏫 Lección con el profe · Lesson with the teacher:</b> the main class (see below).", "<b>Tarjetas · Cards:</b> words with pictures. Tap <b>🔊</b> to listen and tap the card to see the English.", "<b>Frases · Phrases:</b> the questions and answers of the unit.", "<b>Diálogo · Dialogue:</b> a short conversation. Tap <b>Listen</b> to hear it all.", "<b>Parejas · Match:</b> join each Spanish word with its English meaning.", "<b>Prueba · Quiz:</b> 10 questions to win stars."]], ["👨‍🏫", "La lección con el profe · The lesson with the teacher", ["Tap <b>¡Empezar! · Start!</b>. The animated teacher explains on the board, step by step. The words he says light up on the board.", "Use <b>Siguiente · Next</b>, <b>Atrás · Back</b> and <b>Repetir · Again</b> to move through the lesson.", "Each lesson has: explanation with patterns and rules, <b>Listen and repeat</b>, <b>Practice</b> (choose the right word), a <b>song</b>, two <b>games</b>, a dialogue and <b>¡Tu turno! · Your turn!</b> where you answer out loud.", "<b>To complete a lesson you must play both games.</b> Then you see 🏆 <i>Lesson complete!</i>"]], ["⭐", "Estrellas y la prueba · Stars and the quiz", ["Each quiz has 10 questions: <b>9–10 correct = ⭐⭐⭐</b>, <b>7–8 = ⭐⭐</b>, <b>4–6 = ⭐</b>. Your best result is saved.", "Your teacher can also give you <b>extra stars</b> 🍎 for good work, participation, homework and more."]], ["🏅", "Premios · Rewards", ["<b>🥉 10 stars</b> bronze medal · <b>🥈 25</b> silver medal · <b>🥇 50</b> gold medal · <b>🏆 100</b> champion trophy.", "<b>🎁 Free lesson (50 stars):</b> you get a code. Show it to your Spanish teacher and choose a free lesson. It can only be used once.", "<b>📜 Certificate (100 stars):</b> your certificate with your name and photo. Show the app with your 100 stars to your teacher to have it signed. You can print it or save it as PDF (Print → Save as PDF).", "Tap <b>🗺️ My path</b> to see where you are and how many stars you need for the next reward."]], ["🔒", "Desbloquear lecciones · Unlocking lessons", ["Units 1 to 28 are locked 🔒. <b>Ask your Spanish teacher</b> to unlock them on your phone.", "Lessons can be open for <b>1 month, 3 months, 6 months, 1 year</b> or forever. You will see the date inside the unit.", "<b>7 days before</b> it closes you will see a red message. Ask your teacher to <b>renew</b> it.", "When a lesson closes, <b>you keep all your stars and rewards.</b>"]], ["📶", "Sin internet y actualizaciones · Offline and updates", ["After the first audio download, the app works <b>without internet</b>.", "When there is a new version, it installs itself: open the app with internet, close it and open it again.", "⚠️ Your stars, rewards, name and unlocked lessons are saved <b>on your phone</b>. If you <b>clear the app data</b>, uninstall it or use incognito mode, they are lost."]], ["🛟", "Ayuda · Help", ["<b>No sound?</b> Turn up the media volume and make sure the audio download finished (✅ Audio ready).", "<b>I don't see the new things?</b> Close the app completely and open it again with internet.", "<b>Any other problem?</b> Ask your Spanish teacher: <b>Alberto Garrido Hernández</b>, Old Harbour Primary School."]]];
+function guideArticle(){
+  const art=h("article",{cls:"guide"},h("h1",{},"📖 Cómo usar la app · How to use the app"),h("p",{cls:"gintro"},"Basic Spanish – Extra Lessons · Alberto Garrido Hernández · Old Harbour Primary School"));
+  const toc=h("nav",{cls:"gtoc"});GUIDE.forEach(([ic,t],k)=>toc.append(h("a",{href:"#g"+k,on:{click:e=>{e.preventDefault();document.getElementById("g"+k).scrollIntoView({behavior:"smooth"});}}},ic+" "+t)));
+  art.append(toc);
+  GUIDE.forEach(([ic,t,items],k)=>{const ul=h("ul",{});items.forEach(x=>{const li=h("li",{});li.innerHTML=x;ul.append(li);});art.append(h("section",{id:"g"+k},h("h2",{},ic+" "+t),ul));});
+  return art;
+}
+function showGuide(){
+  cur=null;hush&&hush();app.innerHTML="";
+  app.append(topbar(true),guideArticle(),h("div",{cls:"controls sm noprint"},h("button",{cls:"btn",on:{click:()=>window.print()}},"🖨️ Imprimir · Print"),h("button",{cls:"btn primary",on:{click:()=>home()}},"← Unidades | Units")));
+  window.scrollTo(0,0);
+}
+
+/* Icon + text: when the text wraps, the second line starts under the first letter (not under the icon) */
+const HANG_SEL="button,a,p,li,label,h1,h2,h3,.inl>span,.apknote,.tmsg,.nk,.nl";
+const EMOJI_START=/^\s*((?:\p{Extended_Pictographic}|\p{Regional_Indicator}|[\u{1F1E6}-\u{1F1FF}0-9#*]\uFE0F?\u20E3)(?:\uFE0F|\u200D(?:\p{Extended_Pictographic})|\p{Emoji_Modifier})*)\s+(\S[\s\S]*)$/u;
+function hangOne(el){
+  const f=el.firstChild;if(!f||f.nodeType!==3)return;
+  if(el.firstElementChild&&el.firstElementChild.classList&&el.firstElementChild.classList.contains("hic"))return;
+  const m=EMOJI_START.exec(f.nodeValue);if(!m)return;
+  const ic=document.createElement("span");ic.className="hic";ic.textContent=m[1];
+  const tx=document.createElement("span");tx.className="htx";tx.append(m[2]);
+  f.remove();while(el.firstChild)tx.append(el.firstChild);
+  el.append(ic,tx);el.classList.add("hang");
+}
+function hangAll(root){(root||document).querySelectorAll(HANG_SEL).forEach(hangOne);}
+let hangQ=false;new MutationObserver(()=>{if(hangQ)return;hangQ=true;requestAnimationFrame(()=>{hangQ=false;hangAll(document.body);});}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
@@ -1874,6 +1921,7 @@ function home(focusBook){
     h("div",{cls:"grid"},unitBtn(DEMO,DEMO_IDX,"Demo")),
     pathBanner(),
     h("button",{cls:"sharebtn",on:{click:shareProgress}},"📤 Compartir mi progreso · Share my progress"),
+    h("button",{cls:"guidebtn",on:{click:showGuide}},"📖 Cómo usar la app · How to use the app"),
     h("h2",{cls:"sec"},"Unidades | Units"),
     h("div",{cls:"grid"},U.map((u,i)=>unitBtn(u,i,String(i+1).padStart(2,"0")))),
     h("h2",{cls:"sec"},"Vocabulario y gramática | Vocabulary and Grammar"),
