@@ -324,6 +324,8 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .dname{font-size:1.6rem;font-weight:700;border-bottom:2px solid #C8A13A;display:inline-block;min-width:60%;padding:.2rem .5rem;margin:.3rem 0}
 .dbig{font-size:1.2rem;font-weight:700;color:#D6284A;margin:.5rem 0}
 .dfoot{display:flex;justify-content:space-between;gap:1rem;margin-top:1.2rem;font-size:.78rem;text-align:center}
+.dphoto{display:block;width:110px;height:110px;border-radius:50%;object-fit:cover;margin:.5rem auto .2rem;border:4px solid #C8A13A;box-shadow:0 0 0 3px #FFFDF4,0 0 0 5px #C8A13A}
+.ddate{align-self:flex-start;padding-top:calc(1px + .2rem)}
 .dline{border-top:1px solid #555;margin-bottom:.2rem;width:100%}
 @media print{body *{visibility:hidden!important}.diploma,.diploma *{visibility:visible!important}.diploma{position:fixed;inset:0;margin:0;border-radius:0}.noprint{display:none!important}}
 .durs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .6rem;justify-content:center}
@@ -332,6 +334,58 @@ h2.sec{font-family:"Fredoka",sans-serif;font-weight:600;font-size:1.3rem;margin:
 .dur.on{border-color:var(--teal);background:var(--teal);color:#fff}
 .expnote{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;justify-content:space-between;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.5rem .7rem;margin-bottom:.8rem;font-size:.88rem}
 .expnote.soon{border-color:#E0405A;background:color-mix(in srgb,#E0405A 8%,var(--surface))}
+.demoend{text-align:center}
+.mini{background:#FFFDF4;border:5px double #C8A13A;border-radius:16px;padding:.8rem;margin:.2rem auto .8rem;max-width:340px;font-family:Georgia,serif;color:#2b2b2b;animation:revealIn .6s ease both}
+.mini .mtop{font-size:2.4rem}.mini .mt{font-size:1.25rem;font-weight:700;color:#0E6E78}.mini .ms{font-style:italic;color:#7a6a3a}
+.mini .mstars{font-weight:700;margin-top:.3rem}.mini .mfoot{font-size:.8rem;color:#7a6a3a;margin-top:.3rem}
+.next{background:#fff;border:2px dashed #FFB627;border-radius:14px;padding:.6rem;margin-bottom:.6rem;color:#12343B}
+.next .nl{font-weight:700;color:#4F6D72;font-size:.9rem}.next .nt{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.2rem;color:#0E6E78}
+.next .ne{color:#4F6D72;font-size:.9rem}.next .nk{font-size:.85rem;margin-top:.3rem;color:#D6284A;font-weight:700}
+.pathbanner{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;margin:.8rem 0 .4rem;border:none;border-radius:18px;padding:.8rem 1rem;color:#fff;font:inherit;
+  background:linear-gradient(120deg,#0E6E78,#1497A3 55%,#4E9A2A);box-shadow:0 5px 0 #0a5158}
+.pathbanner .pbi{font-size:2rem}.pathbanner .pbt{flex:1;line-height:1.35}.pathbanner .pbt b{font-family:"Fredoka",sans-serif;font-size:1.1rem}.pathbanner .pba{font-size:1.2rem}
+.pathhead{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:.8rem 1rem;margin-bottom:.8rem}
+.pathhead h2{font-family:"Fredoka",sans-serif;color:var(--teal);margin:0 0 .2rem}.pathhead p{font-size:.9rem;color:var(--muted);margin:0 0 .9rem}
+.pbar{position:relative;height:14px;background:var(--line);border-radius:999px;margin:1.1rem .6rem .4rem}
+.pfill{height:100%;border-radius:999px;background:linear-gradient(90deg,#FFB627,#FF8A00)}
+.pmark{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:1.4rem;filter:grayscale(1);opacity:.6}.pmark.got{filter:none;opacity:1}
+.pnum{text-align:right;font-weight:800;color:#b37400}
+.pmap{position:relative;border-radius:22px;overflow:hidden;margin-bottom:1.2rem;background:linear-gradient(180deg,#BDE8F5 0%,#DDF3E2 35%,#C9E9B4 100%)}
+.proad{position:absolute;left:0;top:0;pointer-events:none}
+.pdeco{position:absolute;font-size:2rem;opacity:.85;pointer-events:none}
+.pnode,.preward{position:absolute;width:64px;height:64px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:0 5px 0 rgba(0,0,0,.18);padding:0;cursor:pointer;font:inherit}
+.pnode .pic{font-size:1.8rem;line-height:54px}
+.pnode .pbadge{position:absolute;right:-8px;top:-8px;width:26px;height:26px;border-radius:50%;background:#fff;font-size:.8rem;line-height:22px;border:2px solid #ccc;font-weight:800}
+.pnode .plab,.preward .plab{position:absolute;top:66px;left:50%;transform:translateX(-50%);width:124px;font-size:.72rem;font-weight:700;color:#12343B;background:rgba(255,255,255,.85);border-radius:8px;padding:.1rem .3rem;line-height:1.2}
+.pnode.done{border-color:#3DDC84}.pnode.done .pbadge{background:#3DDC84;border-color:#3DDC84;color:#fff}
+.pnode.open{border-color:#1497A3;animation:pulse 1.6s ease-in-out infinite}.pnode.open .pbadge{border-color:#1497A3;color:#1497A3}
+.pnode.locked{background:#e9eef0;filter:grayscale(.6)}.pnode.locked .pic{opacity:.6}
+.pnode.demo{border-color:#FFB627}
+.pnode.extras{border-color:#E0405A}
+.preward{width:78px;height:78px;margin:-7px 0 0 -7px;background:radial-gradient(circle at 35% 30%,#fff7d6,#FFD36B 60%,#C8A13A);border-color:#FFE9A8}
+.preward .ric2{font-size:2.4rem;line-height:68px;filter:grayscale(1);opacity:.55}
+.preward.got .ric2{filter:none;opacity:1}
+.preward.got{animation:shine 2.2s ease-in-out infinite;box-shadow:0 0 0 6px rgba(255,214,107,.45),0 6px 0 rgba(0,0,0,.18)}
+.preward .plab{top:80px;background:#fff7d6;border:2px solid #FFD36B}
+.preward.diploma{background:radial-gradient(circle at 35% 30%,#fff,#F7E7C6 60%,#C8A13A)}
+.here{position:absolute;z-index:3;background:#E0405A;color:#fff;font-weight:800;font-size:.75rem;border-radius:999px;padding:.25rem .6rem;white-space:nowrap;animation:pbob 1.2s ease-in-out infinite;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+@keyframes pulse{0%,100%{box-shadow:0 5px 0 rgba(0,0,0,.18),0 0 0 0 rgba(20,151,163,.5)}50%{box-shadow:0 5px 0 rgba(0,0,0,.18),0 0 0 10px rgba(20,151,163,0)}}
+@keyframes shine{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes pbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.sharebtn{display:block;width:100%;margin:.2rem 0 .8rem;border:2px solid #E0405A;background:var(--surface);color:#D6284A;border-radius:14px;padding:.6rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:1rem}
+.shareprev{display:block;width:100%;max-width:300px;margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toprow1{justify-content:space-between!important;gap:.45rem;flex-wrap:wrap}
+.toprow1 .topr{margin-left:auto}
+.namechip{flex:1 1 auto;min-width:0;max-width:100%;text-align:left;border:2px solid var(--teal);background:var(--surface);color:var(--teal);border-radius:999px;padding:.3rem .7rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.namechip.empty{border-style:dashed;color:#D6284A;border-color:#E0405A}
+.namewrap{display:flex;align-items:center;gap:.4rem;flex:1 1 auto;min-width:0}
+@media (max-width:520px){.namewrap{flex:1 1 100%}}
+.avatarbtn{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:2px solid var(--teal);background:var(--surface);padding:0;overflow:hidden;font-size:1.2rem;line-height:38px}
+.avatarbtn img{width:100%;height:100%;object-fit:cover;display:block}
+.bigavatar{display:block;width:160px;height:160px;border-radius:50%;object-fit:cover;margin:.4rem auto;border:4px solid var(--teal)}
+.bigavatar.empty{font-size:4.5rem;line-height:150px;text-align:center;background:var(--bg)}
+.photorow{display:flex;align-items:center;gap:.4rem;justify-content:center;font-weight:700;margin:.3rem 0}
+.bonusrow{align-items:flex-start}.bl{flex:1}.blist{margin:.3rem 0 0 1rem;padding:0;font-size:.85rem}.blist li{margin:.15rem 0}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -748,7 +802,9 @@ const KEY="basic-spanish-v1";
 let prog={};
 try{prog=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(prog));}catch(e){}}
-const totalStars=()=>Object.values(prog).reduce((a,b)=>a+(b||0),0);
+const quizStars=()=>Object.values(prog).reduce((a,b)=>a+(b||0),0);
+const bonusStars=()=>{try{return (RW.bonus||[]).reduce((a,b)=>a+(b.n||0),0);}catch(e){return 0;}};
+const totalStars=()=>quizStars()+bonusStars();
 
 /* Speech */
 let esVoice=null;
@@ -1347,6 +1403,20 @@ function lessonPlayer(u,box,les,idx){
       return;
     }
     doneL[idx]=1;saveDone();
+    if(idx===DEMO_IDX){
+      screen.append(h("div",{cls:"demoend"},
+        h("div",{cls:"mini"},h("div",{cls:"mtop"},"🎓"),h("div",{cls:"mt"},"¡Completé mi primera clase!"),h("div",{cls:"ms"},"I finished my first lesson!"),
+          rounds?h("div",{cls:"mstars"},"⭐ "+score+" / "+rounds):null,h("div",{cls:"mfoot"},"Basic Spanish · Free demo")),
+        h("div",{cls:"next"},h("div",{cls:"nl"},"👉 Ahora sigue con · Next:"),h("div",{cls:"nt"},U[0].i+" 1. "+U[0].t),h("div",{cls:"ne"},U[0].e),
+          h("div",{cls:"nk"},"🔒 Pídele a tu maestro que la desbloquee · Ask your teacher to unlock it")),
+        h("div",{cls:"controls sm"},
+          h("button",{cls:"btn primary",on:{click:()=>showPath()}},"🗺️ Mi camino · My path"),
+          h("button",{cls:"btn",on:{click:()=>openUnit(0,"lesson")}},"👀 Lección 1 · Lesson 1"),
+          h("button",{cls:"btn",on:{click:()=>{tab="quiz";render();}}},"📝 Prueba · Quiz"))));
+      confetti(screen);cheer();teacherEl.classList.add("dance");
+      say(TL.end(les),[],()=>teacherEl&&teacherEl.classList.remove("dance"));
+      return;
+    }
     screen.append(h("div",{cls:"btitle"},h("div",{cls:"bic"},"🏆"),h("div",{cls:"bh"},"¡Lección completada!"),h("div",{cls:"bsub"},"Lesson complete!"),
       rounds?h("div",{cls:"big"},"⭐ "+score+" / "+rounds):null,
       h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:()=>{score=0;rounds=0;g1Done=false;g2Done=false;go(0);}}},"🔁 Otra vez · Again"),h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();}}},"📝 Prueba · Quiz"))));
@@ -1473,6 +1543,10 @@ function rewardsPanel(){
     h("div",{cls:"rrow"+(r.diploma?" got":"")},h("div",{cls:"ric"+(r.diploma?"":" dim")},"📜"),
       h("div",{},h("b",{},"Diploma · Certificate (100 ⭐)"),h("br",{}),r.diploma?"Basic Spanish – Excellent Student":"Llega a 100 estrellas · Reach 100 stars")),
     r.diploma?h("button",{cls:"btn",on:{click:()=>{close();showDiploma();}}},"📜 Ver mi diploma · See my certificate"):null,
+    bonusList(),
+    h("button",{cls:"tkey",on:{click:()=>{close();teacherRewards();}}},"🍎 Maestro: dar estrellas · Teacher: give stars"),
+    h("button",{cls:"btn",on:{click:()=>{close();showPath();}}},"🗺️ Ver mi camino · See my path"),
+    h("button",{cls:"btn",on:{click:()=>{close();shareProgress();}}},"📤 Compartir mi progreso · Share my progress"),
     h("button",{cls:"btn primary",on:{click:close}},"OK")].filter(Boolean));
 }
 function redeemCoupon(){
@@ -1498,22 +1572,18 @@ function showDiploma(){
   const nm=h("div",{cls:"dname"},RW.name||"_______________");
   const nameBox=h("div",{cls:"noprint dnamebox"});
   const drawName=()=>{nameBox.innerHTML="";
-    if(RW.name){nameBox.append(h("p",{cls:"rintro"},"🔒 El nombre ya está guardado y no se puede cambiar. · The name is saved and can't be changed."));return;}
-    const inp=h("input",{type:"text",placeholder:"Tu nombre completo · Your full name",maxlength:"40"});
-    inp.addEventListener("input",()=>{nm.textContent=inp.value.trim()||"_______________";});
-    const save=h("button",{cls:"btn primary",on:{click:()=>{const v=inp.value.trim();if(v.length<2){inp.focus();return;}
-      if(!confirm("¿Guardar este nombre? No se podrá cambiar después.\nSave this name? It can't be changed later.\n\n"+v))return;
-      RW.name=v;saveRW();nm.textContent=v;drawName();}}},"💾 Guardar nombre · Save name");
-    nameBox.append(h("p",{cls:"rintro"},"Escribe tu nombre. Solo se puede escribir una vez. · Write your name. You can only do it once."),h("div",{cls:"tform"},inp,save));
+    if(RW.name){nm.textContent=RW.name;nameBox.append(h("p",{cls:"rintro"},"🔒 El nombre ya está guardado y no se puede cambiar. · The name is saved and can't be changed."));return;}
+    nameBox.append(h("p",{cls:"rintro"},"Primero escribe tu nombre completo. · First write your full name."),
+      h("button",{cls:"btn primary",on:{click:()=>askName(()=>drawName())}},"✏️ Escribir mi nombre · Write my name"));
   };
   drawName();
   const d=new Date();const date=d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   const cert=h("div",{cls:"diploma",id:"diploma"},
     h("div",{cls:"dtop"},"🏆"),h("div",{cls:"dtitle"},"Certificate of Achievement"),h("div",{cls:"dsub"},"Certificado de logro"),
-    h("div",{cls:"dtext"},"This certificate is proudly presented to"),nm,
+    h("div",{cls:"dtext"},"This certificate is proudly presented to"),RW.photo?h("img",{cls:"dphoto",src:RW.photo,alt:""}):null,nm,
     h("div",{cls:"dbig"},"Basic Spanish – Excellent Student"),
     h("div",{cls:"dtext"},"for earning 100 stars ⭐ learning Spanish."),
-    h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{},h("div",{cls:"dline"}),date)));
+    h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{cls:"ddate"},date)));
   overlay("Certificate",close=>[cert,nameBox,
     h("div",{cls:"controls sm noprint"},h("button",{cls:"btn primary",on:{click:()=>{if(!RW.name){alert("Primero guarda tu nombre. · Save your name first.");return;}window.print();}}},"🖨️ Imprimir · Print"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
 }
@@ -1528,6 +1598,246 @@ function checkRewards(){
     h("button",{cls:"btn primary",on:{click:close}},"¡Genial! · Great!")].filter(Boolean));
   try{cheer();}catch(e){}
 }
+
+/* ---------- Learning path map ---------- */
+function pathNodes(){
+  const nodes=[],placed=new Set();let cum=0;
+  const rewardAt=()=>{for(const [n,ic,name] of MEDALS){if(n<100&&!placed.has(n)&&cum>=n){placed.add(n);nodes.push({t:"reward",n,ic,name});}}};
+  nodes.push({t:"demo",i:DEMO_IDX});cum+=3;rewardAt();
+  for(let i=0;i<28;i++){nodes.push({t:"lesson",i});cum+=3;rewardAt();}
+  nodes.push({t:"extras"});cum+=18;
+  nodes.push({t:"reward",n:100,ic:"🏆",name:MEDALS[3][2]});nodes.push({t:"diploma"});
+  return nodes;
+}
+function showPath(){
+  cur=null;hush&&hush();app.innerHTML="";
+  const t=totalStars(),pct=Math.min(100,t);
+  const head=h("div",{cls:"pathhead"},h("h2",{},"🗺️ Mi camino · My learning path"),
+    h("p",{},"Gana estrellas en las pruebas y consigue todos los premios · Win stars and collect every reward!"),
+    h("div",{cls:"pbar"},h("div",{cls:"pfill",style:"width:"+pct+"%"}),
+      ...[[10,"🥉"],[25,"🥈"],[50,"🥇"],[100,"🏆"]].map(([n,ic])=>h("span",{cls:"pmark"+(t>=n?" got":""),style:"left:"+n+"%"},ic))),
+    h("div",{cls:"pnum"},"⭐ "+t+" / 100"),h("button",{cls:"sharebtn",on:{click:shareProgress}},"📤 Compartir mi progreso · Share my progress"));
+  const nodes=pathNodes(),ROW=124,XS=[50,74,50,26];
+  const map=h("div",{cls:"pmap",style:"height:"+(nodes.length*ROW+60)+"px"});
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("class","proad");map.append(svg);
+  ["☁️","🌳","🏫","🌴","☁️","🌻","🏔️","🌈","🌳","🎈"].forEach((d,k)=>map.append(h("span",{cls:"pdeco",style:`top:${60+k*nodes.length*ROW/10}px;${k%2?"right":"left"}:4%`},d)));
+  let hereDone=false;
+  const pts=[];
+  nodes.forEach((n,k)=>{
+    const x=XS[k%4],y=40+k*ROW+30;pts.push([x,y]);
+    let el;
+    if(n.t==="lesson"||n.t==="demo"){
+      const i=n.i,u=ALL[i],done=!!doneL[i]||(prog[i]||0)>0,open=isUnlocked(i),locked=!open;
+      el=h("button",{cls:"pnode"+(n.t==="demo"?" demo":"")+(done?" done":locked?" locked":" open"),on:{click:()=>openUnit(i,n.t==="demo"||open?"lesson":undefined)}},
+        h("span",{cls:"pic"},u.i),
+        h("span",{cls:"pbadge"},done?"✓":locked?"🔒":"▶"),
+        h("span",{cls:"plab"},(n.t==="demo"?"Demo · ":(i+1)+". ")+u.t+(prog[i]?" "+starStr(prog[i]):"")));
+      if(!hereDone&&!done){hereDone=true;map.append(h("div",{cls:"here",style:`top:${y-74}px;left:calc(${x}% - 46px)`},"📍 Aquí estás · You're here"));}
+    }else if(n.t==="extras"){
+      el=h("button",{cls:"pnode extras open",on:{click:()=>home()}},h("span",{cls:"pic"},"📚"),h("span",{cls:"plab"},"Extras: vocabulario y gramática · +18 ⭐"));
+    }else if(n.t==="reward"){
+      const got=t>=n.n;
+      el=h("button",{cls:"preward"+(got?" got":""),on:{click:rewardsPanel}},h("span",{cls:"ric2"},n.ic),
+        h("span",{cls:"plab"},n.name.split(" · ")[0]+" · "+n.n+" ⭐"+(n.n===50?" + 🎁 lección gratis":"")+(got?" ✅":" · faltan "+(n.n-t)+" ⭐")));
+    }else{
+      const got=t>=100;
+      el=h("button",{cls:"preward diploma"+(got?" got":""),on:{click:()=>got?showDiploma():rewardsPanel()}},h("span",{cls:"ric2"},"📜"),h("span",{cls:"plab"},"Diploma · Certificate"+(got?" ✅":" · 100 ⭐")));
+    }
+    el.style.top=(y-32)+"px";el.style.left="calc("+x+"% - 32px)";map.append(el);
+  });
+  app.append(topbar(true),head,map);
+  requestAnimationFrame(()=>{
+    const W=map.clientWidth,P=pts.map(([x,y])=>[x/100*W,y]);
+    let d="M"+P[0][0]+" "+P[0][1];for(let k=1;k<P.length;k++){const [x0,y0]=P[k-1],[x1,y1]=P[k],my=(y0+y1)/2;d+=` C ${x0} ${my}, ${x1} ${my}, ${x1} ${y1}`;}
+    svg.setAttribute("viewBox",`0 0 ${W} ${map.clientHeight}`);svg.setAttribute("width",W);svg.setAttribute("height",map.clientHeight);
+    svg.innerHTML=`<path d="${d}" fill="none" stroke="#E9D9A6" stroke-width="30" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="14 12" stroke-linecap="round"/>`;
+    const me=map.querySelector(".here");if(me)setTimeout(()=>me.scrollIntoView({block:"center",behavior:"smooth"}),300);
+  });
+  window.scrollTo(0,0);
+}
+function pathBanner(){
+  const t=totalStars();
+  return h("button",{cls:"pathbanner",on:{click:showPath}},h("span",{cls:"pbi"},"🗺️"),
+    h("span",{cls:"pbt"},h("b",{},"Mi camino · My learning path"),h("br",{}),"⭐ "+t+" / 100 · 🥉 🥈 🥇 🏆 📜"),h("span",{cls:"pba"},"▶"));
+}
+
+/* ---------- Share my progress ---------- */
+const QR_WEB="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAIAAAAG+WgKAAAEIUlEQVR4nO3dwa3cNhRA0ThIB64lu5TvXWpxDT8FCEgeiEtS45yznpEG/heCHyiJ376+vn6Dzu+3fwC/GkkRkxQxSRGTFDFJEZMUMUkRkxQxSRGTFLE/Jh/6/udfu3/Hv/j594///MzkFz6Ps/attbNPnDzXmskvdJUiJilikiImKWKSIjaa+J4m//NfM5lo9k09a1Ph245cWfuFrlLEJEVMUsQkRUxSxBYnvqe16WBtWqlmnGrV7/mttc9UTv4tnlyliEmKmKSISYqYpIhlE9/7VWtq1exW3VP6Nq5SxCRFTFLEJEVMUsQ+cuI7uYZVzXd3V/1OcpUiJilikiImKWKSIpZNfCenlWp62rfKtjaT7psuT3KVIiYpYpIiJilikiK2OPHdfWPkvufm9j2jt/aZibt/iydXKWKSIiYpYpIiJili3/4/O7BXM9cnvnXzJFcpYpIiJilikiImKWKjie/uOtfJd1refXvn5MgT1T2ua2d3lSImKWKSIiYpYpIilq3xnXzz5PvPte+5wsnZJ0fe9y1XKWKSIiYpYpIiJiliG9/cUu2lfvL5u7WzT0x+z77VzH13oj65ShGTFDFJEZMUMUkRG018+9ae7q58rX2reidMdeS14+y7n9ZVipikiEmKmKSISYrY4hrfr/qeyYlqNXPf/hH77jJ1VycXSIqYpIhJipikiGW7M6xNGft2u9u3I97Je0FP3o1ZnctVipikiEmKmKSISYrY0TW+k3vSVWtYd/dSXzvX3eO4ShGTFDFJEZMUMUkRe90O7PtW/SbnursfX6X6hZ7j4xUkRUxSxCRFTFLEjq7x3Z1Eql9YrQyefJfpGs/x8QqSIiYpYpIiJilio4lv33svJ9/at4PDPnffUzqx745WVylikiImKWKSIiYpYqMd2O8+lfaJ64lP1btuqnNNvvVkjY8LJEVMUsQkRUxSxEYT39Pd2WRynKe7s1ul2mvefnx8DEkRkxQxSRGTFLFsjW/fu1P2rfHtmwEnv2ftOGtO3tHqKkVMUsQkRUxSxCRFLHuOb98OdJWT+zXc/dfYt1+huzq5QFLEJEVMUsQkRWxxje+kk3djTr615uRK5b7nHE18XCApYpIiJilikiKW7c5QqXY8fzp5J+rT21YPJzzHxytIipikiEmKmKSILU58T2/bWW9NtR/f075JdsJzfHwwSRGTFDFJEZMUsWziO2nfXgNve8fmmmrNcY2rFDFJEZMUMUkRkxSxj5z4qlW2fW+kubuD4eQz+/7FXKWISYqYpIhJipikiGUT393ny9aekqvutHye6+ScWK0e2o+Pl5IUMUkRkxQxSRFbnPjuvr3z7p7jJ+/PrFjj44NJipikiEmKmKSIjXZngDlXKWKSIiYpYpIiJilikiImKWKSIiYpYpIiJili/wBa/0aTlGI+lwAAAABJRU5ErkJggg==";
+function progressStats(){
+  const t=totalStars();const done=[];for(let i=0;i<28;i++)if(doneL[i]||(prog[i]||0)>0)done.push(i);
+  const demo=!!(doneL[DEMO_IDX]||prog[DEMO_IDX]);
+  let next=null;for(let i=0;i<28;i++){if(!done.includes(i)){next=i;break;}}
+  return{t,done,demo,next,medals:MEDALS.filter(m=>t>=m[0])};
+}
+function loadImg(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});}
+async function progressCanvas(name,withPhoto){
+  const st=progressStats(),W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const F='"Fredoka","Trebuchet MS",sans-serif';
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#0E6E78");g.addColorStop(.6,"#1497A3");g.addColorStop(1,"#4E9A2A");x.fillStyle=g;x.fillRect(0,0,W,H);
+  const rr=(X,Y,w,h,r,fill)=>{x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();x.fillStyle=fill;x.fill();};
+  x.textAlign="center";x.textBaseline="middle";x.fillStyle="#fff";
+  x.font="bold 40px "+F;x.fillText("📗 BASIC SPANISH · MY PROGRESS",W/2,80);
+  const ph=withPhoto&&RW.photo?await loadImg(RW.photo):null;
+  const nameCx=ph?W/2+70:W/2,maxW=ph?W-320:W-120;
+  if(ph){x.save();x.beginPath();x.arc(140,168,60,0,Math.PI*2);x.fillStyle="#fff";x.fill();x.beginPath();x.arc(140,168,53,0,Math.PI*2);x.clip();x.drawImage(ph,87,115,106,106);x.restore();}
+  x.fillStyle="#fff";x.font="bold 76px "+F;let nm=name||"Mi progreso";let fs=76;while(x.measureText(nm).width>maxW&&fs>36){fs-=4;x.font="bold "+fs+"px "+F;}x.fillText(nm,nameCx,170);
+  x.font="34px "+F;x.fillStyle="#FFD36B";x.fillText("¡Estoy aprendiendo español! · I'm learning Spanish!",W/2,245);
+  rr(70,300,W-140,260,36,"#ffffff");
+  x.fillStyle="#b37400";x.font="bold 150px "+F;x.fillText("⭐ "+st.t,W/2,410);
+  x.fillStyle="#4F6D72";x.font="34px "+F;x.fillText("estrellas · stars",W/2,505);
+  rr(70,590,W-140,190,36,"#ffffff");
+  x.fillStyle="#12343B";x.font="bold 34px "+F;x.fillText("Medallas · Medals",W/2,635);
+  MEDALS.forEach(([n,ic],k)=>{const cx=W/2+(k-1.5)*190;x.globalAlpha=st.t>=n?1:.22;x.font="90px serif";x.fillText(ic,cx,715);x.globalAlpha=1;});
+  const box=(X,label,val)=>{rr(X,810,(W-140-30)/2,170,30,"#ffffff");const cx=X+(W-140-30)/4;x.fillStyle="#0E6E78";x.font="bold 70px "+F;x.fillText(val,cx,875);x.fillStyle="#4F6D72";let lf=30;x.font=lf+"px "+F;while(x.measureText(label).width>(W-140-30)/2-30&&lf>18){lf-=1;x.font=lf+"px "+F;}x.fillText(label,cx,945);};
+  box(70,"lecciones completadas · lessons done",st.done.length+(st.demo?1:0)+" / 29");
+  box(70+(W-140-30)/2+30,"premios · rewards",(st.medals.length+(st.t>=50?1:0)+(st.t>=100?1:0))+" / 6");
+  rr(70,1010,W-140,110,30,"#FFF4D6");x.fillStyle="#7a5200";x.font="bold 32px "+F;
+  const nx=st.next==null?"🏆 ¡Terminé todas las lecciones! · All lessons done!":"👉 Próxima · Next: "+(st.next+1)+". "+U[st.next].t;
+  let f2=32;while(x.measureText(nx).width>W-180&&f2>20){f2-=2;x.font="bold "+f2+"px "+F;}x.fillText(nx,W/2,1065);
+  const q=await loadImg(QR_WEB);rr(70,1150,W-140,170,30,"#ffffff");
+  if(q)x.drawImage(q,95,1162,146,146);
+  x.textAlign="left";x.fillStyle="#12343B";x.font="bold 40px "+F;x.fillText("¡Aprende conmigo! · Learn with me!",270,1205);
+  x.fillStyle="#0E6E78";x.font="bold 36px "+F;x.fillText("spanishflt.github.io",270,1255);
+  x.fillStyle="#4F6D72";x.font="24px "+F;x.fillText("Teacher Alberto Garrido Hernández · Old Harbour Primary School",270,1298);
+  return c;
+}
+function shareProgress(){
+  if(!RW.name){askName(()=>shareProgress());return;}
+  const prev=h("img",{cls:"shareprev",alt:"Progress card"});
+  const cb=h("input",{type:"checkbox"});cb.checked=!!RW.photo;
+  const draw=()=>progressCanvas(RW.name,cb.checked).then(c=>{prev.src=c.toDataURL("image/png");});
+  cb.addEventListener("change",draw);draw();
+  const photoRow=RW.photo?h("label",{cls:"photorow"},cb," Incluir mi foto · Include my photo"):null;
+  overlay("Share my progress",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"📤"),h("h2",{},"Compartir mi progreso · Share my progress")),
+    h("p",{cls:"rintro"},"Enséñale tu progreso a tu familia, compañeros y amigos. · Show your progress to your family, classmates and friends."),
+    photoRow,prev,
+    h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>doShare(RW.name,cb.checked)}},"📤 Compartir · Share"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
+}
+async function doShare(name,withPhoto){
+  const st=progressStats();
+  const c=await progressCanvas(name,withPhoto);const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+  const fname="Basic-Spanish-progress"+(name?"-"+name.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-"):"")+".png";
+  const text=(name?name+": ":"")+"🇪🇸 ¡Estoy aprendiendo español con Basic Spanish! · I'm learning Spanish with Basic Spanish! ⭐ "+st.t+" "+(st.medals.map(m=>m[1]).join(""))+" · "+(st.done.length+(st.demo?1:0))+" lessons done. ¡Aprende conmigo! · Learn with me: https://spanishflt.github.io";
+  const file=new File([blob],fname,{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text,title:"Basic Spanish"});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  if(navigator.share){try{await navigator.share({text,title:"Basic Spanish",url:"https://spanishflt.github.io"});}catch(e){}}
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+
+/* ---------- Student full name (one per device) ---------- */
+const validFull=v=>/^[^\d@#$%^&*()_+=<>{}\[\]|\\/:;"!?¿¡]{2,}\s+[^\d@#$%^&*()_+=<>{}\[\]|\\/:;"!?¿¡]{2,}/.test(v.trim());
+function refreshTop(){const t=document.querySelector(".tophome");if(!t)return;if(cur==null&&document.querySelector(".hero"))home();else if(cur!=null)render();}
+function askName(onDone){
+  const inp=h("input",{type:"text",maxlength:"40",placeholder:"Nombre y apellido · First and last name",autocomplete:"name"});
+  const msg=h("p",{cls:"tmsg","aria-live":"polite"});
+  overlay("Your name",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"👤"),h("h2",{},"Tu nombre completo · Your full name")),
+    h("p",{},"Escribe tu nombre y apellido. Saldrá en tu progreso y en tu diploma. ",h("b",{},"Solo se puede escribir una vez."),h("br",{}),h("i",{},"Write your first and last name. It will appear on your progress card and your certificate. You can only write it once.")),
+    h("div",{cls:"tform"},inp,h("button",{cls:"btn primary",on:{click:()=>{const v=inp.value.trim().replace(/\s+/g," ");
+      if(!validFull(v)){msg.textContent="✏️ Escribe nombre y apellido · Write your first and last name";inp.focus();return;}
+      if(!confirm("¿Guardar este nombre? No se podrá cambiar después.\nSave this name? It can't be changed later.\n\n"+v))return;
+      RW.name=v;saveRW();close();refreshTop();onDone&&onDone();}}},"💾 Guardar · Save")),msg,
+    h("button",{cls:"btn",on:{click:close}},"Ahora no · Not now")]);
+  setTimeout(()=>inp.focus(),50);
+}
+function nameInfo(){
+  overlay("Your name",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"👤"),h("h2",{},RW.name)),
+    h("p",{},"🔒 Este nombre aparece en tu progreso y en tu diploma. No se puede cambiar. · This name appears on your progress card and certificate. It can't be changed."),
+    h("button",{cls:"btn",on:{click:()=>{close();photoMenu();}}},RW.photo?"📷 Mi foto · My photo":"📷 Poner foto · Add photo"),
+    h("button",{cls:"tkey",on:{click:()=>{close();teacherRename();}}},"🔑 Maestro: corregir nombre · Teacher: fix name"),
+    h("button",{cls:"btn primary",on:{click:close}},"OK")]);
+}
+function teacherRename(){
+  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const nv=h("input",{type:"text",maxlength:"40",placeholder:"Nombre y apellido · Full name",value:RW.name||""});
+  const msg=h("p",{cls:"tmsg","aria-live":"polite"});
+  overlay("Fix name",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🔑"),h("h2",{},"Corregir nombre · Fix name")),
+    h("div",{cls:"tform"},nv),h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{
+      const v=nv.value.trim().replace(/\s+/g," ");if(!validFull(v)){msg.textContent="✏️ Nombre y apellido · First and last name";return;}
+      try{const kek=await teacherKey(pw.value);await unwrapKey(kek,0);}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";return;}
+      RW.name=v;saveRW();pw.value="";close();refreshTop();}}},"Guardar · Save")),msg,
+    h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
+}
+function nameChip(){
+  return h("div",{cls:"namewrap"},avatarBtn(),
+    RW.name?h("button",{cls:"namechip",title:RW.name,on:{click:nameInfo}},RW.name)
+           :h("button",{cls:"namechip empty",on:{click:()=>askName()}},"✏️ Tu nombre · Your name"));
+}
+
+/* ---------- Student photo (stays on the phone) ---------- */
+function pickPhoto(){
+  const inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=async()=>{const f=inp.files&&inp.files[0];if(!f)return;
+    try{const url=URL.createObjectURL(f);const img=await loadImg(url);URL.revokeObjectURL(url);if(!img)throw 0;
+      const S=256,c=document.createElement("canvas");c.width=S;c.height=S;const x=c.getContext("2d");
+      const m=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-m)/2,sy=(img.naturalHeight-m)/2;
+      x.drawImage(img,sx,sy,m,m,0,0,S,S);RW.photo=c.toDataURL("image/jpeg",0.82);saveRW();refreshTop();
+    }catch(e){alert("No se pudo usar esa foto. · That photo couldn't be used.");}};
+  inp.click();
+}
+function photoMenu(){
+  overlay("My photo",close=>[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"📷"),h("h2",{},"Mi foto · My photo")),
+    RW.photo?h("img",{cls:"bigavatar",src:RW.photo,alt:"My photo"}):h("div",{cls:"bigavatar empty"},"👤"),
+    h("p",{cls:"rintro"},"Tu foto solo se guarda en este teléfono. · Your photo is only saved on this phone."),
+    h("div",{cls:"controls sm"},
+      h("button",{cls:"btn primary",on:{click:()=>{close();pickPhoto();}}},RW.photo?"🔄 Cambiar foto · Change photo":"📷 Poner foto · Add photo"),
+      RW.photo?h("button",{cls:"btn",on:{click:()=>{delete RW.photo;saveRW();close();refreshTop();}}},"🗑️ Quitar foto · Remove"):null,
+      h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))].filter(Boolean));
+}
+function avatarBtn(){
+  return h("button",{cls:"avatarbtn","aria-label":"Mi foto · My photo",title:"Mi foto · My photo",on:{click:photoMenu}},
+    RW.photo?h("img",{src:RW.photo,alt:""}):h("span",{},"📷"));
+}
+
+/* ---------- Teacher's rewards (bonus stars) ---------- */
+const BONUS_REASONS=["🌟 Excelente trabajo · Excellent work","🙋 Participación · Participation","📒 Tarea · Homework","🗣️ Hablar español · Speaking Spanish","😊 Buen comportamiento · Good behaviour","🤝 Ayudar a un compañero · Helping a classmate"];
+function teacherRewards(){
+  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const msg=h("p",{cls:"tmsg","aria-live":"polite"});const area=h("div",{});
+  let n=1,reason="";
+  const nBtns=[1,2,3,5,10].map(v=>h("button",{cls:"dur"+(v===n?" on":""),on:{click:e=>{n=v;nBtns.forEach(b=>b.classList.toggle("on",+b.dataset.v===v));}}},"+"+v+" ⭐"));
+  nBtns.forEach((b,k)=>b.dataset.v=[1,2,3,5,10][k]);
+  const rIn=h("input",{type:"text",maxlength:"60",placeholder:"Motivo (opcional) · Reason (optional)"});
+  const rBtns=BONUS_REASONS.map(r=>h("button",{cls:"dur",on:{click:()=>{reason=r;rIn.value=r;rBtns.forEach(b=>b.classList.toggle("on",b.textContent===r));}}},r));
+  const showForm=()=>{area.innerHTML="";
+    area.append(h("div",{cls:"dlab"},"¿Cuántas estrellas? · How many stars?"),h("div",{cls:"durs"},...nBtns),
+      h("div",{cls:"dlab"},"¿Por qué? · What for?"),h("div",{cls:"durs"},...rBtns),h("div",{cls:"tform"},rIn),
+      h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>{
+        const r=(rIn.value||"").trim();RW.bonus=RW.bonus||[];RW.bonus.push({n,r,d:Date.now()});saveRW();
+        closeAll();celebrateBonus(n,r);}}},"🎁 Dar estrellas · Give stars"),
+        (RW.bonus&&RW.bonus.length)?h("button",{cls:"btn",on:{click:()=>{const last=RW.bonus[RW.bonus.length-1];
+          if(!confirm("¿Quitar el último premio del maestro? · Remove the last teacher reward?\n\n+"+last.n+" ⭐ "+(last.r||"")))return;
+          RW.bonus.pop();saveRW();closeAll();refreshTop();}}},"↩️ Quitar el último · Undo last"):null));
+  };
+  let closeAll=()=>{};
+  overlay("Teacher's rewards",close=>{closeAll=()=>{close();};return[
+    h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🍎"),h("h2",{},"Teacher's rewards · Premios del maestro")),
+    h("p",{cls:"rintro"},"Solo el maestro puede dar estrellas extra. · Only the teacher can give extra stars."),
+    area,
+    h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")];});
+  area.append(h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{msg.textContent="…";
+    try{const kek=await teacherKey(pw.value);await unwrapKey(kek,0);}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";return;}
+    pw.value="";msg.textContent="";showForm();}}},"Entrar · Enter")),msg);
+  setTimeout(()=>pw.focus(),50);
+}
+function celebrateBonus(n,r){
+  refreshTop();
+  overlay("Teacher reward",close=>[h("div",{cls:"celebrate"},h("div",{cls:"cic"},"🍎"),
+      h("h2",{},"¡Tu maestro te dio +"+n+" ⭐! · Your teacher gave you +"+n+" ⭐!"),r?h("p",{cls:"cgift"},r):null,
+      h("p",{},"Ahora tienes · Now you have ⭐ "+totalStars())),
+    h("button",{cls:"btn primary",on:{click:()=>{close();setTimeout(checkRewards,300);}}},"¡Gracias! · Thank you!")].filter(Boolean));
+  try{cheer();}catch(e){}
+}
+function bonusList(){
+  const B=RW.bonus||[];
+  return h("div",{cls:"rrow got bonusrow"},h("div",{cls:"ric"},"🍎"),
+    h("div",{cls:"bl"},h("b",{},"Premios del maestro · Teacher's rewards: +"+bonusStars()+" ⭐"),
+      B.length?h("ul",{cls:"blist"},...B.slice(-5).reverse().map(b=>h("li",{},"+"+b.n+" ⭐ "+(b.r||"")+" · "+new Date(b.d).toLocaleDateString("en-GB")))):h("div",{cls:"rneed"},"Tu maestro puede darte estrellas extra. · Your teacher can give you extra stars.")));
+}
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
@@ -1538,9 +1848,9 @@ let cur=null, tab="cards";
 
 function topbar(back){
   const right=h("div",{cls:"topr"},rewardsBadge(),h("div",{cls:"stars","aria-live":"polite"},"⭐ "+totalStars()));
-  if(back)return h("div",{cls:"tophome"},h("div",{cls:"top toprow1"},right),h("div",{cls:"toprow2"},h("button",{cls:"back",on:{click:()=>home()}},"← Unidades | Units")));
+  if(back)return h("div",{cls:"tophome"},h("div",{cls:"top toprow1"},nameChip(),right),h("div",{cls:"toprow2"},h("button",{cls:"back",on:{click:()=>home()}},"← Unidades | Units")));
   return h("div",{cls:"tophome"},
-    h("div",{cls:"top toprow1"},right),
+    h("div",{cls:"top toprow1"},nameChip(),right),
     h("div",{cls:"owner ownergrid"},h("span",{cls:"ocopy"},"©"),h("div",{},"Alberto Garrido Hernández"),h("span",{}),h("div",{cls:"role"},"Spanish teacher at Old Harbour Primary School · Region 6 · Jamaica")));
 }
 function starStr(n){return n?"⭐".repeat(n):"";}
@@ -1562,6 +1872,8 @@ function home(focusBook){
       h("button",{cls:"promo",on:{click:()=>document.getElementById("books").scrollIntoView({behavior:"smooth"})}},h("span",{cls:"pi","aria-hidden":"true"},"📚"),h("span",{},h("b",{},"The Spanish Workbooks"),"Grades 1 to 6 · see what’s inside each one"))),
     h("h2",{cls:"sec"},"🎁 Clase de prueba | Free demo"),
     h("div",{cls:"grid"},unitBtn(DEMO,DEMO_IDX,"Demo")),
+    pathBanner(),
+    h("button",{cls:"sharebtn",on:{click:shareProgress}},"📤 Compartir mi progreso · Share my progress"),
     h("h2",{cls:"sec"},"Unidades | Units"),
     h("div",{cls:"grid"},U.map((u,i)=>unitBtn(u,i,String(i+1).padStart(2,"0")))),
     h("h2",{cls:"sec"},"Vocabulario y gramática | Vocabulary and Grammar"),
