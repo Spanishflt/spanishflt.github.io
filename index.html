@@ -429,6 +429,84 @@ span.hang{display:inline-flex}
 .greet .gtip{font-size:.95rem;line-height:1.35}.greet .gtip i{color:var(--muted);font-size:.85rem}
 .greet .gogo{margin-top:.5rem;border:none;background:#FFB627;color:#3A2600;border-radius:999px;padding:.35rem .9rem;font-family:"Fredoka",sans-serif;font-weight:700}
 .greet .gx{border:none;background:transparent;color:var(--muted);font-size:1.1rem;padding:.1rem .3rem}
+.mascot{position:fixed;right:max(8px,env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));width:78px;height:96px;z-index:45;--px:0px;--py:0px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mascot.off{display:none}
+body:has(.lesson) .mascot,body:has(.lesson) .mshow{display:none}
+.mshow{position:fixed;right:max(8px,env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:45;display:none;border:2px solid #2BB34F;background:var(--surface);border-radius:50%;width:40px;height:40px;font-size:1.3rem;padding:0;opacity:.85}
+.mshow.on{display:block}
+.psvg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}
+.psvg *{transform-box:view-box}
+.pall{transform-origin:50px 120px;animation:pbreath 2.6s ease-in-out infinite}
+@keyframes pbreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.985)}}
+.phead{transform-origin:50px 58px;transition:transform .3s}
+.pcrest{transform-origin:50px 24px;animation:pcrest 1.8s ease-in-out infinite}
+@keyframes pcrest{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+.ptail{transform-origin:50px 96px;animation:ptail 2.4s ease-in-out infinite}
+@keyframes ptail{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.pwl{transform-origin:34px 64px}.pwr{transform-origin:66px 64px}
+.ppup{transform:translate(var(--px),var(--py));transition:transform .18s}
+.plid{transform-origin:center;transform:scaleY(0);transition:transform .12s}
+.plidL{transform-origin:42px 38px}.plidR{transform-origin:58px 38px}
+.mascot.blink .plid{transform:scaleY(1)}
+.pbeakL{transform-origin:50px 52px}
+.mascot.talking .pbeakL{animation:ptalk .22s ease-in-out infinite alternate}
+@keyframes ptalk{to{transform:translateY(2.5px)}}
+.mbub{position:absolute;right:62px;bottom:70px;background:#fff;color:#12343B;border:2px solid #2BB34F;border-radius:14px;padding:.25rem .55rem;font-family:"Fredoka",sans-serif;font-weight:700;font-size:.85rem;white-space:nowrap;opacity:0;transform:translateY(6px) scale(.9);transition:all .2s;pointer-events:none;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.mbub.on{opacity:1;transform:none}
+.mbub:after{content:"";position:absolute;right:-8px;bottom:8px;border:6px solid transparent;border-left-color:#2BB34F}
+.mzz{position:absolute;right:4px;top:-10px;font-size:1.1rem;opacity:0;pointer-events:none}
+/* actions */
+.a-look .ppup{animation:plook 1.8s ease-in-out}
+@keyframes plook{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,-1px)}55%{transform:translate(3px,-1px)}80%{transform:translate(0,2px)}}
+.a-scratch .pwr{animation:pscratch 1.7s ease-in-out}
+.a-scratch .phead{transform:rotate(-12deg)}
+@keyframes pscratch{0%{transform:rotate(0)}20%,80%{transform:rotate(-125deg) translate(-2px,-6px)}30%,50%,70%{transform:rotate(-135deg) translate(-2px,-6px)}40%,60%{transform:rotate(-118deg) translate(-2px,-6px)}100%{transform:rotate(0)}}
+.a-hop .pall{animation:phop .55s ease-in-out 2}
+@keyframes phop{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.a-jump .pall{animation:pjump .5s cubic-bezier(.3,1.6,.5,1) 2}
+@keyframes pjump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(0) scale(1.08,.9)}55%{transform:translateY(-22px) scale(.95,1.06)}}
+.a-jump .pwl{animation:pflapL .25s ease-in-out 4}.a-jump .pwr{animation:pflapR .25s ease-in-out 4}
+.a-dance .pall{animation:pdance .5s ease-in-out infinite}
+@keyframes pdance{0%,100%{transform:rotate(-9deg) translateY(0)}50%{transform:rotate(9deg) translateY(-6px)}}
+.a-dance .pwl{animation:pflapL .5s ease-in-out infinite}.a-dance .pwr{animation:pflapR .5s ease-in-out infinite}
+.a-dance .phead{animation:pheadbob .25s ease-in-out infinite alternate}
+@keyframes pheadbob{to{transform:rotate(8deg)}}
+.a-flap .pwl,.a-wave .pwl{animation:pflapL .2s ease-in-out 6}.a-flap .pwr{animation:pflapR .2s ease-in-out 6}
+@keyframes pflapL{0%,100%{transform:rotate(0)}50%{transform:rotate(38deg)}}
+@keyframes pflapR{0%,100%{transform:rotate(0)}50%{transform:rotate(-38deg)}}
+.a-wave .pwr{animation:pwave .4s ease-in-out 4}
+@keyframes pwave{0%,100%{transform:rotate(-110deg)}50%{transform:rotate(-150deg)}}
+.a-clap .pwl{animation:pclapL .25s ease-in-out 6}.a-clap .pwr{animation:pclapR .25s ease-in-out 6}
+.a-clap .pall{animation:phop .5s ease-in-out 3}
+@keyframes pclapL{0%,100%{transform:rotate(0)}50%{transform:rotate(-62deg) translate(8px,-2px)}}
+@keyframes pclapR{0%,100%{transform:rotate(0)}50%{transform:rotate(62deg) translate(-8px,-2px)}}
+.a-sit .pall{animation:psit 2.6s ease-in-out}
+@keyframes psit{0%,100%{transform:translateY(0)}20%,80%{transform:translateY(9px) scale(1.04,.94)}}
+.a-sit .plegs{animation:plegs 2.6s ease-in-out;transform-origin:50px 96px}
+@keyframes plegs{0%,100%{transform:scaleY(1)}20%,80%{transform:scaleY(.15)}}
+.a-wink .plidR{transform:scaleY(1)}
+.a-wink .phead{transform:rotate(6deg)}
+.a-walk .pall{animation:pwalk 3.2s ease-in-out}
+@keyframes pwalk{0%,100%{transform:translateX(0)}10%,40%{transform:translateX(-22px) rotate(-4deg)}25%{transform:translateX(-14px) translateY(-4px) rotate(4deg)}50%,60%{transform:translateX(-30px) scaleX(-1)}75%{transform:translateX(-12px) translateY(-4px) scaleX(-1)}90%{transform:translateX(0) scaleX(-1)}}
+.a-talkbob .phead{animation:pheadbob .3s ease-in-out 5 alternate}
+.a-tilt .phead{animation:ptilt 1.5s ease-in-out}
+@keyframes ptilt{0%,100%{transform:rotate(0)}30%,70%{transform:rotate(-18deg)}}
+.a-spin .pall{animation:pspin 1.1s ease-in-out}
+@keyframes pspin{0%{transform:rotate(0)}50%{transform:translateY(-16px) rotate(180deg)}100%{transform:rotate(360deg)}}
+.a-facepalm .pwr{animation:pface 1.3s ease-in-out}.a-facepalm .phead{animation:pshake .3s ease-in-out 3}
+@keyframes pface{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(-112deg) translate(0,-4px)}}
+@keyframes pshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.a-stretch .pall{animation:pstretch 1.3s ease-in-out}.a-stretch .pwl{animation:pflapL .3s ease-in-out 3}.a-stretch .pwr{animation:pflapR .3s ease-in-out 3}
+@keyframes pstretch{0%,100%{transform:scale(1)}40%{transform:scale(.94,1.12)}}
+.mascot.sleeping .plid{transform:scaleY(1)!important}
+.mascot.sleeping .phead{transform:rotate(14deg) translateY(4px)}
+.mascot.sleeping .pall{animation:psleep 3s ease-in-out infinite}
+@keyframes psleep{0%,100%{transform:translateY(8px) scale(1.03,.95)}50%{transform:translateY(9px) scale(1.05,.93)}}
+.mascot.sleeping .plegs{transform:scaleY(.15);transform-origin:50px 96px}
+.mascot.sleeping .mzz{animation:pzz 2.2s ease-in-out infinite}
+@keyframes pzz{0%{opacity:0;transform:translate(0,6px) scale(.7)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-16px) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.pall,.pcrest,.ptail{animation:none!important}}
+body{padding-bottom:84px}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -1037,8 +1115,8 @@ function tone(ctx,f,t,d,type,vol){
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.22,t+.02);g.gain.setValueAtTime((vol||.22)*.8,t+Math.max(.03,d-.08));g.gain.linearRampToValueAtTime(0,t+d);
   o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+d+.02);musicNodes.push(o);
 }
-function cheer(){const c=ac();if(!c)return;const t=c.currentTime;["C5","E5","G5","C6"].forEach((n,i)=>tone(c,freq(n),t+i*.09,.16,"triangle",.18));}
-function buzz(){const c=ac();if(!c)return;tone(c,140,c.currentTime,.22,"square",.08);}
+function cheer(){try{Coco.event("good");}catch(e){}const c=ac();if(!c)return;const t=c.currentTime;["C5","E5","G5","C6"].forEach((n,i)=>tone(c,freq(n),t+i*.09,.16,"triangle",.18));}
+function buzz(){try{Coco.event("bad");}catch(e){}const c=ac();if(!c)return;tone(c,140,c.currentTime,.22,"square",.08);}
 const TUNES={
  frere:{bpm:120,P:{A:"C4:1 D4:1 E4:1 C4:1",B:"E4:1 F4:1 G4:2",C:"G4:.5 A4:.5 G4:.5 F4:.5 E4:1 C4:1",D:"C4:1 G3:1 C4:2"},seq:"AABBCCDD"},
  twinkle:{bpm:110,P:{A:"C4:1 C4:1 G4:1 G4:1 A4:1 A4:1 G4:2",B:"F4:1 F4:1 E4:1 E4:1 D4:1 D4:1 C4:2",C:"G4:1 G4:1 F4:1 F4:1 E4:1 E4:1 D4:2"},seq:"ABCCAB"},
@@ -1639,7 +1717,7 @@ function checkRewards(){
     n===100?h("p",{cls:"cgift"},"📜 ¡Ganaste tu diploma! · You earned your certificate!"):null),
     n===100?h("button",{cls:"btn",on:{click:()=>{close();showDiploma();}}},"📜 Ver mi diploma · See my certificate"):null,
     h("button",{cls:"btn primary",on:{click:close}},"¡Genial! · Great!")].filter(Boolean));
-  try{cheer();}catch(e){}
+  try{cheer();}catch(e){}try{setTimeout(()=>Coco.event("party"),200);}catch(e){}
 }
 
 /* ---------- Learning path map ---------- */
@@ -1970,7 +2048,7 @@ function dailyGreeting(){
       tip&&tip.go?h("button",{cls:"gogo",on:{click:()=>{close();tip.go();}}},"▶ Vamos · Let's go"):null),
     h("button",{cls:"gx","aria-label":"Cerrar · Close",on:{click:()=>close()}},"✕"));
   let gone=false;const close=()=>{if(gone)return;gone=true;card.classList.add("out");setTimeout(()=>card.remove(),400);};
-  document.body.append(card);setTimeout(close,12000);
+  document.body.append(card);setTimeout(close,12000);try{setTimeout(()=>Coco.event("hi"),600);}catch(e){}
 }
 
 function backArrow(){const sp=document.createElement("span");sp.className="barrow";sp.setAttribute("aria-hidden","true");
@@ -1981,6 +2059,52 @@ function backArrow(){const sp=document.createElement("span");sp.className="barro
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had||done)return;done=true;location.reload();});
   navigator.serviceWorker.getRegistration().then(r=>{if(r)r.update().catch(()=>{});}).catch(()=>{});
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")navigator.serviceWorker.getRegistration().then(r=>{if(r)r.update().catch(()=>{});}).catch(()=>{});});
+})();
+
+/* ---------- Coco the parrot (mascot) ---------- */
+const Coco=(()=>{
+  const PH={hi:["¡Hola!","¡Hola, amigo!","¡Qué tal?"],good:["¡Muy bien!","¡Excelente!","¡Bravo!","¡Genial!","¡Así se hace!"],bad:["¡Uy!","¡Inténtalo otra vez!","¡Tú puedes!"],
+    idle:["¡Vamos!","¡Repite conmigo!","¡Hablo español!","¡Qué divertido!","¡Estudia conmigo!","¿Jugamos?","¡Me gusta aprender!"],wake:["¡Ay! ¡Me dormí!","¡Hola otra vez!","¡Estoy despierto!"]};
+  let el,svgEl,bub,zz,busy=false,sleeping=false,idleT,sleepT,actT,hidden=false;
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  function build(){
+    el=document.createElement("div");el.className="mascot";el.setAttribute("role","img");el.setAttribute("aria-label","Coco, el loro");
+    el.innerHTML='<svg viewBox="0 0 100 124" class="psvg" aria-hidden="true"><defs><linearGradient id="pgBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#47D16A"/><stop offset="1" stop-color="#1C9A3E"/></linearGradient><linearGradient id="pgWing" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22A845"/><stop offset=".62" stop-color="#1A8A3A"/><stop offset=".63" stop-color="#2F7BE0"/><stop offset=".82" stop-color="#2F7BE0"/><stop offset=".83" stop-color="#E0405A"/><stop offset="1" stop-color="#E0405A"/></linearGradient><radialGradient id="pgHead" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#5CE07D"/><stop offset="1" stop-color="#22A845"/></radialGradient></defs><g class="pall"> <g class="ptail"><path d="M44 96 C38 106 34 114 31 122 C37 121 41 117 44 110Z" fill="#2F7BE0"/><path d="M50 98 C49 108 48 116 49 123 C54 120 55 112 54 100Z" fill="#E0405A"/><path d="M56 96 C60 104 63 112 66 120 C61 120 57 114 55 106Z" fill="#FFB627"/></g> <g class="plegs"><path d="M44 96 v9 M56 96 v9" stroke="#E39A2D" stroke-width="3.4" stroke-linecap="round"/><path d="M39 106 q5 -3 10 0 M51 106 q5 -3 10 0" stroke="#E39A2D" stroke-width="3" fill="none" stroke-linecap="round"/></g> <g class="pbody"><ellipse cx="50" cy="76" rx="22" ry="25" fill="url(#pgBody)"/><ellipse cx="51" cy="83" rx="13" ry="15" fill="#A6EA82"/>  <path d="M44 74 q6 4 12 0 M43 82 q7 4 14 0 M45 90 q5 3 10 0" stroke="#7FCF5E" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></g> <g class="pwl"><path d="M32 62 C20 70 19 88 29 100 C36 93 39 80 37 66Z" fill="url(#pgWing)"/><path d="M27 72 q2 8 0 16" stroke="#137a31" stroke-width="1.2" fill="none" opacity=".6"/></g> <g class="pwr"><path d="M68 62 C80 70 81 88 71 100 C64 93 61 80 63 66Z" fill="url(#pgWing)"/><path d="M73 72 q-2 8 0 16" stroke="#137a31" stroke-width="1.2" fill="none" opacity=".6"/></g> <g class="phead">  <g class="pcrest"><path d="M45 22 C42 12 46 6 50 3 C50 10 50 16 49 22Z" fill="#E0405A"/><path d="M50 21 C51 11 56 6 61 5 C58 11 56 17 54 22Z" fill="#FFB627"/><path d="M41 24 C36 17 37 11 40 8 C42 14 44 19 46 23Z" fill="#2F7BE0"/></g>  <circle cx="50" cy="40" r="20" fill="url(#pgHead)"/>  <path d="M38 26 Q50 19 62 26 Q56 30 50 29 Q44 30 38 26Z" fill="#FFD54A"/>  <ellipse cx="42" cy="38" rx="7.5" ry="8" fill="#fff"/><ellipse cx="58" cy="38" rx="7.5" ry="8" fill="#fff"/>  <g class="ppup"><circle cx="42.5" cy="39" r="3.6" fill="#1b1b1b"/><circle cx="58.5" cy="39" r="3.6" fill="#1b1b1b"/><circle cx="43.8" cy="37.6" r="1.2" fill="#fff"/><circle cx="59.8" cy="37.6" r="1.2" fill="#fff"/></g>  <g class="plid plidL"><path d="M34.5 38 a7.5 8 0 0 1 15 0Z" fill="#2BB34F"/><path d="M34.5 38 a7.5 8 0 0 0 15 0Z" fill="#2BB34F"/></g>  <g class="plid plidR"><path d="M50.5 38 a7.5 8 0 0 1 15 0Z" fill="#2BB34F"/><path d="M50.5 38 a7.5 8 0 0 0 15 0Z" fill="#2BB34F"/></g>  <circle cx="35" cy="47" r="3.2" fill="#FF8A8A" opacity=".7"/><circle cx="65" cy="47" r="3.2" fill="#FF8A8A" opacity=".7"/>  <path class="pbeakU" d="M44 46 Q50 41 56 46 Q55 54 50 59 Q45 54 44 46Z" fill="#FFB627" stroke="#D98A0F" stroke-width="1"/>  <path class="pbeakL" d="M46.5 52 Q50 55 53.5 52 Q53 57 50 59 Q47 57 46.5 52Z" fill="#E08B12"/> </g></g></svg>';svgEl=el.querySelector(".psvg");
+    bub=document.createElement("div");bub.className="mbub";el.append(bub);
+    zz=document.createElement("div");zz.className="mzz";zz.textContent="💤";el.append(zz);
+    const show=document.createElement("button");show.className="mshow";show.setAttribute("aria-label","Mostrar a Coco · Show Coco");show.textContent="🦜";
+    show.onclick=()=>{hidden=false;try{RW.cocoOff=false;saveRW();}catch(e){};el.classList.remove("off");show.classList.remove("on");act("jump",900);say("¡Volví!");};
+    document.body.append(el,show);
+    let press;el.addEventListener("pointerdown",()=>{press=setTimeout(()=>{hidden=true;try{RW.cocoOff=true;saveRW();}catch(e){};el.classList.add("off");show.classList.add("on");},700);});
+    el.addEventListener("pointerup",()=>clearTimeout(press));el.addEventListener("pointerleave",()=>clearTimeout(press));
+    el.addEventListener("click",()=>{if(sleeping)return wake();tapFun();});
+    try{if(RW.cocoOff){hidden=true;el.classList.add("off");show.classList.add("on");}}catch(e){}
+    // the eyes follow the finger / mouse
+    const look=(x,y)=>{if(sleeping||!svgEl)return;const r=svgEl.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.32;
+      const dx=Math.max(-1,Math.min(1,(x-cx)/220)),dy=Math.max(-1,Math.min(1,(y-cy)/220));el.style.setProperty("--px",(dx*2.6)+"px");el.style.setProperty("--py",(dy*2.4)+"px");};
+    window.addEventListener("pointermove",e=>look(e.clientX,e.clientY),{passive:true});
+    window.addEventListener("pointerdown",e=>look(e.clientX,e.clientY),{passive:true});
+    ["pointerdown","keydown","scroll","touchstart"].forEach(ev=>window.addEventListener(ev,activity,{passive:true}));
+    blinkLoop();schedule();activity();
+  }
+  function act(name,ms){if(!el)return;clearTimeout(actT);el.classList.remove("a-"+el.dataset.act);el.dataset.act=name;void el.offsetWidth;el.classList.add("a-"+name);busy=true;
+    actT=setTimeout(()=>{el.classList.remove("a-"+name);busy=false;},ms||1400);}
+  function say(t,ms){if(!bub)return;bub.textContent=t;bub.classList.add("on");el.classList.add("talking");clearTimeout(bub._t);
+    bub._t=setTimeout(()=>{bub.classList.remove("on");el.classList.remove("talking");},ms||2200);}
+  function blinkLoop(){setTimeout(()=>{if(el&&!sleeping){el.classList.add("blink");setTimeout(()=>el.classList.remove("blink"),170);}blinkLoop();},2200+Math.random()*3200);}
+  const IDLE=[()=>act("look",1800),()=>{act("scratch",1700);},()=>act("hop",1100),()=>{act("dance",2200);say(pick(PH.idle));},()=>act("sit",2600),()=>act("flap",1200),
+    ()=>act("wink",900),()=>act("walk",3200),()=>{say(pick(PH.idle));act("talkbob",1600);},()=>act("tilt",1500),()=>act("spin",1100)];
+  function schedule(){clearTimeout(idleT);idleT=setTimeout(()=>{if(el&&!busy&&!sleeping&&!hidden&&!document.hidden)pick(IDLE)();schedule();},2800+Math.random()*3500);}
+  function activity(){clearTimeout(sleepT);if(sleeping)wake();sleepT=setTimeout(sleep,45000);}
+  function sleep(){if(!el||hidden)return;sleeping=true;el.classList.add("sleeping");bub.classList.remove("on");}
+  function wake(){if(!sleeping)return;sleeping=false;el.classList.remove("sleeping");act("stretch",1300);setTimeout(()=>say(pick(PH.wake)),300);}
+  function tapFun(){const f=pick([()=>{act("dance",2000);say("¡A bailar!");},()=>{act("jump",1000);say("¡Hola!");},()=>{act("spin",1100);say("¡Wiii!");},()=>{act("clap",1400);say("¡Bravo!");},()=>{act("scratch",1600);say("Mmm…");}]);f();}
+  function event(type){if(!el||hidden)return;if(sleeping)wake();
+    if(type==="good"){act("clap",1500);say(pick(PH.good),1600);}
+    else if(type==="bad"){act("facepalm",1300);say(pick(PH.bad),1500);}
+    else if(type==="party"){act("dance",2600);setTimeout(()=>act("jump",900),1300);say("¡Felicidades!",2400);}
+    else if(type==="hi"){act("wave",1600);say(pick(PH.hi));}}
+  return {start(){if(!el)build();},event,act,say};
 })();
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
@@ -2253,8 +2377,8 @@ function viewQuiz(u,box){
     q.opts.forEach(o=>opts.append(h("button",{cls:"opt",on:{click:e=>{
       opts.querySelectorAll(".opt").forEach(x=>x.disabled=true);
       const ok=o===q.ans;
-      if(ok){e.currentTarget.classList.add("right");score++;fb.textContent="¡Correcto! · Correct! ⭐";}
-      else{e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es · The answer is: "+q.ans;}
+      if(ok){e.currentTarget.classList.add("right");score++;fb.textContent="¡Correcto! · Correct! ⭐";try{Coco.event("good");}catch(_){}}
+      else{try{Coco.event("bad");}catch(_){}e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es · The answer is: "+q.ans;}
       if(q.pieces)sayPieces(q.pieces);else speak(q.say||(q.w?q.w.es:q.ans));setTimeout(next,q.pieces?3200:1600);}}},o)));
     b.append(opts,fb);area.append(b);
   }
@@ -2278,6 +2402,7 @@ function viewQuiz(u,box){
 
 checkExpiry(false);
 home();
+setTimeout(()=>{try{Coco.start();}catch(e){}},400);
 setTimeout(()=>{try{dailyGreeting();}catch(e){}},1200);
 setTimeout(()=>{prefetchAllAudio();syncServerTime();},3000);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
