@@ -2435,6 +2435,7 @@ function viewQuiz(u,box){
 
 checkExpiry(false);
 home();
+try{if(/[?&]demo=1/.test(location.search)){openUnit(DEMO_IDX,"lesson");history.replaceState(null,"",location.pathname);}}catch(e){}
 setTimeout(()=>{try{Coco.start();}catch(e){}},400);
 setTimeout(()=>{try{dailyGreeting();}catch(e){}},1200);
 setTimeout(()=>{prefetchAllAudio();syncServerTime();},3000);
