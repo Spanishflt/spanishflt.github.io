@@ -1,4 +1,4 @@
-const CACHE = "basic-spanish-v93";
+const CACHE = "basic-spanish-v94";
 const AUDIO_CACHE = "basic-spanish-audio";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 const isAudio = url => /\/audio\/[^\/]+\.mp3$/i.test(new URL(url).pathname);
@@ -37,7 +37,16 @@ self.addEventListener("fetch", e => {
     return;
   }
   // the app page: try the network first (fresh), fall back to the saved copy when offline or slow
-  if (e.request.mode === "navigate" || /\/(index\.html)?$/.test(url.pathname)) {
+  const appPage = url.origin === self.location.origin && /^\/(index\.html)?$/.test(url.pathname);
+  // other pages of the site (like promo.html): always from the internet, saved copy only when offline
+  if (e.request.mode === "navigate" && !appPage) {
+    e.respondWith(fetch(e.request, {cache: "no-cache"}).then(res => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+      return res;
+    }).catch(() => caches.match(e.request, {ignoreSearch: true}).then(hit => hit || caches.match("./index.html"))));
+    return;
+  }
+  if (appPage) {
     e.respondWith((async () => {
       const cached = await caches.match("./index.html");
       try {
