@@ -508,6 +508,7 @@ body:has(.lesson) .mascot,body:has(.lesson) .mshow{display:none}
 @media (prefers-reduced-motion:reduce){.pall,.pcrest,.ptail{animation:none!important}}
 body{padding-bottom:84px}
 .secnote{margin:-.35rem 0 .7rem;font-size:.8rem;font-weight:400;color:var(--muted)}
+.appver{font-size:.16em;font-weight:400;color:var(--muted);letter-spacing:.02em;margin-left:.35em;vertical-align:.15em;font-family:system-ui,sans-serif;white-space:nowrap}
 .hint{color:var(--muted);margin:0 0 1rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
 .chips button{background:transparent;border:2px solid var(--line);border-radius:10px;padding:.25rem .7rem;font-size:.95rem}
@@ -2107,6 +2108,7 @@ const Coco=(()=>{
     else if(type==="hi"){act("wave",1600);say(pick(PH.hi));}}
   return {start(){if(!el)build();},event,act,say};
 })();
+const APP_VERSION="v1.1";
 /* ---------- Views ---------- */
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
@@ -2134,7 +2136,7 @@ function home(focusBook){
   cur=null;app.innerHTML="";
   app.append(topbar(false),
     h("div",{cls:"hero"},
-      h("h1",{cls:isXmas()?"xmas":""},"Basic ",h("span",{cls:"sS"},"S",isXmas()?h("span",{cls:"santahat"}):null),"panish"),
+      h("h1",{cls:isXmas()?"xmas":""},"Basic ",h("span",{cls:"sS"},"S",isXmas()?h("span",{cls:"santahat"}):null),"panish",h("span",{cls:"appver"},APP_VERSION)),
       h("div",{cls:"hsub"},"Extra Lessons"),
       apkButton(),
       h("p",{cls:"bi"},h("span",{cls:"es2"},"Español para principiantes. Elige una unidad, aprende las palabras, escucha las conversaciones y gana estrellas en la prueba."),h("span",{cls:"en2"},"Spanish for beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz.")),
