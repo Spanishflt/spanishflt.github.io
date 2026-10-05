@@ -1,7 +1,10 @@
-const CACHE = "basic-spanish-v96";
+const CACHE = "basic-spanish-v97";
 const AUDIO_CACHE = "basic-spanish-audio";
+const BOOK_CACHE = "basic-spanish-books";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 const isAudio = url => /\/audio\/[^\/]+\.mp3$/i.test(new URL(url).pathname);
+// pages of the digital workbooks: kept on the phone across app updates
+const isBook = url => /\/books\/[^\/]+\/[^\/]+\.dat$/i.test(new URL(url).pathname);
 
 self.addEventListener("install", e => {
   // always take the files fresh from the server, never from the browser's HTTP cache
@@ -11,13 +14,18 @@ self.addEventListener("install", e => {
 self.addEventListener("activate", e => {
   e.waitUntil((async () => {
     const audio = await caches.open(AUDIO_CACHE);
+    const books = await caches.open(BOOK_CACHE);
     for (const k of await caches.keys()) {
-      if (k === CACHE || k === AUDIO_CACHE) continue;
+      if (k === CACHE || k === AUDIO_CACHE || k === BOOK_CACHE) continue;
       const old = await caches.open(k);
       for (const req of await old.keys()) {
         if (isAudio(req.url) && !(await audio.match(req, {ignoreSearch: true}))) {
           const res = await old.match(req);
           if (res) await audio.put(req, res);
+        }
+        if (isBook(req.url) && !(await books.match(req, {ignoreSearch: true}))) {
+          const res = await old.match(req);
+          if (res) await books.put(req, res);
         }
       }
       await caches.delete(k);
@@ -29,6 +37,14 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
+  if (isBook(e.request.url)) {
+    // workbook pages: from the phone first; download once, then they work offline
+    e.respondWith(caches.open(BOOK_CACHE).then(c => c.match(e.request, {ignoreSearch: true}).then(hit => hit || fetch(e.request).then(res => {
+      if (res && res.ok) c.put(e.request, res.clone());
+      return res;
+    }))));
+    return;
+  }
   if (isAudio(e.request.url)) {
     e.respondWith(caches.open(AUDIO_CACHE).then(c => c.match(e.request, {ignoreSearch: true}).then(hit => hit || fetch(e.request).then(res => {
       if (res && res.ok) c.put(e.request, res.clone());
