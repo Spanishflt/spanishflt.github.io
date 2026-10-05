@@ -2829,10 +2829,13 @@ function wbTextEl(t){
 }
 function wbTextInput(){
   const L=WR.el.texts;
+  // remember if the student was typing when the tap began (the phone may end the typing before the tap finishes)
+  L.addEventListener("pointerdown",e=>{const a=document.activeElement;WR.wasEdit=!!(a&&a.classList.contains("tx"))||!!L.querySelector(".wbt.focus");},true);
   L.addEventListener("click",e=>{
     if(WR.tool!=="text"||e.target!==L)return;
     if(Date.now()-(WR.noTap||0)<800)return;
-    const a=document.activeElement;if(a&&a.classList.contains("tx")){a.blur();return;}
+    const a=document.activeElement;
+    if(WR.wasEdit||(a&&a.classList.contains("tx"))){WR.wasEdit=false;if(a&&a.classList.contains("tx"))a.blur();return;}   // 1st tap: just stop typing
     const r=L.getBoundingClientRect();wbSnap();
     const t={x:Math.round((e.clientX-r.left)/r.width*1e4),y:Math.round((e.clientY-r.top)/r.height*1e4),s:"",c:WR.colors.text};
     wbPD().t.push(t);const el=wbTextEl(t);L.append(el);setTimeout(()=>el.querySelector(".tx").focus(),30);
