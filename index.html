@@ -2726,7 +2726,7 @@ async function wbGo(n,dir){
   const pg=WR.el.page;
   if(dir){pg.classList.remove("wb-slide-l","wb-slide-r");void pg.offsetWidth;pg.classList.add(dir>0?"wb-slide-l":"wb-slide-r");}
   WR.el.stage.scrollTo(0,0);
-  WR.img=null;wbLayout();wbStatus("Cargando página… · Loading page…");
+  WR.img=null;wbLayout();wbTexts();wbStatus("Cargando página… · Loading page…");
   try{
     const img=await wbLoad(n);if(WR.page!==n)return;
     WR.img=img;wbStatus(null);wbDrawBg();
@@ -2746,7 +2746,8 @@ function wbLayout(){
   WR.el.page.style.width=W+"px";WR.el.page.style.height=H+"px";
   const dpr=Math.min(window.devicePixelRatio||1,2600/W,3);
   for(const c of [WR.el.bg,WR.el.ink,WR.el.live]){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);c.getContext("2d").setTransform(dpr,0,0,dpr,0,0);}
-  wbDrawBg();wbDrawInk();wbTexts();
+  WR.lw=st.clientWidth;
+  wbDrawBg();wbDrawInk();WR.el.texts.querySelectorAll(".tx").forEach(x=>x.style.fontSize=(WR.W*.032)+"px");
 }
 function wbDrawBg(){
   const g=WR.el.bg.getContext("2d"),W=WR.W,H=WR.H;
@@ -2828,7 +2829,7 @@ function wbTextEl(t){
 }
 function wbTextInput(){
   const L=WR.el.texts;
-  L.addEventListener("pointerup",e=>{
+  L.addEventListener("click",e=>{
     if(WR.tool!=="text"||e.target!==L)return;
     const a=document.activeElement;if(a&&a.classList.contains("tx")){a.blur();return;}
     const r=L.getBoundingClientRect();wbSnap();
@@ -2903,7 +2904,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowLeft")wbGo(WR.page-1,-1);
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();wbUndo();}
 });
-let wbRT;window.addEventListener("resize",()=>{clearTimeout(wbRT);wbRT=setTimeout(()=>{if(WV&&!WV.hidden)wbLayout();},150);});
+let wbRT;window.addEventListener("resize",()=>{clearTimeout(wbRT);wbRT=setTimeout(()=>{if(WV&&!WV.hidden&&WR.el.stage.clientWidth!==WR.lw)wbLayout();},150);});
 GUIDE.push(["✏️","Libros digitales · Digital Workbooks",[
   "Your Spanish Workbook can open inside the app. Find it under <b>Libros digitales | Digital Workbooks</b> on the home screen.",
   "Mr. Hernández unlocks it on your phone with his password, for 1 month, 3 months, 6 months, 1 year or forever.",
