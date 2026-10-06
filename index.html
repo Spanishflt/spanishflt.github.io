@@ -536,7 +536,7 @@ span.hang{display:inline-flex}
 .cl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
 .cl-tile{display:flex;flex-direction:column;align-items:center;gap:.1rem;text-align:center;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:.5rem .3rem;box-shadow:var(--shadow);min-height:108px}
 .cl-tile.on{border-color:var(--teal);background:var(--teal-soft)}
-.cl-tile.locked{opacity:.6;box-shadow:none}
+.cl-tile.locked{opacity:.7;box-shadow:none}.cl-ic.sil{filter:brightness(0) opacity(.35)}.demogift{margin:10px 0 0;padding:10px 12px;border-radius:14px;background:#FCE8F3;color:#8A1F5E;font-weight:700;text-align:center;font-size:.95rem;line-height:1.35}.demogift span{display:block;font-weight:600;font-size:.85rem}
 .cl-ic{font-size:1.9rem;line-height:1.2}.cl-nm{font-weight:700;font-size:.95rem}.cl-en{font-size:.8rem;color:var(--muted)}.cl-st{font-size:.78rem;font-weight:700;color:var(--teal)}
 .dust{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden}
 .dust::before{content:"";position:absolute;inset:-20%;background:linear-gradient(135deg,rgba(255,194,26,0),rgba(255,111,168,.4) 45%,rgba(255,255,255,0));animation:dustwash .85s ease-out forwards}
@@ -1673,6 +1673,7 @@ function lessonPlayer(u,box,les,idx){
       screen.append(h("div",{cls:"demoend"},
         h("div",{cls:"mini"},h("div",{cls:"mtop"},"🎓"),h("div",{cls:"mt"},"¡Completé mi primera clase!"),h("div",{cls:"ms"},"I finished my first lesson!"),
           rounds?h("div",{cls:"mstars"},"⭐ "+score+" / "+rounds):null,h("div",{cls:"mfoot"},"Basic Spanish · Free demo")),
+        curSkin()==="lady"?h("div",{cls:"demogift"},"🎁 ¡Ganaste tu primer regalo! Hay "+(ACCS.length-1)+" más en las clases.",h("span",{},"You won your first gift! There are "+(ACCS.length-1)+" more in the lessons.")):null,
         h("div",{cls:"next"},h("div",{cls:"nl"},"👉 Ahora sigue con · Next:"),h("div",{cls:"nt"},U[0].i+" 1. "+U[0].t),h("div",{cls:"ne"},U[0].e),
           h("div",{cls:"nk"},"🔒 Pídele a tu maestro que la desbloquee · Ask your teacher to unlock it")),
         h("div",{cls:"controls sm"},
@@ -2338,8 +2339,8 @@ function openCloset(){
       h("div",{cls:"cl-grid"},ACCS.map((a,i)=>{
         const have=i<clOwned(),on=CL.wear.includes(a[0]);
         return h("button",{cls:"cl-tile"+(have?(on?" on":""):" locked"),"aria-pressed":String(have&&on),on:{click:()=>{if(!have)return;if(on)CL.wear=CL.wear.filter(x=>x!==a[0]);else CL.wear.push(a[0]);applyWear();saveCL();draw();}}},
-          h("span",{cls:"cl-ic","aria-hidden":"true"},have?a[1]:"🔒"),h("span",{cls:"cl-nm"},have?a[2]:"???"),h("span",{cls:"cl-en"},have?a[3]:"Gift "+(i+1)),
-          h("span",{cls:"cl-st"},have?(on?"✓ Wearing":"Tap to wear"):((i+1)*5)+" correct words"));
+          h("span",{cls:"cl-ic"+(have?"":" sil"),"aria-hidden":"true"},a[1]),h("span",{cls:"cl-nm"},have?a[2]:"???"),h("span",{cls:"cl-en"},have?a[3]:"Gift "+(i+1)),
+          h("span",{cls:"cl-st"},have?(on?"✓ Wearing":"Tap to wear"):"Earned in a lesson"));
       })));
   }
   draw();document.body.append(ovl);
