@@ -2186,8 +2186,14 @@ function guideImgs(box){
     if(kind==="stadium"||kind==="castle"){const fn=kind==="stadium"?stadiumSVG:castleSVG;
       [[6,"¡Completo!","Complete!"],[1,"Mejora 1","Upgrade 1"],[3,"Mejora 3","Upgrade 3"]].forEach(([st,es,en],ix)=>fig(fn(st,false,(kind==="castle"&&ix===0)?"Mi castillo":undefined),es,en));}
     else if(kind==="coco"){const src=document.querySelector(".mascot .psvg");if(!src){box.remove();return;}
-      [["gc-all","Clásicos","Classic"],["gc-all gc-var","Edición de color","Colour edition"]].forEach(([c,es,en])=>{const n=src.cloneNode(true);n.setAttribute("class","psvg "+c);const w=document.createElement("div");w.append(n);fig(w.innerHTML,es,en,"gcoco");});}
+      [["gc-all","Clásicos","Classic"],["gc-all gc-var","Edición de color","Colour edition"]].forEach(([c,es,en])=>{const n=cocoClone(src,"g"+(c.length));n.setAttribute("class","psvg "+c);const w=document.createElement("div");w.append(n);fig(w.innerHTML,es,en,"gcoco");});}
   }catch(e){box.remove();}
+}
+function cocoClone(src,tag){
+  /* clone Coco's SVG with its own unique ids, so gradients/clips keep working even when the live Coco is hidden in the cage */
+  let h2=src.outerHTML;const ids=[...h2.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
+  ids.forEach(id=>{const nid=id+"_"+tag;h2=h2.split('id="'+id+'"').join('id="'+nid+'"').split("url(#"+id+")").join("url(#"+nid+")").split('href="#'+id+'"').join('href="#'+nid+'"');});
+  const w=document.createElement("div");w.innerHTML=h2;return w.firstElementChild;
 }
 function guideArticle(){
   const art=h("article",{cls:"guide"},h("h1",{},"📖 Cómo usar la app · How to use the app"),h("p",{cls:"gintro"},"Basic Spanish – Extra Lessons · "+APP_VERSION+" · Alberto Garrido Hernández · Old Harbour Primary School"));
@@ -2399,7 +2405,7 @@ function openCloset(){
     card.innerHTML="";
     const left=clOwned()>=ACCS.length?"Your closet is complete! 🎉":"Next gift in "+(5-CL.n%5)+" correct words";
     const prev=h("div",{cls:"cl-prev","aria-hidden":"true"});
-    const cs=h("div",{cls:"cl-castle"});cs.innerHTML=castleSVG(stadStage(),true);prev.append(cs);const src=document.querySelector(".mascot .psvg");if(src)prev.append(src.cloneNode(true));
+    const cs=h("div",{cls:"cl-castle"});cs.innerHTML=castleSVG(stadStage(),true);prev.append(cs);const src=document.querySelector(".mascot .psvg");if(src)prev.append(cocoClone(src,"cl"));
     const bar=h("div",{});bar.style.width=(clOwned()>=ACCS.length?100:(CL.n%5)*20)+"%";
     card.append(
       h("div",{cls:"cl-top"},h("h2",{},"👜 Mi armario · My closet"),h("button",{cls:"cl-x","aria-label":"Close",on:{click:close}},"✕")),
