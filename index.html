@@ -105,7 +105,8 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .tabs button{min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.4rem .15rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:inherit}
 .tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
 .tabs button small{display:block;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:400;font-size:.72rem;opacity:.8;line-height:1}
-.tabs button{line-height:1.15}
+.tabs button{line-height:1.15;overflow:hidden;overflow-wrap:anywhere}
+.tabs button .tlk{display:block;font-size:.7rem;line-height:1;margin-bottom:.1rem}
 .chips button small{opacity:.7;font-size:.82rem}
 .bi .es2{display:block}
 .bi .en2{display:block;font-size:.9em;opacity:.8;font-style:italic}
@@ -863,12 +864,12 @@ const U=[
  v:{"Días de la semana":["domingo|Sunday","lunes|Monday","martes|Tuesday","miércoles|Wednesday","jueves|Thursday","viernes|Friday","sábado|Saturday"],
     "Meses del año":["enero|January","febrero|February","marzo|March","abril|April","mayo|May","junio|June","julio|July","agosto|August","septiembre|September","octubre|October","noviembre|November","diciembre|December"]},
  p:["||Hoy es sábado, 5 de abril de 2025.|Today is Saturday, April 5, 2025.","||Hoy es viernes, 7 de marzo de 2025.|Today is Friday, March 7, 2025.","||Hoy es lunes, 7 de abril de 2025.|Today is Monday, April 7, 2025."],
- d:[], s:["Hoy es sábado 5 de abril","Hoy es viernes 7 de marzo"]},
+ d:["Katia|Hola.","Rafael|Hola.","Katia|¿Qué día es hoy?","Rafael|Hoy es lunes, 7 de abril de 2025.","Katia|¿Qué mes es?","Rafael|Es abril.","Katia|Adiós.","Rafael|Adiós."], s:["Hoy es sábado 5 de abril","Hoy es viernes 7 de marzo"]},
 
 {i:"🔤",t:"Verificar la ortografía",e:"Verifying spelling",
  v:{"Alfabeto":ALPHA_LIST,"Contracciones":["al|a + el (to the)","del|de + el (of the / from the)"]},
  p:["¿Podrías deletrear tu nombre, por favor?|Could you spell your name, please?|ce, ele, a, u, de, i, a|C-L-A-U-D-I-A","¿Podrías deletrear «gracias», por favor?|Could you spell “gracias”, please?|ge, ere, a, ce, i, a, ese|G-R-A-C-I-A-S","||Mañana voy al parque.|Tomorrow I go to the park.","||Él viene del estadio.|He comes from the stadium.","||Ellos van al banco.|They go to the bank.","||La página del libro.|The page of the book."],
- d:[], s:["Ellos van al banco","Él viene del estadio","Podrías deletrear tu nombre por favor"]},
+ d:["Katia|Hola.","Rafael|Hola.","Katia|¿Podrías deletrear tu nombre, por favor?","Rafael|ere, a, efe, a, e, ele","Katia|¿Podrías deletrear «gracias», por favor?","Rafael|ge, ere, a, ce, i, a, ese","Katia|Adiós.","Rafael|Adiós."], s:["Ellos van al banco","Él viene del estadio","Podrías deletrear tu nombre por favor"]},
 
 {i:"🙋",t:"Preguntar el nombre de alguien",e:"Asking for someone’s name",
  v:{"Frases":["¿cómo te llamas?|what’s your name?","me llamo…|my name is…","¿cómo se llama él?|what is his name?","¿cómo se llama ella?|what is her name?","él se llama…|his name is…","ella se llama…|her name is…"]},
@@ -924,7 +925,7 @@ const U=[
     "Muebles":["un reloj|a clock|🕰️","un sofá|a sofa|🛋️","un televisor|a TV set|📺","una cama|a bed|🛏️","una lámpara|a lamp|💡","una cómoda|a dressing table","una estufa|a stove","una silla|a chair|🪑","una mesa|a table","una ducha|a shower|🚿","una bañera|a bathtub|🛁","un grifo|a tap|🚰"],
     "Tamaño":["pequeño(a)|small","mediano(a)|medium-sized","grande|large","más pequeño(a) que|smaller than","más grande que|larger than"]},
  p:["||Mi cocina es amarilla.|My kitchen is yellow.","||La cocina es grande.|The kitchen is large.","||El baño es más pequeño que el dormitorio.|The bathroom is smaller than the bedroom.","||La sala es más grande que la cocina.|The living room is larger than the kitchen.","||Mi habitación favorita es la sala.|My favorite room is the living room.","¿Dónde estás?|Where are you?|Estoy en el dormitorio.|I am in the bedroom.","||En mi sala hay un sofá.|In my living room there is a sofa."],
- d:[], s:["Estoy en el dormitorio","La sala es más grande que la cocina","En mi sala hay un sofá","Mi cocina es amarilla"]},
+ d:["Katia|Hola.","Rafael|Hola.","Katia|¿Dónde estás?","Rafael|Estoy en la sala.","Katia|¿Qué hay en tu sala?","Rafael|En mi sala hay un sofá.","Katia|¿Cómo es tu cocina?","Rafael|Mi cocina es amarilla.","Katia|Adiós.","Rafael|Adiós."], s:["Estoy en el dormitorio","La sala es más grande que la cocina","En mi sala hay un sofá","Mi cocina es amarilla"]},
 
 {i:"✏️",t:"Hablar sobre los objetos del aula",e:"Talking about classroom objects",
  v:{"Objetos del aula":["el libro|textbook|📕","la goma|eraser","la mochila|knapsack|🎒","el cuaderno|notebook|📓","la regla|ruler|📏","la silla|chair|🪑","el lápiz|pencil|✏️","el sacapuntas|sharpener","el diccionario|dictionary|📖","la pizarra|blackboard","el bolígrafo|pen|🖊️","la tiza|chalk"],
@@ -1019,7 +1020,7 @@ const U=[
 {i:"➕",t:"Leer operaciones matemáticas",e:"Reading math operations",special:"math",
  v:{"Vocabulario":["la suma|addition|➕","la resta|subtraction|➖","más|plus","menos|take away / minus","es igual a|is equal to|🟰"]},
  p:["||Cuatro más cinco es igual a nueve.|4 + 5 = 9","||Ocho más diez es igual a dieciocho.|8 + 10 = 18","||Cinco menos cuatro es igual a uno.|5 − 4 = 1","||Diez menos ocho es igual a dos.|10 − 8 = 2"],
- d:[], s:["Ocho más diez es igual a dieciocho","Diez menos ocho es igual a dos","Seis más tres es igual a nueve"]},
+ d:["Katia|Hola.","Rafael|Hola.","Katia|¿Cuánto es cuatro más cinco?","Rafael|Cuatro más cinco es igual a nueve.","Katia|¿Cuánto es diez menos ocho?","Rafael|Diez menos ocho es igual a dos.","Katia|Adiós.","Rafael|Adiós."], s:["Ocho más diez es igual a dieciocho","Diez menos ocho es igual a dos","Seis más tres es igual a nueve"]},
 
 {i:"👕",t:"Hablar sobre vestuario",e:"Talking about clothing",
  v:{"El vestuario":["una blusa|a blouse|👚","un abrigo|a coat|🧥","un sombrero|a hat|👒","una gorra|a cap|🧢","un bolso|a handbag|👜","un vestido|a dress|👗","un anillo|a ring|💍","un reloj|a watch|⌚","un cinto|a belt","una corbata|a tie","una camisa|a shirt|👔","una licra|a pair of tights","un short|a pair of shorts|🩳","un par de aretes|a pair of earrings","un pantalón|a pair of pants|👖","un pulóver|a pullover","un par de medias|a pair of socks|🧦","una chaqueta|a jacket","un collar|a necklace|📿","una sombrilla|an umbrella|☂️","una bufanda|a scarf|🧣","un par de zapatos|a pair of shoes|👟"],
@@ -2781,7 +2782,7 @@ function render(){
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
     hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{tab="lesson";render();}}},
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},(unitLocked(cur)?"🔒 ":"")+l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
