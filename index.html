@@ -97,7 +97,10 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .uhead{display:flex;gap:.8rem;align-items:center;margin-bottom:1rem}
 .uhead .ic{font-size:2.8rem;line-height:1}
 .uhead h1{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.05;margin:0;color:var(--teal)}
-.uhead p{margin:.1rem 0 0;color:var(--muted)}
+.uhead p{margin:.1rem 0 0;color:var(--muted);overflow-wrap:break-word}
+.uhead>div:not(.ic){min-width:0;flex:1 1 0}
+.uhead .ic{flex:none}
+.uhead h1{overflow-wrap:break-word}
 .tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.6em,1fr));gap:.3rem;margin-bottom:1rem;font-size:clamp(.78rem,3.4vw,1rem)}
 .tabs button{min-width:0;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:.4rem .15rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:inherit}
 .tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
@@ -762,12 +765,12 @@ body{padding-bottom:84px}
 .qbox .say{margin:0 auto}
 .qbig{font-size:5rem;line-height:1.2}
 .qtxt{font-family:"Atkinson Hyperlegible",sans-serif;font-size:clamp(1.5rem,6vw,2rem);font-weight:600;margin:.4rem 0;line-height:1.2}
-.qlisten{font-size:3rem;width:96px;height:96px;border-radius:50%;border:3px solid var(--mango);background:var(--bg);margin:.4rem auto}
+.qlisten{font-size:3rem;width:2em;height:2em;line-height:1;padding:0;border-radius:50%;border:3px solid var(--mango);background:var(--bg);margin:.4rem auto}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin-top:1rem}
 .opts.long{grid-template-columns:1fr}
-.opt{border-radius:14px;padding:.75rem .5rem;background:var(--bg);border:2px solid var(--line);font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2;min-width:0;max-width:100%;font-size:clamp(.85rem,4.2vw,1.05rem);overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.opt{border-radius:14px;padding:.75rem .5rem;background:var(--bg);border:2px solid var(--line);font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2;min-width:0;max-width:100%;font-size:clamp(.85rem,4.2vw,1.05rem);overflow-wrap:break-word}
 /* anti-desborde: textos largos nunca salen del margen */
-.face .txt,.face .word,.face .sub,.qtxt,.qbox,.opt{overflow-wrap:anywhere;max-width:100%;min-width:0}
+.face .txt,.face .word,.face .sub,.qtxt,.qbox,.opt{overflow-wrap:break-word;max-width:100%;min-width:0}
 .face .word{font-size:clamp(1.5rem,8vw,2.8rem)!important}
 .face .txt{font-size:clamp(1.4rem,6.5vw,2.2rem)!important}
 .qtxt{font-size:clamp(1.3rem,5.6vw,2rem)!important}
