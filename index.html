@@ -323,7 +323,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .vsec h3{font-family:"Atkinson Hyperlegible",sans-serif;margin:.8rem 0 .2rem;color:var(--teal);font-size:1.05rem}
 .dlpill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;background:#12343B;color:#fff;border-radius:999px;padding:.45rem .9rem;font-size:.85rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);max-width:92vw;text-align:center}
 .dlpill.ok{background:#1C8A4C}
-.topr{display:flex;align-items:center;gap:.4rem}
+.topr{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
 .toprow1{justify-content:flex-end;margin-bottom:.35rem}
 .tophome .owner{margin-bottom:.6rem}
 .toprow2{margin-top:.7rem;margin-bottom:.8rem}
@@ -763,9 +763,14 @@ body{padding-bottom:84px}
 .qbig{font-size:5rem;line-height:1.2}
 .qtxt{font-family:"Atkinson Hyperlegible",sans-serif;font-size:clamp(1.5rem,6vw,2rem);font-weight:600;margin:.4rem 0;line-height:1.2}
 .qlisten{font-size:3rem;width:96px;height:96px;border-radius:50%;border:3px solid var(--mango);background:var(--bg);margin:.4rem auto}
-.opts{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:1rem}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin-top:1rem}
 .opts.long{grid-template-columns:1fr}
-.opt{border-radius:14px;padding:.75rem .5rem;background:var(--bg);border:2px solid var(--line);font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2}
+.opt{border-radius:14px;padding:.75rem .5rem;background:var(--bg);border:2px solid var(--line);font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2;min-width:0;max-width:100%;font-size:clamp(.85rem,4.2vw,1.05rem);overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+/* anti-desborde: textos largos nunca salen del margen */
+.face .txt,.face .word,.face .sub,.qtxt,.qbox,.opt{overflow-wrap:anywhere;max-width:100%;min-width:0}
+.face .word{font-size:clamp(1.5rem,8vw,2.8rem)!important}
+.face .txt{font-size:clamp(1.4rem,6.5vw,2.2rem)!important}
+.qtxt{font-size:clamp(1.3rem,5.6vw,2rem)!important}
 .opt.right{background:var(--lime);border-color:var(--lime);color:#fff}
 .opt.bad{background:var(--hibiscus);border-color:var(--hibiscus);color:#fff}
 .fb{min-height:1.6em;margin:.9rem 0 0;font-weight:700}
