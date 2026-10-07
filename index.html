@@ -245,7 +245,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .bubble .esb{color:var(--teal)}
 .lnav{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:.5rem}
 .lnav .btn{padding:.45rem .3rem;line-height:1.1}
-.lnav .l1{display:block;font-size:clamp(.9rem,4vw,1.05rem)}
+.lnav .l1{display:flex;align-items:center;justify-content:center;gap:.45em;flex-wrap:wrap;font-size:clamp(.9rem,4vw,1.05rem)}
 .lnav .l2{display:block;font-size:.75rem;opacity:.8}
 .lockcard{text-align:center;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:1.4rem 1rem;box-shadow:var(--shadow)}
 .lockcard .lockic{font-size:3.4rem}
@@ -1545,9 +1545,9 @@ function lessonPlayer(u,box,les,idx){
   const board=h("div",{cls:"board"},h("div",{cls:"bbar"},h("span",{},(idx===DEMO_IDX?"Demo · Clase de prueba":"Lección "+(idx+1)+" · Lesson "+(idx+1))+" ",infoBtn("dark")),dots),screen);
   teacherEl=teacherSVG();teacherEl.classList.add("arm-rest");
   const bubble=h("button",{cls:"bubble","aria-live":"polite",title:"Tap to hear again",on:{click:()=>{primeSpeech();go(k);}}});
-  const back=h("button",{cls:"btn",on:{click:()=>go(k-1)}},h("span",{cls:"l1"},"◀ Atrás"),h("span",{cls:"l2"},"Back"));
-  const again=h("button",{cls:"btn",on:{click:()=>{primeSpeech();go(k);}}},h("span",{cls:"l1"},"🔁 Repetir"),h("span",{cls:"l2"},"Again"));
-  const next=h("button",{cls:"btn primary",on:{click:()=>{primeSpeech();go(k+1);}}},h("span",{cls:"l1"},"Siguiente ▶"),h("span",{cls:"l2"},"Next"));
+  const back=h("button",{cls:"btn",on:{click:()=>go(k-1)}},h("span",{cls:"l1"},h("span",{},"◀"),h("span",{},"Atrás")),h("span",{cls:"l2"},"Back"));
+  const again=h("button",{cls:"btn",on:{click:()=>{primeSpeech();go(k);}}},h("span",{cls:"l1"},h("span",{},"🔁"),h("span",{},"Repetir")),h("span",{cls:"l2"},"Again"));
+  const next=h("button",{cls:"btn primary",on:{click:()=>{primeSpeech();go(k+1);}}},h("span",{cls:"l1"},h("span",{},"Siguiente"),h("span",{},"▶")),h("span",{cls:"l2"},"Next"));
   box.append(h("div",{cls:"lesson"},board,h("div",{cls:"stagebot"},teacherEl,bubble),h("div",{cls:"lnav"},back,again,next)));
 
   const praise=()=>{teacherMood("happy",1500);cheer();talk(segs(pick(TL.praise)));};
