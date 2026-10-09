@@ -444,6 +444,7 @@ button.hang,a.hang{display:inline-flex;justify-content:center}
 .hang>.htx{min-width:0;text-align:left}
 h1.hang,h2.hang,h3.hang,p.hang,li.hang,label.hang,div.hang{display:flex}
 span.hang{display:inline-flex}
+small.hang,.gm-cta small.hang{display:flex}
 .unit.t0{background:color-mix(in srgb,#FFB627 13%,var(--surface));border-color:color-mix(in srgb,#FFB627 38%,var(--line))}
 .unit.t1{background:color-mix(in srgb,#3B9CE0 13%,var(--surface));border-color:color-mix(in srgb,#3B9CE0 38%,var(--line))}
 .unit.t2{background:color-mix(in srgb,#7B4FD6 13%,var(--surface));border-color:color-mix(in srgb,#7B4FD6 38%,var(--line))}
@@ -2307,16 +2308,24 @@ function showGuide(){
 }
 
 /* Icon + text: when the text wraps, the second line starts under the first letter (not under the icon) */
-const HANG_SEL="button,a,p,li,label,h1,h2,h3,div,span";
-const EMOJI_START=/^\s*((?:\p{Extended_Pictographic}|\p{Regional_Indicator}|[\u{1F1E6}-\u{1F1FF}0-9#*]\uFE0F?\u20E3)(?:\uFE0F|\u200D(?:\p{Extended_Pictographic})|\p{Emoji_Modifier})*)\s+(\S[\s\S]*)$/u;
+const HANG_SEL="button,a,p,li,label,h1,h2,h3,div,span,small";
+const EMOJI_START=/^\s*((?:\p{Extended_Pictographic}|\p{Regional_Indicator}|[\u{1F1E6}-\u{1F1FF}0-9#*]\uFE0F?\u20E3)(?:\uFE0F|\u200D(?:\p{Extended_Pictographic})|\p{Emoji_Modifier})*)\s*(\S[\s\S]*)?$/u;
+const HANG_INLINE=/^(B|STRONG|I|EM|U|SPAN|SMALL)$/;
 function hangOne(el){
   if(el.closest(".hero h1,.here,.teacher,.santahat,.stars,.rbadge,.pmark,.pic,.ric,.ric2,.bic,.cic,.dtop,.mtop,.gface,.hic,.htx>.hic,svg"))return;
-  const f=el.firstChild;if(!f||f.nodeType!==3)return;
+  if(el.classList.contains("hang"))return;
   if(el.firstElementChild&&el.firstElementChild.classList&&el.firstElementChild.classList.contains("hic"))return;
+  /* first text node, reached only through inline wrappers (e.g. <b>🎁 Title</b> rest) */
+  let f=el.firstChild;
+  while(f&&f.nodeType===1&&HANG_INLINE.test(f.tagName)&&getComputedStyle(f).display==="inline"&&!f.classList.contains("hic")&&!f.classList.contains("htx")&&!f.classList.contains("hang"))f=f.firstChild;
+  if(!f||f.nodeType!==3)return;
   const m=EMOJI_START.exec(f.nodeValue);if(!m)return;
+  const hasMore=!!m[2]||f.nextSibling||(f.parentNode!==el&&(f.parentNode.nextSibling||f.parentNode.textContent.trim().length>m[1].length));
+  if(!m[2]&&!(el.textContent.trim().length>m[1].length))return;
   const ic=document.createElement("span");ic.className="hic";ic.textContent=m[1];
-  const tx=document.createElement("span");tx.className="htx";tx.append(m[2]);
-  f.remove();while(el.firstChild)tx.append(el.firstChild);
+  f.nodeValue=m[2]||"";
+  const tx=document.createElement("span");tx.className="htx";
+  while(el.firstChild)tx.append(el.firstChild);
   el.append(ic,tx);el.classList.add("hang");
 }
 function hangAll(root){(root||document).querySelectorAll(HANG_SEL).forEach(hangOne);}
