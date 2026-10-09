@@ -959,7 +959,7 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 @keyframes wzz{0%{opacity:0;margin:.2em 0 0 0}30%{opacity:1}100%{opacity:0;margin:-.35em 0 0 .2em}}
 .worm.awake i.hd::before,.worm.awake i.hd::after,.worm.crawl i.hd::before,.worm.crawl i.hd::after{animation:wbl 5s infinite}
 @keyframes wbl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
-@media (prefers-reduced-motion:reduce){.worm i.hd::before,.worm i.hd::after,.worm .zz{animation:none!important}}}
+}
 </style>
 </head>
 <body>
@@ -3069,7 +3069,7 @@ function starStr(n){return n?STARI().repeat(n):"";}
 
 const WS={p:.1,dir:1,mode:"awake",t:null,raf:0,trick:null,T:0,phase:0,last:0,nextTrick:0,P:null,started:0};
 const wLater=(ms,fn)=>{clearTimeout(WS.t);WS.t=setTimeout(fn,ms*(window.__wormTS||1));};
-const wRM=()=>{try{return matchMedia("(prefers-reduced-motion:reduce)").matches;}catch(e){return false;}};
+const wRM=()=>false;
 function wormProf(h1){
   const cs=getComputedStyle(h1),fs=parseFloat(cs.fontSize),hr=h1.getBoundingClientRect();
   const hat=h1.querySelector(".santahat"),hrc=hat&&hat.offsetWidth?hat.getBoundingClientRect():null;
@@ -3145,9 +3145,9 @@ function wormTrick(type,cb){
 const wormActive=()=>{for(let i=0;i<28;i++)if(unlocked[i])return true;return false;};
 function wormRest(first){
   if(!wormActive()){WS.locked=1;wormSetMode("sleep");wLater(1500,()=>wormRest(first));return;}
-  if(WS.locked){WS.locked=0;wormSetMode("awake");wLater(250,()=>wormTrick("hop",()=>wormTrick("rise",()=>wormTrick("loop",()=>wormRest()))));return;}
+  if(WS.locked){if(!document.querySelector(".worm")){wLater(500,()=>wormRest(first));return;}WS.locked=0;wormSetMode("awake");wLater(200,()=>wormTrick("hop",()=>wormWalk()));return;}
   wormSetMode("awake");
-  wLater(first?6000:5000,()=>wormTrick(null,()=>{wormSetMode("awake");wLater(4000,()=>{wormSetMode("sleep");wLater(120000+Math.random()*120000,()=>{wormSetMode("awake");wLater(3000,wormWalk);});});}));
+  wLater(first?6000:5000,()=>wormTrick(null,()=>{wormSetMode("awake");wLater(4000,()=>{wormSetMode("sleep");wLater(40000+Math.random()*50000,()=>{wormSetMode("awake");wLater(3000,wormWalk);});});}));
 }
 function wormWalk(){
   const w=document.querySelector(".worm");if(!w||wRM()){wormRest();return;}
