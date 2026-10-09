@@ -1287,6 +1287,7 @@ function speak(text,opts={}){
   if(esVoice)u.voice=esVoice;if(opts.end)u.onend=opts.end;
   speechSynthesis.speak(u);
 }
+function sayWord(w){unlockAudio();if(cur==null&&w.u!=null){const c=cur;cur=w.u;try{speak(w.es);}catch(e){}cur=c;}else speak(w.es);}
 const sayBtn=text=>h("button",{cls:"say","aria-label":"Escuchar",on:{click:e=>{e.stopPropagation();speak(text);}}},"🔊");
 
 /* ---------- Lessons (locked) ---------- */
@@ -3532,7 +3533,6 @@ function hardGame(){
     return{t,w,ans:w[key],opts:shuffle([w[key],...out])};
   });
   let qi=0,right=0;const fixed=[];
-  function say(w){unlockAudio();if(cur==null&&w.u!=null){const c=cur;cur=w.u;try{speak(w.es);}catch(e){}cur=c;}else speak(w.es);}
   function show(){
     wrap.innerHTML="";
     if(qi>=qs.length){
@@ -3552,14 +3552,14 @@ function hardGame(){
     const b=h("div",{cls:"qbox"});
     if(q.t==="pic")b.append(h("p",{cls:"qp"},"¿Qué es esto? · What is it in Spanish?"),h("div",{cls:"qbig"},q.w.e));
     else if(q.t==="en2es")b.append(h("p",{cls:"qp"},"¿Cómo se dice en español? · How do you say it in Spanish?"),h("div",{cls:"qtxt"},q.w.en));
-    else b.append(h("p",{cls:"qp"},"¿Qué significa? · What does it mean?"),h("div",{cls:"qtxt"},q.w.es),h("button",{cls:"say","aria-label":"Escuchar",on:{click:()=>say(q.w)}},"🔊"));
+    else b.append(h("p",{cls:"qp"},"¿Qué significa? · What does it mean?"),h("div",{cls:"qtxt"},q.w.es),h("button",{cls:"say","aria-label":"Escuchar",on:{click:()=>sayWord(q.w)}},"🔊"));
     const opts=h("div",{cls:"opts"+(q.opts.some(o=>o.length>18)?" long":"")});
     q.opts.forEach(o=>opts.append(h("button",{cls:"opt",on:{click:e=>{
       opts.querySelectorAll(".opt").forEach(x=>x.disabled=true);
       const ok=o===q.ans;
       if(ok){e.currentTarget.classList.add("right");right++;fixed.push(q.w);fb.textContent="¡Correcto! · Correct! ⭐";try{Coco.event("good");}catch(_){}}
       else{try{Coco.event("bad");}catch(_){}e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es · The answer is: "+q.ans;}
-      say(q.w);setTimeout(()=>{qi++;show();},1700);}}},o)));
+      sayWord(q.w);setTimeout(()=>{qi++;show();},1700);}}},o)));
     b.append(opts,fb);
     wrap.append(h("div",{cls:"rules"},h("div",{cls:"rt"},"🧠 Mis palabras difíciles · My tricky words")),live,b);
   }
@@ -3615,7 +3615,7 @@ function viewQuiz(u,box){
     const b=h("div",{cls:"qbox"});
     if(q.type==="pic"){b.append(h("p",{cls:"qp"},"¿Qué es esto? · What is it in Spanish?"),h("div",{cls:"qbig"},q.w.e));}
     else if(q.type==="en2es"){b.append(h("p",{cls:"qp"},"¿Cómo se dice en español? · How do you say it in Spanish?"),h("div",{cls:"qtxt"},q.w.en));}
-    else if(q.type==="es2en"){b.append(h("p",{cls:"qp"},"¿Qué significa? · What does it mean?"),h("div",{cls:"qtxt"},q.w.es),h("button",{cls:"say","aria-label":"Escuchar",on:{click:()=>say(q.w)}},"🔊"));}
+    else if(q.type==="es2en"){b.append(h("p",{cls:"qp"},"¿Qué significa? · What does it mean?"),h("div",{cls:"qtxt"},q.w.es),h("button",{cls:"say","aria-label":"Escuchar",on:{click:()=>sayWord(q.w)}},"🔊"));}
     else if(q.type==="listen"){const l=h("button",{cls:"qlisten","aria-label":"Escuchar",on:{click:()=>speak(q.w.es)}},"🔊");b.append(h("p",{cls:"qp"},"Escucha y elige · Listen and choose what you hear."),l);setTimeout(()=>speak(q.w.es),250);}
     else if(q.type==="sym"){b.append(h("p",{cls:"qp"},q.prompt),h("div",{cls:"qtxt"},q.show));}
     const fb=h("p",{cls:"fb","aria-live":"polite"});
