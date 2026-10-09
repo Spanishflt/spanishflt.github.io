@@ -452,7 +452,7 @@ small.hang,.gm-cta small.hang{display:flex}
 .unit.t4{background:color-mix(in srgb,#4E9A2A 13%,var(--surface));border-color:color-mix(in srgb,#4E9A2A 38%,var(--line))}
 .unit.t5{background:color-mix(in srgb,#FF8A3D 13%,var(--surface));border-color:color-mix(in srgb,#FF8A3D 38%,var(--line))}
 .sS{position:relative;display:inline-block}
-.hero h1.xmas{margin-top:.2em}
+.hero h1.xmas{margin-top:.75em}
 .santahat{position:absolute;left:0;top:0;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
 .santahat img{width:100%;height:100%;display:block}
 .greet{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));z-index:60;width:min(94vw,460px);display:flex;gap:.6rem;align-items:flex-start;
@@ -941,8 +941,8 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 .sp-p h4{margin:14px 0 4px;font-size:.9rem}
 .sp-go{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line,#ccd);background:transparent;color:inherit;font:inherit;font-size:.86rem;cursor:pointer}
 
-.hero h1{position:relative}
-.worm{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:2}
+.hero h1{position:relative;margin-top:.35em}
+.worm{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:2;font-size:.72em}
 .worm i{display:block;position:absolute;left:0;top:0;width:.46em;height:.46em;margin:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#C8F59B,#7ED957 55%,#4E9A2A);box-shadow:0 .03em 0 rgba(0,0,0,.18);will-change:transform}
 .worm i.hd{width:.6em;height:.6em;background:radial-gradient(circle at 38% 30%,#E4FFC4,#8FE063 55%,#4E9A2A)}
 .worm i.hd::before,.worm i.hd::after{content:"";position:absolute;top:.17em;width:.17em;height:.2em;border-radius:50%;background:#fff;box-shadow:inset -.03em -.02em 0 #14322a}
@@ -3082,7 +3082,7 @@ function wormProf(h1){
     for(let k=0;k<t.length;k++){const ch=t[k],rg=document.createRange();rg.setStart(n,k);rg.setEnd(n,k+1);const r=rg.getBoundingClientRect();if(!r.width)continue;
       const asc=ch===" "?xh*.6:ctx.measureText(ch).actualBoundingBoxAscent;cols.push({l:r.left-hr.left,r:r.right-hr.left,top:base-asc});}}
   if(!cols.length)return WS.P||{S:()=>fs*.4,x0:0,x1:10,fs,sig};
-  const xmin=cols[0].l,xmax=cols[cols.length-1].r,d=.46*fs,step=2,N=Math.ceil((xmax-xmin)/step)+1,raw=new Array(N);
+  const xmin=cols[0].l,xmax=cols[cols.length-1].r,d=.33*fs,step=2,N=Math.ceil((xmax-xmin)/step)+1,raw=new Array(N);
   for(let q=0;q<N;q++){const x=xmin+q*step;let y=base-xh*.6;for(const c of cols)if(x>=c.l&&x<=c.r){y=c.top;break;}
     if(hrc){const cx=hrc.left-hr.left+hrc.width/2,u=(x-cx)/(hrc.width/2);if(Math.abs(u)<=1){const hy=hrc.top-hr.top+hrc.height*.5*u*u;y=Math.min(y,hy);}}raw[q]=y;}
   const W2=Math.round(d*.5/step),dil=raw.map((v,q)=>{let m=v;for(let z=-W2;z<=W2;z++){const w=raw[q+z];if(w!==undefined&&w<m)m=w;}return m;});
@@ -3092,9 +3092,9 @@ function wormProf(h1){
 }
 function wormApply(w){["awake","sleep","crawl"].forEach(m=>w.classList.toggle(m,WS.mode===m||(m==="crawl"&&WS.mode==="trick"&&WS.trick&&WS.trick.type==="__")));}
 function wormDraw(now){
-  const w=document.querySelector(".worm");if(!w||!w.isConnected)return false;const h1=w.parentElement;const P=wormProf(h1),fs=P.fs;
+  const w=document.querySelector(".worm");if(!w||!w.isConnected)return false;const h1=w.parentElement;const P=wormProf(h1),fs=P.fs*.72;
   const els=w._e||(w._e=[w.querySelector(".hd"),...[1,2,3,4,5].map(k=>w.querySelector(".b"+k))]);
-  const sp=.34*fs,rk=k=>k?.23*fs:.3*fs,dir=WS.dir,xh=P.x0+WS.p*(P.x1-P.x0);
+  const sp=.34*fs,rk=k=>k?.23*fs:.3*fs,dir=WS.dir,xh=P.x0+WS.p*(P.x1-P.x0);const pill=document.querySelector(".topr"),minTop=pill?pill.getBoundingClientRect().bottom-h1.getBoundingClientRect().top+2:-1e9;
   const gy=(x,k)=>P.S(x)-rk(k)+.05*fs;
   const pts=[];for(let k=0;k<6;k++){const x=xh-dir*k*sp;pts.push({x,y:gy(x,k),a:0});}
   const tr=WS.trick;let t=tr?(now-tr.t0)/1000:0;
@@ -3110,7 +3110,7 @@ function wormDraw(now){
       const x3=pts[3].x;for(let k=0;k<=3;k++){let x=pts[k].x+(x3+dir*(3-k)*.06*fs-pts[k].x)*s;if(k===0)x+=dir*.18*fs*Math.sin(t*9)*s;pts[k].x=x;pts[k].y=gy(x,k)-(3-k)*.2*fs*s;if(k===0)pts[k].a=.35*Math.sin(t*9)*s*dir;}}
     if(!tr||tr.type!=="loop"){const sl=Math.atan2(gy(xh+4,0)-gy(xh-4,0),8);pts[0].a+=Math.max(-.5,Math.min(.5,sl))*.7;}
   }
-  for(let k=0;k<6;k++){const e=els[k],p=pts[k],h=rk(k);e.style.transform="translate("+(p.x-h)+"px,"+(p.y-h)+"px)"+(k===0?" rotate("+p.a+"rad) scaleX("+dir+")":"");}
+  for(let k=0;k<6;k++){const e=els[k],p=pts[k],h=rk(k);if(p.y-h<minTop)p.y=minTop+h;e.style.transform="translate("+(p.x-h)+"px,"+(p.y-h)+"px)"+(k===0?" rotate("+p.a+"rad) scaleX("+dir+")":"");}
   const z=w.querySelector(".zz");z.style.transform="translate("+(pts[0].x+dir*.3*fs)+"px,"+(pts[0].y-.6*fs)+"px)";
   return true;
 }
@@ -3133,7 +3133,7 @@ function wormKick(){WS.last=performance.now();if(!WS.raf)WS.raf=requestAnimation
 function wormSetMode(m){WS.mode=m;const w=document.querySelector(".worm");if(w){wormApply(w);}if(m==="crawl")wormKick();else{const w2=document.querySelector(".worm");w2&&wormDraw(performance.now());}}
 function wormTrick(type,cb){
   const w=document.querySelector(".worm");if(!w||wRM()){cb&&cb();return;}
-  const P=wormProf(w.parentElement),fs=P.fs,span=P.x1-P.x0;
+  const P=wormProf(w.parentElement),fs=P.fs*.72,span=P.x1-P.x0;
   if(!type){const ty=["hop","rise","shimmy","loop","loop"];type=ty[Math.floor(Math.random()*ty.length)];}
   const tr={type,t0:performance.now(),dur:type==="hop"?2.4:type==="rise"?3.6:type==="shimmy"?2.8:3,cb};
   if(type==="loop"){const x0=P.x0+WS.p*span,adv=5*.34*fs;let ok=x0+WS.dir*adv>=P.x0&&x0+WS.dir*adv<=P.x1;
@@ -3143,7 +3143,8 @@ function wormTrick(type,cb){
 }
 const wormActive=()=>{for(let i=0;i<28;i++)if(unlocked[i])return true;return false;};
 function wormRest(first){
-  if(!wormActive()){wormSetMode("sleep");wLater(4000,()=>wormRest(first));return;}
+  if(!wormActive()){WS.locked=1;wormSetMode("sleep");wLater(1500,()=>wormRest(first));return;}
+  if(WS.locked){WS.locked=0;wormSetMode("awake");wLater(250,()=>wormTrick("hop",()=>wormTrick("rise",()=>wormTrick("loop",()=>wormRest()))));return;}
   wormSetMode("awake");
   wLater(first?6000:5000,()=>wormTrick(null,()=>{wormSetMode("awake");wLater(4000,()=>{wormSetMode("sleep");wLater(120000+Math.random()*120000,()=>{wormSetMode("awake");wLater(3000,wormWalk);});});}));
 }
@@ -3159,7 +3160,7 @@ function wormEl(){
   const hd=h("i",{cls:"hd"});hd.append(h("b"),h("s"),h("s"));w.append(hd,h("span",{cls:"zz"},"z z z"));
   if(WS.mode==="crawl"&&!WS.raf&&!WS.trick)WS.mode="awake";
   wormApply(w);
-  setTimeout(()=>{const a=document.querySelector(".worm");if(!a)return;wormApply(a);wormDraw(performance.now());if(WS.mode==="crawl"||WS.trick)wormKick();if(!WS.started){WS.started=1;wormRest(true);}try{document.fonts&&document.fonts.ready.then(()=>{WS.P=null;wormDraw(performance.now());});}catch(e){}},60);
+  setTimeout(()=>{const a=document.querySelector(".worm");if(!a)return;wormApply(a);wormDraw(performance.now());if(WS.mode==="crawl"||WS.trick)wormKick();if(!WS.started){WS.started=1;wormRest(true);}else if(WS.locked&&wormActive())wormRest();try{document.fonts&&document.fonts.ready.then(()=>{WS.P=null;wormDraw(performance.now());});}catch(e){}},60);
   return w;
 }
 addEventListener("resize",()=>{WS.P=null;try{wormDraw(performance.now());}catch(e){}});
