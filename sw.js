@@ -1,4 +1,4 @@
-const CACHE = "basic-spanish-v96";
+const CACHE = "basic-spanish-v97";
 const AUDIO_CACHE = "basic-spanish-audio";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 const isAudio = url => /\/audio\/[^\/]+\.mp3$/i.test(new URL(url).pathname);
@@ -49,13 +49,24 @@ self.addEventListener("fetch", e => {
   if (appPage) {
     e.respondWith((async () => {
       const cached = await caches.match("./index.html");
+      // offline for sure: open the saved copy at once, no waiting
+      if (cached && self.navigator && self.navigator.onLine === false) return cached;
+      const ctrl = new AbortController(); const killer = setTimeout(() => ctrl.abort(), 15000);
+      const update = fetch(new Request("./index.html", {cache: "no-cache", signal: ctrl.signal})).then(async res => {
+        clearTimeout(killer);
+        if (res && res.ok) { const c = await caches.open(CACHE); await c.put("./index.html", res.clone()); }
+        return res;
+      });
+      if (!cached) { try { return await update; } catch (err) { return Response.error(); } }
+      // saved copy exists: wait only 1.2 s for the internet; if slow, open the saved copy now
+      // and let the update keep downloading in the background (it is used on the next opening)
+      const slow = new Promise(r => setTimeout(() => r(null), 1200));
       try {
-        const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), cached ? 4000 : 15000);
-        const res = await fetch(new Request("./index.html", {cache: "no-cache", signal: ctrl.signal}));
-        clearTimeout(t);
-        if (res && res.ok) { const c = await caches.open(CACHE); c.put("./index.html", res.clone()); return res; }
-        return cached || res;
-      } catch (err) { return cached || Response.error(); }
+        const res = await Promise.race([update, slow]);
+        if (res && res.ok) return res;
+      } catch (err) {}
+      e.waitUntil(update.catch(() => {}));
+      return cached;
     })());
     return;
   }
