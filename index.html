@@ -1275,7 +1275,7 @@ function speak(text,opts={}){
   const clean=text.replace(/\(.*?\)/g,"").replace(/…/g,"").replace(/ \/ /g,", ");
   if(!opts.queue){const sp=typeof spellTokens==="function"&&spellTokens(clean);if(sp){sayLetters(sp,()=>{});return;}}
   if(!opts.noclip&&typeof AUDIO_IDX!=="undefined"&&cur!=null&&!spellTokens(clean)){
-    const un="unit-"+pad2(cur+1),m=AUDIO_IDX[un]&&AUDIO_IDX[un][segKey({t:clean,l:"es",v:opts.v})];
+    const kk=segKey({t:clean,l:"es",v:opts.v});let un="unit-"+pad2(cur+1),m=AUDIO_IDX[un]&&AUDIO_IDX[un][kk];if(!m){const ln="lesson-"+pad2(cur+1);if(AUDIO_IDX[ln]&&AUDIO_IDX[ln][kk]){un=ln;m=AUDIO_IDX[ln][kk];}}
     if(m){const c=ac();if(!opts.queue){speechSynthesis&&speechSynthesis.cancel();stopClip();}
       loadAudio(un).then(buf=>{if(!buf||!c||m[0]>=buf.duration-0.05){speak(clean,Object.assign({},opts,{noclip:true}));return;}
         if(c.state==="suspended")c.resume();const src=c.createBufferSource();src.buffer=buf;src.connect(voiceOut(c));clipNode=src;
