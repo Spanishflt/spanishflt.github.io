@@ -844,6 +844,8 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 .gm-scene{position:relative;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);border:3px solid var(--surface);background:var(--teal-soft)}
 .gm-scene .sc svg{display:block;width:100%;height:auto}
 .gmB .gm-scene{height:128px}.gmB .gm-scene .sc,.gmB .gm-scene .sc svg{height:100%}
+.gm-build{position:absolute;left:0;right:0;text-align:center;font-size:11.5px;font-style:italic;font-weight:400;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.65);pointer-events:none;letter-spacing:.2px}
+.gm-build.gb-normal{top:39%}.gm-build.gb-lady{top:53%}.gm-build.gb-futbol{top:39.5%}
 .gm-chips{position:absolute;left:8px;right:8px;top:8px;display:flex;gap:6px;justify-content:space-between;pointer-events:none}
 .gm-chips>*{pointer-events:auto;background:var(--surface);color:var(--ink);border-radius:99px;padding:5px 11px;font-weight:700;font-size:13px;box-shadow:0 3px 0 rgba(0,0,0,.14);border:0;font-family:inherit}
 .gm-chips button{cursor:pointer}
@@ -1534,8 +1536,8 @@ function lessonInfo(){
       h("p",{},"⭐ ",h("b",{},"Stars: "),"study the lesson with the teacher, then take the quiz to win stars."),
       h("p",{cls:"ovt"},"Your lessons will be locked again if you:"),
       h("ul",{},
-        h("li",{},"uninstall the Basic Spanish app, or clear its data;"),
-        h("li",{},"clear your browser’s history or browsing data (on Android, the app also uses Chrome, so clearing Chrome’s data locks the lessons too);"),
+        h("li",{},"uninstall the Basic Spanish app, or clear its data (Android: Settings › Apps › Basic Spanish › Storage › Clear data);"),
+        h("li",{},"clear your browser’s history or browsing data (if you use the website, or the older Android app that opens inside Chrome, clearing Chrome’s data locks the lessons too);"),
         h("li",{},"open the website in a different browser;"),
         h("li",{},"factory reset your device, or change to a different phone, tablet or computer.")),
       h("p",{},"Your stars and progress are also saved only on that device."),
@@ -3001,6 +3003,7 @@ function gameBoard(mode){
   scene.innerHTML='<div class="sc">'+art+'</div>';
   if(mode==="B"){const sv=scene.querySelector("svg");if(sv)sv.setAttribute("preserveAspectRatio","xMidYMid slice");}
   const col=sk==="lady"?h("button",{on:{click:openCloset}},"👜 "+clOwned()+"/"+ACCS.length):sk==="normal"?h("button",{on:{click:openAlbum}},"📒 "+alOwned()+"/"+STK.length):h("span",{},"🥅 "+st+"/6");
+  if(st===0)scene.append(h("div",{cls:"gm-build gb-"+sk},sk==="lady"?"Build your castle":sk==="futbol"?"Build your stadium":"Build your school"));
   scene.append(h("div",{cls:"gm-chips"},h("span",{},"⭐ "+totalStars()),h("span",{},(sk==="lady"?"🏰":sk==="futbol"?"🏟️":"🏫")+" "+st+"/6"),col));
   const upTxt=h("div",{cls:"gm-up2"},st<6?"⬆️ Mejora en "+nxt+(nxt===1?" clase":" clases")+" · Upgrade in "+nxt+(nxt===1?" lesson":" lessons"):"🌟 ¡Completo! · Complete!");
   const cu=U[c0],cOpen=isOpen(c0);
