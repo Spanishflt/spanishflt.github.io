@@ -1222,6 +1222,9 @@ const totalStars=()=>quizStars()+bonusStars();
 
 /* Speech */
 let esVoice=null;
+/* Android WebView (the standalone app) has no speechSynthesis: add a silent stand-in so the recorded audio still plays and nothing waits forever */
+if(!("speechSynthesis" in window)){window.__noTTS=true;window.speechSynthesis={speaking:false,paused:false,speak(u){setTimeout(()=>{try{u&&u.onend&&u.onend({});}catch(e){}},Math.max(600,((u&&u.text)||"").length*55));},cancel(){},resume(){},pause(){},getVoices(){return[];},addEventListener(){},removeEventListener(){}};}
+if(typeof SpeechSynthesisUtterance==="undefined")window.SpeechSynthesisUtterance=function(t){this.text=t;};
 function loadVoices(){if(!("speechSynthesis" in window))return;const vs=speechSynthesis.getVoices();esVoice=vs.find(v=>/^es(-|_)(MX|US|419)/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null;}
 if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
 function speak(text,opts={}){
@@ -1892,7 +1895,8 @@ function voiceBanner(){
 function checkEsVoice(){
   const decide=()=>{
     let missing;
-    if(!("speechSynthesis" in window))missing=true;
+    if(window.__noTTS)missing=false;
+    else if(!("speechSynthesis" in window))missing=true;
     else{const vs=speechSynthesis.getVoices();missing=!vs.some(v=>/^es/i.test(v.lang||""));}
     if(missing!==noEsVoice){noEsVoice=missing;if(cur==null&&document.querySelector(".hero"))home();}
   };
