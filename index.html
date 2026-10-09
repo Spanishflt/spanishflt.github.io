@@ -3007,10 +3007,10 @@ function gameBoard(mode){
   scene.append(h("div",{cls:"gm-chips"},h("span",{},"⭐ "+totalStars()),h("span",{},(sk==="lady"?"🏰":sk==="futbol"?"🏟️":"🏫")+" "+st+"/6"),col));
   const upTxt=h("div",{cls:"gm-up2"},st<6?"⬆️ Mejora en "+nxt+(nxt===1?" clase":" clases")+" · Upgrade in "+nxt+(nxt===1?" lesson":" lessons"):"🌟 ¡Completo! · Complete!");
   const cu=U[c0],cOpen=isOpen(c0);
-  const cta=h("button",{cls:"gm-cta"+(cOpen?"":" lk"),on:{click:()=>openUnit(c0)}},h("span",{cls:"ci"+(cOpen?"":" hand"),"aria-hidden":"true"},cOpen?cu.i:"👉"),
+  const cta=h("button",{cls:"gm-cta lk",on:{click:()=>openUnit(c0)}},h("span",{cls:"ci hand","aria-hidden":"true"},"👉"),
     h("span",{},h("b",{},cOpen?"Sigue con la clase "+(c0+1)+" · Next lesson "+(c0+1):"La clase "+(c0+1)+" te espera · Lesson "+(c0+1)+" is waiting"),
-      h("small",{cls:cOpen?"":"lockline"},cOpen?cu.t+" · "+cu.e:[h("span",{"aria-hidden":"true"},"🔒"),h("span",{},"Pide a tu profe que la abra · Ask your teacher to unlock it")])),
-    h("span",{cls:"go","aria-hidden":"true"},cOpen?"▶️":""));
+      h("small",{cls:cOpen?"":"lockline"},cOpen?cu.i+" "+cu.t+" · "+cu.e:[h("span",{"aria-hidden":"true"},"🔒"),h("span",{},"Pide a tu profe que la abra · Ask your teacher to unlock it")]))
+  );
   const demo=h("button",{cls:"gm-demo",id:"gm-demo",on:{click:()=>openUnit(DEMO_IDX)}},h("span",{"aria-hidden":"true"},"🎈"),h("span",{},h("b",{},"Clase de prueba · Free demo"),h("small",{},"Numbers 1 to 10")));
   try{if(!demoOpened()&&!hasAnyProgress()&&!GM_WIG){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){GM_WIG=true;io.disconnect();demo.classList.add("wig");setTimeout(()=>demo.classList.remove("wig"),2600);}},{threshold:.9});setTimeout(()=>{try{io.observe(demo);}catch(e){}},400);}}catch(e){}
   /* path (lessons + rewards where they are earned) */
