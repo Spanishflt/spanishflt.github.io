@@ -1273,7 +1273,7 @@ function speak(text,opts={}){
   if(!("speechSynthesis" in window))return;
   if(!opts.queue)speechSynthesis.cancel();
   const clean=text.replace(/\(.*?\)/g,"").replace(/…/g,"").replace(/ \/ /g,", ");
-  if(!opts.queue){const sp=typeof spellTokens==="function"&&spellTokens(clean);if(sp){sayLetters(sp,()=>{});return;}}
+  {const sp=typeof spellTokens==="function"&&spellTokens(clean);if(sp){sayLetters(sp,opts.end||(()=>{}));return;}}
   if(!opts.noclip&&typeof AUDIO_IDX!=="undefined"&&cur!=null&&!spellTokens(clean)){
     const kk=segKey({t:clean,l:"es",v:opts.v});let un="unit-"+pad2(cur+1),m=AUDIO_IDX[un]&&AUDIO_IDX[un][kk];if(!m){const ln="lesson-"+pad2(cur+1);if(AUDIO_IDX[ln]&&AUDIO_IDX[ln][kk]){un=ln;m=AUDIO_IDX[ln][kk];}}
     if(m){const c=ac();if(!opts.queue){speechSynthesis&&speechSynthesis.cancel();stopClip();}
