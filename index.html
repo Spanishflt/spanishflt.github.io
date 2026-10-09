@@ -926,6 +926,20 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 
 :root[data-skin="futbol"] h2.sec,:root[data-skin="lady"] h2.sec{padding-left:1.7em;text-indent:-1.7em}
 :root[data-skin="futbol"] h2.sec::before,:root[data-skin="lady"] h2.sec::before{display:inline-block;width:1.7em;text-indent:0}
+
+.sp-h{position:fixed;right:0;top:112px;z-index:60;width:26px;height:104px;border:0;border-radius:14px 0 0 14px;background:var(--teal);color:#fff;box-shadow:-2px 3px 10px rgba(0,0,0,.25);touch-action:none;display:flex;align-items:center;justify-content:center;padding:0;cursor:grab;transition:transform .3s}
+.sp-h span{writing-mode:vertical-rl;transform:rotate(180deg);font:800 12px/1 "Atkinson Hyperlegible",sans-serif;letter-spacing:.04em;white-space:nowrap}
+.sp-h.nudge{animation:spn 1s ease-in-out 2}@keyframes spn{0%,100%{transform:translateX(0)}50%{transform:translateX(-14px)}}
+.sp-p{position:fixed;right:0;top:0;bottom:0;z-index:61;width:min(310px,88vw);background:var(--card,#fff);color:var(--ink,#1B2B33);box-shadow:-6px 0 24px rgba(0,0,0,.28);border-radius:22px 0 0 22px;transform:translateX(100%);transition:transform .28s cubic-bezier(.3,.7,.3,1);overflow-y:auto;padding:16px 16px 28px;touch-action:pan-y}
+.sp-p.open{transform:none}.sp-p.drag{transition:none}
+.sp-bk{position:fixed;inset:0;z-index:59;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s}.sp-bk.on{opacity:1;pointer-events:auto}
+.sp-p h3{margin:0 0 2px;font-size:1.15rem;color:var(--teal)}.sp-p .sp-x{position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:22px;color:var(--muted,#667);cursor:pointer}
+.sp-p .sp-sub{font-size:.8rem;color:var(--muted,#667);margin-bottom:10px}
+.sp-big{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--teal-soft);margin:8px 0}.sp-big .ic{font-size:34px}.sp-big b{display:block;font-size:1.02rem}.sp-big small{color:var(--muted,#667)}
+.sp-row{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line,#ccd)}.sp-row b{white-space:nowrap}
+.sp-bar{height:10px;border-radius:6px;background:var(--line,#dde);overflow:hidden;margin:4px 0 2px}.sp-bar i{display:block;height:100%;background:var(--mango);border-radius:6px}
+.sp-p h4{margin:14px 0 4px;font-size:.9rem}
+.sp-go{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line,#ccd);background:transparent;color:inherit;font:inherit;font-size:.86rem;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2956,6 +2970,48 @@ function penShot(root,ok,g,sv){
   p.querySelector(".pscore").textContent="🧤\n"+g+" – "+sv;
   if(!ok)skinPop("🧤 ¡Atajada!");
 }
+
+/* Student status panel (pull from right edge) */
+(function(){
+  const bk=h("div",{cls:"sp-bk"}),pn=h("aside",{cls:"sp-p","aria-label":"Mi progreso"}),hd=h("button",{cls:"sp-h","aria-label":"Mi progreso · My progress"},h("span",{},"Mi progreso"));
+  document.body.append(bk,pn,hd);
+  let isOpen=false;const W=()=>pn.getBoundingClientRect().width||300;
+  function statusData(){
+    const q=[];ALL.forEach((u,i)=>{if(i!==DEMO_IDX&&(prog[i]||0)>0)q.push(i);});
+    const sum=q.reduce((a,i)=>a+prog[i],0),pct=q.length?Math.round(sum/(q.length*3)*100):0;
+    const done=[];for(let i=0;i<28;i++)if(doneL[i]||(prog[i]||0)>0)done.push(i);
+    const t=totalStars();const got=MEDALS.filter(m=>t>=m[0]),nxt=MEDALS.find(m=>t<m[0]);
+    const lvl=!q.length?["🌱","Aún no hay pruebas","No quizzes yet"]:pct>=85?["🌟","¡Excelente!","Excellent!"]:pct>=65?["😊","¡Muy bien!","Very good!"]:pct>=40?["💪","Vas mejorando","You're improving"]:["🌱","Sigue practicando","Keep practicing"];
+    const redo=q.filter(i=>i<28&&prog[i]<3).sort((a,b)=>prog[a]-prog[b]).slice(0,3);
+    let hc=0;try{hc=hardCount();}catch(e){}
+    return{q,pct,done,t,got,nxt,lvl,redo,hc};
+  }
+  function fill(){
+    const d=statusData();pn.innerHTML="";
+    const bar=(p)=>h("div",{cls:"sp-bar"},h("i",{style:"width:"+Math.max(0,Math.min(100,p))+"%"}));
+    pn.append(h("button",{cls:"sp-x","aria-label":"Cerrar · Close",on:{click:()=>setOpen(false)}},"✕"),
+      h("h3",{},RW.name||"Mi progreso"),h("div",{cls:"sp-sub"},"Mi progreso · My progress"),
+      h("div",{cls:"sp-big"},h("span",{cls:"ic","aria-hidden":"true"},d.lvl[0]),h("div",{},h("b",{},d.lvl[1]),h("small",{},d.lvl[2]+(d.q.length?" · "+d.pct+"%":"")))),
+      h("div",{cls:"sp-row"},h("span",{},"⭐ Estrellas · Stars"),h("b",{},String(d.t))),
+      h("div",{cls:"sp-row"},h("span",{},"📘 Clases · Lessons"),h("b",{},d.done.length+" / 28")),
+      h("div",{cls:"sp-row"},h("span",{},"📝 Pruebas · Quizzes"),h("b",{},String(d.q.length))),
+      h("div",{cls:"sp-row"},h("span",{},"🏅 Medallas · Medals"),h("b",{},d.got.length?d.got.map(m=>m[1]).join(" "):"—")));
+    if(d.nxt){pn.append(h("h4",{},"Próximo premio · Next prize: "+d.nxt[1]),bar(d.t/d.nxt[0]*100),h("div",{cls:"sp-sub"},"Te faltan "+(d.nxt[0]-d.t)+" ⭐ · "+(d.nxt[0]-d.t)+" ⭐ to go"));}
+    if(d.redo.length){pn.append(h("h4",{},"Para mejorar · To improve"));d.redo.forEach(i=>pn.append(h("button",{cls:"sp-go",on:{click:()=>{setOpen(false);openUnit(i,"quiz");}}},(i+1)+". "+ALL[i].t+" · "+starStr(prog[i]))));}
+    if(d.hc){pn.append(h("h4",{},"Palabras difíciles · Tricky words"),h("div",{cls:"sp-sub"},d.hc+" para repasar · to review"));}
+  }
+  function setOpen(o){isOpen=o;if(o)fill();pn.classList.toggle("open",o);bk.classList.toggle("on",o);pn.style.transform="";hd.style.transform="";hd.style.opacity=o?"0":"";hd.style.pointerEvents=o?"none":"";}
+  bk.addEventListener("click",()=>setOpen(false));
+  let sx=null,moved=0,base=0,fromPanel=false;
+  function down(e,fp){sx=e.clientX;moved=0;fromPanel=fp;base=isOpen?0:W();pn.classList.add("drag");if(!isOpen)fill();e.target.setPointerCapture&&e.target.setPointerCapture(e.pointerId);}
+  function move(e){if(sx==null)return;moved=e.clientX-sx;const x=Math.max(0,Math.min(W(),base+moved));pn.style.transform="translateX("+x+"px)";hd.style.transform="translateX("+(x-W())+"px)";}
+  function up(){if(sx==null)return;pn.classList.remove("drag");const x=Math.max(0,Math.min(W(),base+moved));const open=isOpen?x<W()*.35:x<W()*.7;sx=null;
+    if(!isOpen&&Math.abs(moved)<6){pn.style.transform="";hd.classList.remove("nudge");void hd.offsetWidth;hd.classList.add("nudge");return;}
+    setOpen(open);}
+  hd.addEventListener("pointerdown",e=>down(e,false));hd.addEventListener("pointermove",move);hd.addEventListener("pointerup",up);hd.addEventListener("pointercancel",up);
+  pn.addEventListener("pointerdown",e=>{if(isOpen&&!e.target.closest("button"))down(e,true);});pn.addEventListener("pointermove",move);pn.addEventListener("pointerup",up);pn.addEventListener("pointercancel",up);
+  window.__spOpen=setOpen;
+})();
 function skinPop(t){const e=document.createElement("div");e.className="skinpop";e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),1200);}
 document.addEventListener("pointerdown",ev=>{const k=curSkin();if(k==="normal")return;const e=document.createElement("span");e.className="skintap";e.textContent=k==="futbol"?"⚽":(Math.random()<.5?"👑":"✨");e.style.left=ev.clientX+"px";e.style.top=ev.clientY+"px";document.body.append(e);setTimeout(()=>e.remove(),900);},{passive:true});
 function setSkin(k){
