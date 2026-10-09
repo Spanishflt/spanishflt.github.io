@@ -491,11 +491,11 @@ small.hang,.gm-cta small.hang{display:flex}
 .pgk .gkb{animation:gksway 1.5s ease-in-out infinite}
 @keyframes gksway{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
 .pitch.goal .gkb,.pitch.save .gkb{animation:none}
-.pitch.goal .pgk{transform:translateX(calc(var(--s)*-62px)) rotate(calc(var(--s)*-70deg))}
-.pitch.save .pgk{transform:translateX(calc(var(--s)*62px)) rotate(calc(var(--s)*70deg))}
+.pitch.goal .pgk{transform:translateX(calc(var(--s)*-52px)) rotate(calc(var(--s)*-70deg))}
+.pitch.save .pgk{transform:translateX(calc(var(--s)*52px)) rotate(calc(var(--s)*70deg))}
 .pball{position:absolute;left:50%;bottom:6px;width:34px;margin-left:-17px;font-size:30px;line-height:34px;text-align:center;transition:transform .55s cubic-bezier(.2,.7,.3,1)}
-.pitch.goal .pball{transform:translate(calc(var(--s)*70px),-92px) rotate(calc(var(--s)*540deg)) scale(.65)}
-.pitch.save .pball{transform:translate(calc(var(--s)*62px),-70px) rotate(calc(var(--s)*360deg)) scale(.7)}
+.pitch.goal .pball{transform:translate(calc(var(--s)*38px),-84px) rotate(calc(var(--s)*540deg)) scale(.65)}
+.pitch.save .pball{transform:translate(calc(var(--s)*50px),-70px) rotate(calc(var(--s)*360deg)) scale(.7)}
 .pennote{margin:8px 0;padding:9px 12px;border-radius:14px;background:#E3F4E8;color:#14532D;font-weight:700;font-size:.92rem;line-height:1.35;text-align:center}.pennote small{display:block;font-weight:600;font-size:.82rem;margin-top:2px}
 .gimgs{display:flex;flex-wrap:wrap;gap:.4rem;margin:.55rem 0 .3rem;align-items:flex-start}.gimgs figure{flex:1;margin:0;text-align:center;min-width:0}.gimgs figure>svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line)}.gimgs figcaption{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.25}
 .gimgs:not(.coco) figure:first-child{flex:0 0 100%}.gimgs:not(.coco) figure:not(:first-child){flex:1 1 calc(50% - .2rem)}.gimgs.coco{justify-content:center}.gimgs.coco figure{flex:0 1 140px}.gimgs.coco figure>svg{border:0;max-height:170px}
@@ -3184,9 +3184,9 @@ function render(){
   const body=h("div",{});
   app.append(...[topbar(true),
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
-    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{tab="lesson";render();}}},
+    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();}}},
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{tab=k;render();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
