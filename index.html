@@ -3387,7 +3387,7 @@ function home(focusBook){
   app.append(topbar(false),
     h("div",{cls:"hero"},
       h("h1",{cls:isXmas()?"xmas":""},"Basic ",h("span",{cls:"sS"},"S",isXmas()?h("span",{cls:"santahat"}):null),"panish",h("span",{cls:"appver"},APP_VERSION),h("span",{cls:"wbp",style:"display:inline-block;width:0;height:0;vertical-align:baseline"}),wormEl()),
-      h("div",{cls:"hsub hsubrow"},h("span",{},"Extra Lessons"),chestEl(74,"chome")),
+      h("div",{cls:"hsub"},"Extra Lessons"),
       apkButton(),
       skinRow(),...(layoutMode()==="classic"?[curSkin()==="lady"?closetBtn():null,curSkin()==="lady"?castleCard():null,curSkin()==="futbol"?stadiumCard():null,curSkin()==="normal"?albumBtn():null,curSkin()==="normal"?schoolCard():null]:[]),
       layoutMode()==="classic"?h("p",{cls:"bi"},h("span",{cls:"es2"},"Español para principiantes. Elige una unidad, aprende las palabras, escucha las conversaciones y gana estrellas en la prueba."),h("span",{cls:"en2"},"Spanish for beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz.")):null),
