@@ -2103,35 +2103,30 @@ function chestEl(size,cls){
 }
 function chestTarget(){return [...document.querySelectorAll(".chest")].find(c=>c.getBoundingClientRect().width>0)||null;}
 function chestLid(on){document.querySelectorAll(".chest").forEach(c=>c.classList.toggle("open",on));}
+function chestItems(){
+  const r=rewardsState(),sk=curSkin(),L=[];
+  r.medals.forEach(m=>L.push(m[1]));if(r.coupon)L.push(r.couponUsed?"✅":"🎁");if(r.diploma)L.push("📜");
+  try{if(sk==="lady"){for(let i=Math.max(0,clOwned()-3);i<clOwned();i++)L.push(ACCS[i][1]);}
+  else if(sk==="normal"){for(let i=Math.max(0,alOwned()-3);i<alOwned();i++)L.push(STK[i][0]);}
+  else if(sk==="futbol"){if(totalStars()>0)L.push("⚽");}}catch(e){}
+  const fill=["🪙","💎","⭐","🪙","💎","⭐"];let k=0;while(L.length<6)L.push(fill[k++%6]);
+  return L.slice(-6);
+}
+function chestPlay(items){
+  const cs=[...document.querySelectorAll(".chest")];if(!cs.length)return;
+  const it=items||chestItems();
+  cs.forEach(c=>{c.classList.remove("open");c.querySelectorAll(".cfan").forEach((f,i)=>{f.textContent=it[i%it.length];});void c.offsetWidth;c.classList.add("open");});
+  clearTimeout(chestPlay.t);chestPlay.t=setTimeout(()=>chestLid(false),1700);
+}
 function chestBurst(emoji){
   const c=chestTarget();if(!c)return false;
-  chestLid(true);
-  const r=c.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height*.35;
+  const r=c.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height*.4;
   const f=h("span",{cls:"cfly","aria-hidden":"true"},emoji);f.style.left=x+"px";f.style.top=y+"px";document.body.append(f);
-  const dy=Math.max(90,Math.min(window.innerHeight*.32,230));
-  try{f.animate([{transform:"translate(-50%,-50%) scale(.3)",opacity:0},{transform:"translate(-50%,-50%) scale(1.2)",opacity:1,offset:.25},{transform:"translate(-50%,calc(-50% + "+dy+"px)) scale(2.4)",opacity:1,offset:.8},{transform:"translate(-50%,calc(-50% + "+dy+"px)) scale(2.8)",opacity:0}],{duration:1500,easing:"ease-out"}).onfinish=()=>f.remove();}catch(e){setTimeout(()=>f.remove(),1500);}
-  setTimeout(()=>{if(!document.querySelector(".ovl.chestovl"))chestLid(false);},1900);
+  const dy=Math.max(120,Math.min(window.innerHeight*.42,320));
+  try{f.animate([{transform:"translate(-50%,calc(-50% + "+dy+"px)) scale(2.8)",opacity:0},{transform:"translate(-50%,calc(-50% + "+dy+"px)) scale(2.8)",opacity:1,offset:.2},{transform:"translate(-50%,calc(-50% + "+(dy*.55)+"px)) scale(1.9)",opacity:1,offset:.5},{transform:"translate(-50%,-50%) scale(.35)",opacity:1,offset:.92},{transform:"translate(-50%,-50%) scale(.2)",opacity:0}],{duration:1100,easing:"ease-in-out"}).onfinish=()=>{f.remove();chestPlay();};}catch(e){setTimeout(()=>{f.remove();chestPlay();},1100);}
   return true;
 }
-function chestOpen(){
-  chestLid(true);try{cheer&&0;}catch(e){}
-  setTimeout(()=>{
-    const r=rewardsState(),sk=curSkin();
-    const th=sk==="lady"?["👑","Mi armario · My closet","29 accesorios para Coco · 29 accessories for Coco"]:sk==="futbol"?["⚽","Penales · Penalty shootouts","Un tiro de penales por clase cada día · One shootout per lesson each day"]:["📒","Mi álbum · My album","29 stickers para coleccionar · 29 stickers to collect"];
-    const close=overlay("Magic chest",cl=>[
-      h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🧰"),h("h2",{},"Cofre mágico · Magic chest")),
-      h("p",{cls:"rintro"},"¡Mira lo que puedes ganar! Gana estrellas ⭐ en las pruebas · Look what you can win! Earn stars ⭐ in the quizzes:"),
-      h("div",{cls:"rgrid"},...MEDALS.map(([n,ic,name])=>h("div",{cls:"rcell"+(r.t>=n?" got":"")},h("div",{cls:"ric"+(r.t>=n?"":" dim")},ic),h("div",{cls:"rname"},name),h("div",{cls:"rneed"},r.t>=n?"✅":n+" ⭐")))),
-      h("div",{cls:"rrow"+(r.coupon?" got":"")},h("div",{cls:"ric"+(r.coupon?"":" dim")},"🎁"),h("div",{},h("b",{},"Lección gratis · Free lesson (50 ⭐)"))),
-      h("div",{cls:"rrow"+(r.diploma?" got":"")},h("div",{cls:"ric"+(r.diploma?"":" dim")},"📜"),h("div",{},h("b",{},"Diploma · Certificate (100 ⭐)"))),
-      h("div",{cls:"rrow got"},h("div",{cls:"ric"},th[0]),h("div",{},h("b",{},th[1]),h("br",{}),th[2])),
-      h("div",{cls:"rrow"},h("div",{cls:"ric dim"},"❓"),h("div",{},h("b",{},"¡Y más sorpresas! · And more surprises!"))),
-      h("button",{cls:"btn",on:{click:()=>{cl();rewardsPanel();}}},"🏅 Ver todos mis premios · See all my rewards"),
-      h("button",{cls:"btn primary",on:{click:cl}},"OK")]);
-    const ov=document.querySelector(".ovl:last-of-type");if(ov)ov.classList.add("chestovl");
-    const t=setInterval(()=>{if(!document.querySelector(".ovl.chestovl")){clearInterval(t);chestLid(false);}},300);
-  },850);
-}
+function chestOpen(){chestPlay();}
 function rewardsPanel(){
   const r=rewardsState();
   overlay("My rewards",close=>[
