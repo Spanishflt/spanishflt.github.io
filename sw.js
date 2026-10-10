@@ -1,4 +1,4 @@
-const CACHE = "basic-spanish-v97";
+const CACHE = "basic-spanish-v98";
 const AUDIO_CACHE = "basic-spanish-audio";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 const isAudio = url => /\/audio\/[^\/]+\.mp3$/i.test(new URL(url).pathname);
