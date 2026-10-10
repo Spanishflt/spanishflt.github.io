@@ -1416,7 +1416,7 @@ function loadEnVoice(){if(!("speechSynthesis" in window))return;const vs=speechS
 if("speechSynthesis" in window){loadEnVoice();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",loadEnVoice);}
 const TXTFIX={"Tía is a woman:":"«Tía» is a woman:","Look: English says woof, but Spanish says guau!":"Look: English says woof, but Spanish says «guau»!",": a la.":": «a la».",": a el norte becomes al norte.":": «a el norte» becomes «al norte».","Mamá is a woman:":"«Mamá» is a woman:","Hermana is a girl:":"«Hermana» is a girl:","goes with calor, frío and viento.":"goes with «calor», «frío» and «viento».","goes with tormenta and niebla.":"goes with «tormenta» and «niebla»."};
 const SONGFIX=[["mu, mu, mu","mu, mu"],["guau, guau, guau","guau, guau"],["miau, miau, miau","miau, miau"],["oinc, oinc, oinc","oinc, oinc"]];
-const fixT=text=>{text=TXTFIX[text]||text;for(const[a,b]of SONGFIX)if(text.includes(a))text=text.split(a).join(b);text=text.replace(/«¡ia, ia, o!»\s*/g,"");return text;};
+const fixT=text=>{for(const k in TXTFIX)if(text.includes(k))text=text.split(k).join(TXTFIX[k]);for(const[a,b]of SONGFIX)if(text.includes(a))text=text.split(a).join(b);text=text.replace(/«¡ia, ia, o!»\s*/g,"");return text;};
 function segs(text){text=fixT(text);const out=[];text.split(/(«[^»]+»)/).forEach(p=>{if(!p.trim()||/^[\s.,;:!?¡¿]*$/.test(p))return;if(p[0]==="«")out.push({t:p.slice(1,-1),l:"es"});else out.push({t:p,l:"en"});});return out;}
 function richText(text){text=fixT(text);const span=h("span",{});text.split(/(«[^»]+»)/).forEach(p=>{if(!p)return;if(p[0]==="«")span.append(h("b",{cls:"esb"},p.slice(1,-1)));else span.append(p);});return span;}
 
@@ -1876,9 +1876,9 @@ function lessonPlayer(u,box,les,idx){
     say(TL.pat,list.map(([es],i)=>({t:es,l:"es",pause:1400,onStart:()=>mark(els[i])})));
   }
   function song(){
-    const sg=les.song;const ly=h("div",{cls:"lyrics"});const ls=sg.lines.map(l=>{const d=h("div",{cls:"lyr"},l);ly.append(d);return d;});
+    const sg=Object.assign({},les.song,{lines:les.song.lines.map(fixT)});const ly=h("div",{cls:"lyrics"});const ls=sg.lines.map(l=>{const d=h("div",{cls:"lyr"},l);ly.append(d);return d;});
     const hl=i=>{ls.forEach((d,j)=>d.classList.toggle("on",j===i));if(i>=0)inView(ls[i]);};
-    const words=h("button",{cls:"btn",on:{click:()=>{teacherEl.classList.remove("dance");talk(sg.lines.map((l,i)=>({t:l,l:"es",pause:600,onStart:()=>hl(i)})),()=>{hl(-1);stopMusic();});startBeat(100);}}},"🗣️ La letra · Words");
+    const words=h("button",{cls:"btn",on:{click:()=>{teacherEl.classList.remove("dance");talk(sg.lines.map((l,i)=>({l,i})).filter(x=>!/ia, ia, o/i.test(x.l)).map(x=>({t:x.l,l:"es",pause:600,onStart:()=>hl(x.i)})),()=>{hl(-1);stopMusic();});startBeat(100);}}},"🗣️ La letra · Words");
     const sing=h("button",{cls:"btn primary",on:{click:()=>{hush();teacherEl.classList.add("dance");
       playSong(sg,hl,()=>{teacherEl.classList.remove("dance");confetti(screen);teacherMood("happy",1800);say(TL.songEnd);});}}},"🎵 ¡A cantar! · Sing!");
     screen.append(h("div",{cls:"bhead"},"🎵 Canción · Song"),ly,h("div",{cls:"controls sm"},words,sing));
