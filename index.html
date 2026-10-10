@@ -48,6 +48,7 @@
 .chest .csp{top:25%}
 .chestwrap:before{width:260px!important;height:160px!important}
 @media (prefers-reduced-motion:reduce){.chest .csvg{animation:none!important}}
+.hsubrow{display:flex;align-items:center;justify-content:flex-start;gap:1.1rem}.hsubrow .chest{margin:-8px 0 -8px 0}
 </style>
 <script>try{var _k=localStorage.getItem("bs-skin");if(_k==="futbol"||_k==="lady")document.documentElement.setAttribute("data-skin",_k)}catch(e){}</script>
 <style>
@@ -3187,7 +3188,7 @@ function skinRow(){
 }
 function topbar(back){
   const right=h("div",{cls:"topr"},rewardsBadge(),h("div",{cls:"stars","aria-live":"polite"},STARI()+" "+totalStars()));
-  if(back)return h("div",{cls:"tophome"},h("div",{cls:"top toprow1"},nameChip(),right),h("div",{cls:"toprow2"},h("button",{cls:"back","aria-label":"Home",on:{click:()=>home()}},backArrow(),"Home"),chestEl(92,"cmini")));
+  if(back)return h("div",{cls:"tophome"},h("div",{cls:"top toprow1"},nameChip(),right),h("div",{cls:"toprow2"},h("button",{cls:"back","aria-label":"Home",on:{click:()=>home()}},backArrow(),"Home"),chestEl(74,"cmini")));
   return h("div",{cls:"tophome"},
     h("div",{cls:"top toprow1"},nameChip(),right));
 }
@@ -3390,8 +3391,7 @@ function home(focusBook){
   app.append(topbar(false),
     h("div",{cls:"hero"},
       h("h1",{cls:isXmas()?"xmas":""},"Basic ",h("span",{cls:"sS"},"S",isXmas()?h("span",{cls:"santahat"}):null),"panish",h("span",{cls:"appver"},APP_VERSION),h("span",{cls:"wbp",style:"display:inline-block;width:0;height:0;vertical-align:baseline"}),wormEl()),
-      h("div",{cls:"chestwrap"},chestEl(230),h("span",{cls:"chint"},"👆 Toca el cofre · Tap the chest")),
-      h("div",{cls:"hsub"},"Extra Lessons"),
+      h("div",{cls:"hsub hsubrow"},h("span",{},"Extra Lessons"),chestEl(84,"chome")),
       apkButton(),
       skinRow(),...(layoutMode()==="classic"?[curSkin()==="lady"?closetBtn():null,curSkin()==="lady"?castleCard():null,curSkin()==="futbol"?stadiumCard():null,curSkin()==="normal"?albumBtn():null,curSkin()==="normal"?schoolCard():null]:[]),
       layoutMode()==="classic"?h("p",{cls:"bi"},h("span",{cls:"es2"},"Español para principiantes. Elige una unidad, aprende las palabras, escucha las conversaciones y gana estrellas en la prueba."),h("span",{cls:"en2"},"Spanish for beginners. Choose a unit, learn the words, listen to the conversations and earn stars in the quiz.")):null),
