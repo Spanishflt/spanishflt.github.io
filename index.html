@@ -179,7 +179,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ltab[aria-selected="true"] small{color:#5a4200}
 .lesson{display:grid;gap:.7rem}
 .board{background:linear-gradient(#3a4452,#262e38);border-radius:20px;padding:.4rem .55rem .55rem;box-shadow:0 6px 0 #161b21,0 10px 18px rgba(0,0,0,.18)}
-.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}input.secret{-webkit-text-security:disc;text-security:disc;font-family:inherit;letter-spacing:.08em}.endpick{display:grid!important;grid-template-columns:1fr 1fr;gap:.5rem}.endpick{align-items:stretch}.endpick .btn{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .4rem}.endpick .l1{display:flex;align-items:center;justify-content:center;gap:.4em;font-size:1.05rem}.endpick .l2{display:block;font-size:.78rem;opacity:.8}.nextbox{margin:1rem auto .5rem;max-width:430px;text-align:center}.nexth{margin:0 0 .45rem;font-weight:700;color:var(--muted,#5a6470)}.nextpick:has(>.btn:only-child){grid-template-columns:1fr;max-width:220px;margin:0 auto}
+.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}.btitle .endpick{width:100%;max-width:430px;margin-left:auto;margin-right:auto}.famshare{display:flex!important;align-items:center;justify-content:center;gap:.6rem;width:100%;max-width:430px;margin:.6rem auto 0;padding:.6rem .8rem;background:#25D366!important;color:#fff!important;border-color:#1a9e4b!important;box-shadow:0 4px 0 #1a9e4b!important}.famic{flex:0 0 auto;width:3.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;border-radius:14px;background:#25D366;color:#fff;box-shadow:0 3px 0 #1a9e4b;cursor:pointer;padding:.3rem 0;font-family:inherit}.famic .fii{font-size:1.35rem;line-height:1}.famic .fsh{margin-top:-3px;font-size:.58rem;opacity:.95}.famic .fff{font-size:.5rem;font-weight:700;line-height:1.05;text-align:center;opacity:.95;padding:0 2px}.famic small{font-size:.62rem;font-weight:800;letter-spacing:.02em}.famic:active{transform:translateY(2px);box-shadow:0 1px 0 #1a9e4b}.famshare .sff{font-size:.72rem;opacity:.85;margin-top:1px}.spshare2{display:flex;align-items:center;gap:.75rem;margin:.7rem 0 .8rem}.spshare2 .famic{height:3.4rem}.spst{display:flex;flex-direction:column;cursor:pointer;line-height:1.2}.spst b{font-size:1rem;color:var(--ink)}.spst small{font-size:.8rem;color:var(--muted,#5a6470)}.famshare.spshare{margin:.7rem 0 .8rem;width:100%}.famshare.famsm{margin:.1rem auto .7rem;padding:.4rem .8rem;box-shadow:0 3px 0 #1a9e4b!important}.famsm .fi{font-size:1.2rem}.famsm b{font-size:.95rem}.famsm small{font-size:.72rem}.famshare .fi{font-size:1.5rem;line-height:1}.famshare .ft{display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.15}.famshare b{font-size:1.08rem;font-weight:800}.famshare small{font-size:.8rem;opacity:.92;font-weight:600}input.secret{-webkit-text-security:disc;text-security:disc;font-family:inherit;letter-spacing:.08em}.endpick{display:grid!important;grid-template-columns:1fr 1fr;gap:.5rem}.endpick{align-items:stretch}.endpick .btn{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .4rem}.endpick .l1{display:flex;align-items:center;justify-content:center;gap:.4em;font-size:1.05rem}.endpick .l2{display:block;font-size:.78rem;opacity:.8}.nextbox{margin:1rem auto .5rem;max-width:430px;text-align:center}.nexth{margin:0 0 .45rem;font-weight:700;color:var(--muted,#5a6470)}.nextpick:has(>.btn:only-child){grid-template-columns:1fr;max-width:220px;margin:0 auto}
 .bbar{display:flex;flex-direction:column;align-items:stretch;gap:.35rem;flex-wrap:nowrap;color:#cfe3ea;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:.85rem;padding:0 .35rem .35rem}
 .bfoot{display:flex;align-items:center;gap:.6rem;min-height:22px;padding:.5rem .35rem 0}
 .bfoot .dots{flex:1 1 auto;justify-content:flex-start}
@@ -2093,6 +2093,7 @@ function lessonPlayer(u,box,les,idx){
   function end(){
     /* the lesson always moves forward: reaching the last step completes it (no sending back to the games) */
     doneL[idx]=1;saveDone();
+    try{const LS=JSON.parse(localStorage.getItem("bs-lstars")||"{}"),o=LS[idx];if(rounds&&(!o||score/rounds>=o[0]/o[1])){LS[idx]=[score,rounds];localStorage.setItem("bs-lstars",JSON.stringify(LS));}}catch(e){}
     if(idx===DEMO_IDX){
       screen.append(h("div",{cls:"demoend"},
         h("div",{cls:"mini"},h("div",{cls:"mtop"},"🎓"),h("div",{cls:"mt"},"¡Completé mi primera clase!"),h("div",{cls:"ms"},"I finished my first lesson!"),
@@ -2100,7 +2101,7 @@ function lessonPlayer(u,box,les,idx){
         h("p",{cls:"bsub"},"¿Qué quieres hacer ahora? · What do you want to do now?"),
         h("div",{cls:"controls sm endpick"},
           h("button",{cls:"btn primary",on:{click:()=>{tab="cards";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"📇"),h("span",{},"Repasar")),h("span",{cls:"l2"},"Review")),
-          h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),
+          h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),famBtn(idx,score,rounds),
         curSkin()==="normal"?h("div",{cls:"demogift alb"},"📒 ¡Ganaste tu primer sticker! Hay "+(STK.length-1)+" más en las clases.",h("span",{},"You won your first sticker! There are "+(STK.length-1)+" more in the lessons.")):null,
         curSkin()==="lady"?h("div",{cls:"demogift"},"🎁 ¡Ganaste tu primer regalo! Hay "+(ACCS.length-1)+" más en las clases.",h("span",{},"You won your first gift! There are "+(ACCS.length-1)+" more in the lessons.")):null,
         h("div",{cls:"next"},h("div",{cls:"nl"},"👉 Ahora sigue con · Next:"),h("div",{cls:"nt"},U[0].i+" 1. "+U[0].t),h("div",{cls:"ne"},U[0].e),
@@ -2115,7 +2116,7 @@ function lessonPlayer(u,box,les,idx){
     screen.append(h("div",{cls:"btitle"},h("div",{cls:"bic"},"🏆"),h("div",{cls:"bh"},"¡Lección completada!"),h("div",{cls:"bsub"},"Lesson complete!"),
       rounds?h("div",{cls:"big"},"⭐ "+score+" / "+rounds):null,
       h("p",{cls:"bsub"},"¿Qué quieres hacer ahora? · What do you want to do now?"),
-      h("div",{cls:"controls sm endpick"},h("button",{cls:"btn primary",on:{click:()=>{tab="cards";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"📇"),h("span",{},"Repasar")),h("span",{cls:"l2"},"Review")),h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),
+      h("div",{cls:"controls sm endpick"},h("button",{cls:"btn primary",on:{click:()=>{tab="cards";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"📇"),h("span",{},"Repasar")),h("span",{cls:"l2"},"Review")),h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),famBtn(idx,score,rounds),
       h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:()=>{score=0;rounds=0;g1Done=false;g2Done=false;go(0);}}},"🔁 Otra vez · Again"))));
     confetti(screen);cheer();teacherEl.classList.add("dance");
     say(TL.end(les),[],()=>teacherEl&&teacherEl.classList.remove("dance"));
@@ -2552,15 +2553,55 @@ function shareProgress(){
     h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>doShare(RW.name,cb.checked)}},"📤 Compartir · Share"))]);
   {const o=[...document.querySelectorAll(".ovl .ovbox")].pop();if(o)o.classList.add("sharebox");}
 }
+/* ---------- Share an image: new app (native share) → phone share sheet → download ---------- */
+function blobB64(blob){return new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=no;fr.readAsDataURL(blob);});}
+async function shareImage(blob,fname,text){
+  try{if(window.BasicSpanishApp&&typeof BasicSpanishApp.shareFile==="function"){BasicSpanishApp.shareFile(await blobB64(blob),fname,"image/png",text);return;}}catch(e){}
+  const file=new File([blob],fname,{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text,title:"Basic Spanish"});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  if(navigator.share){try{await navigator.share({text,title:"Basic Spanish",url:"https://spanishflt.github.io"});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+  try{if(window.BasicSpanishApp&&typeof BasicSpanishApp.saveFile==="function"){BasicSpanishApp.saveFile(await blobB64(blob),fname,"image/png");return;}}catch(e){}
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+async function lessonCanvas(name,idx,score,rounds){
+  const W=1080,H=1080,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const F='"Atkinson Hyperlegible",system-ui,sans-serif';try{await document.fonts.ready;}catch(e){}
+  const rr=(X,Y,w,h,r)=>{x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();};
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#0E6E78");g.addColorStop(1,"#0A4F57");x.fillStyle=g;x.fillRect(0,0,W,H);
+  rr(60,60,960,960,40);x.fillStyle="#FFF8E1";x.fill();
+  rr(84,84,912,912,28);x.strokeStyle="#FFB627";x.lineWidth=12;x.stroke();
+  const fit=(t,wt,max,min)=>{let fs=max;do{x.font=wt+" "+fs+"px "+F;if(x.measureText(t).width<=820)break;fs-=2;}while(fs>min);};
+  x.textAlign="center";x.textBaseline="alphabetic";
+  x.font="150px "+F;x.fillStyle="#000";x.fillText("🏆",W/2,285);
+  x.fillStyle="#0E6E78";fit("¡Lección completada!","800",66,40);x.fillText("¡Lección completada!",W/2,395);
+  x.fillStyle="#55606b";x.font="italic 40px "+F;x.fillText("Lesson complete!",W/2,450);
+  x.fillStyle="#E0405A";fit(name,"800",92,44);x.fillText(name,W/2,rounds?585:610);
+  const u=ALL[idx],lt=(idx===DEMO_IDX?"Clase de prueba":"Lección "+(idx+1))+(u&&u.t?" · "+u.t:"");
+  x.fillStyle="#1d2b36";fit(lt,"700",44,28);x.fillText(lt,W/2,rounds?665:700);
+  if(rounds){x.fillStyle="#E8A100";x.font="800 70px "+F;x.fillText("⭐ "+score+" / "+rounds,W/2,770);}
+  x.fillStyle="#55606b";fit("Basic Spanish · Prof. Alberto Garrido Hernández","600",32,22);x.fillText("Basic Spanish · Prof. Alberto Garrido Hernández",W/2,880);
+  x.fillStyle="#0E6E78";x.font="700 34px "+F;x.fillText("spanishflt.github.io",W/2,935);
+  return c;
+}
+async function shareLesson(idx,score,rounds,bt){
+  if(!RW.name){askName(()=>shareLesson(idx,score,rounds,bt));return;}
+  if(bt)bt.disabled=true;
+  try{
+    const c=await lessonCanvas(RW.name,idx,score,rounds);const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+    const first=RW.name.trim().split(/\s+/)[0];
+    const what=idx===DEMO_IDX?"la clase de prueba":"la Lección "+(idx+1);
+    const text="🎉 ¡"+first+" completó "+what+" de español!"+(rounds?" ⭐ "+score+"/"+rounds:"")+" · "+first+" finished "+(idx===DEMO_IDX?"the free lesson":"Lesson "+(idx+1))+" in Spanish! Basic Spanish: https://spanishflt.github.io";
+    await shareImage(blob,"Basic-Spanish-"+(idx===DEMO_IDX?"demo":"leccion-"+(idx+1))+".png",text);
+  }finally{if(bt)bt.disabled=false;}
+}
+const famBtn=(idx,score,rounds)=>h("button",{cls:"btn famshare",on:{click:e=>shareLesson(idx,score,rounds,e.currentTarget)}},
+  h("span",{cls:"fi","aria-hidden":"true"},"📤"),h("span",{cls:"ft"},h("b",{},"Enseñar a mi familia"),h("small",{},"Show my family")));
 async function doShare(name,withPhoto){
   const st=progressStats();
   const c=await progressCanvas(name,withPhoto);const blob=await new Promise(r=>c.toBlob(r,"image/png"));
   const fname="Basic-Spanish-progress"+(name?"-"+name.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-"):"")+".png";
   const text=(name?name+": ":"")+"🇪🇸 ¡Estoy aprendiendo español con Basic Spanish! · I'm learning Spanish with Basic Spanish! ⭐ "+st.t+" "+(st.medals.map(m=>m[1]).join(""))+" · "+(st.done.length+(st.demo?1:0))+" lessons done. ¡Aprende conmigo! · Learn with me: https://spanishflt.github.io";
-  const file=new File([blob],fname,{type:"image/png"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text,title:"Basic Spanish"});return;}catch(e){if(e&&e.name==="AbortError")return;}}
-  if(navigator.share){try{await navigator.share({text,title:"Basic Spanish",url:"https://spanishflt.github.io"});}catch(e){}}
-  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+  await shareImage(blob,fname,text);
 }
 
 /* ---------- Student full name (one per device) ---------- */
@@ -3730,6 +3771,9 @@ function penShot(root,ok,g,sv){
     pn.append(h("button",{cls:"sp-x","aria-label":"Cerrar · Close",on:{click:()=>setOpen(false)}},"✕"),
       h("h3",{},RW.name||"Mi progreso"),h("div",{cls:"sp-sub"},"Mi progreso · My progress"),
       h("div",{cls:"sp-big"},h("span",{cls:"ic","aria-hidden":"true"},d.lvl[0]),h("div",{},h("b",{},d.lvl[1]),h("small",{},d.lvl[2]+(d.q.length?" · "+d.pct+"%":"")))),
+      (()=>{const go=()=>{setOpen(false);shareProgress();};return h("div",{cls:"spshare2"},
+        h("button",{cls:"famic","aria-label":"Compartir mi progreso · Share my progress",on:{click:go}},h("span",{cls:"fii","aria-hidden":"true"},"📤"),h("small",{},"Enviar"),h("small",{cls:"fsh"},"Share")),
+        h("div",{cls:"spst",on:{click:go}},h("b",{},"Compartir mi progreso"),h("small",{},"Share my progress"),h("small",{},"Family & friends")));})(),
       h("div",{cls:"sp-row"},h("span",{},"⭐ Estrellas · Stars"),h("b",{},String(d.t))),
       h("div",{cls:"sp-row"},h("span",{},"📘 Clases · Lessons"),h("b",{},d.done.length+" / 28")),
       h("div",{cls:"sp-row"},h("span",{},"📝 Pruebas · Quizzes"),h("b",{},String(d.q.length))),
@@ -3988,7 +4032,7 @@ function gameBoard(mode){
   });
   const more=h("div",{cls:"gm-win"},path);setTimeout(()=>{try{more.scrollTop=Math.max(0,ys[Math.max(0,pc-1)]-46);}catch(e){}},0);
   const gx=h("div",{cls:"gx"},X.map((u,i)=>h("button",{on:{click:()=>openUnit(U.length+i)}},h("i",{"aria-hidden":"true"},u.i),h("span",{},u.t))));
-  const gt=h("div",{cls:"gt"},h("button",{cls:"gt-share",on:{click:shareProgress}},h("span",{"aria-hidden":"true"},"📤"),h("span",{},h("b",{},"Compartir mi progreso"),h("small",{},"Share my progress"))),h("button",{cls:"gt-guide",on:{click:showGuide}},h("span",{"aria-hidden":"true"},"📖"),h("span",{},h("b",{},"Cómo usar la app"),h("small",{},"How to use the app"))));
+  const gt=h("div",{cls:"gt"},h("button",{cls:"gt-guide",on:{click:showGuide}},h("span",{"aria-hidden":"true"},"📖"),h("span",{},h("b",{},"Cómo usar la app"),h("small",{},"How to use the app"))));
   return h("div",{cls:"gm gm"+mode},scene,upTxt,cta,demo,hardBtn(),prizeBanner(),more,
     h("h2",{cls:"sec"},"Vocabulario y gramática | Vocabulary and Grammar"),gx,h("h2",{cls:"sec"},"Más · More"),gt);
 }
@@ -4009,7 +4053,6 @@ function home(focusBook){
     h("h2",{cls:"sec"},"🎁 Clase de prueba | Free demo"),
     h("div",{cls:"grid"},unitBtn(DEMO,DEMO_IDX,"Demo")),
     pathBanner(),
-    h("button",{cls:"sharebtn",on:{click:shareProgress}},"📤 Compartir mi progreso · Share my progress"),
     h("button",{cls:"guidebtn",on:{click:showGuide}},"📖 Cómo usar la app · How to use the app"),
     h("h2",{cls:"sec"},"Clases | Lessons"),
     h("p",{cls:"secnote"},"🔒 To unlock, see your Spanish teacher at OHPIS."),
@@ -4105,7 +4148,9 @@ function render(){
   app.append(...[topbar(true),
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
     hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();unitFocus();}}},
-      h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
+      h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),
+      doneL[cur]?h("button",{cls:"famic","aria-label":"Enseñar a mi familia · Show my family",title:"Enseñar a mi familia · Show my family",on:{click:e=>{let sc=0,rd=0;try{const o=JSON.parse(localStorage.getItem("bs-lstars")||"{}")[cur];if(o){sc=o[0];rd=o[1];}}catch(x){}shareLesson(cur,sc,rd,e.currentTarget);}}},h("span",{cls:"fii","aria-hidden":"true"},"📤"),h("small",{},"Enviar"),h("small",{cls:"fsh"},"Share"),h("span",{cls:"fff"},"Family & friends")):null,
+      infoBtn("big")):null,
     h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();unitFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
