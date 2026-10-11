@@ -1817,6 +1817,8 @@ const NUM_WORDS=(()=>{const a=[];for(let n=0;n<=60;n++)a.push(nw(n));return a;})
 function commonSegs(){const S=[];CARD_REC.concat(LETTER_NAMES,PIECES,NUM_WORDS).forEach(t=>S.push({t,l:"es"}));TL.praise.concat(TL.oops).forEach(t=>segs(t).forEach(x=>S.push(x)));return S;}
 const pad2=n=>String(n).padStart(2,"0");
 
+/* Auto-scroll: move the page just enough so the part that matters is on screen */
+function reveal(topEl,botEl,prefer){try{if(!topEl||!botEl||!topEl.isConnected)return;const vh=window.innerHeight,m=10,t=topEl.getBoundingClientRect().top,b=botEl.getBoundingClientRect().bottom;let dy=0;if(b-t<=vh-2*m){if(t<m)dy=t-m;else if(b>vh-m)dy=b-(vh-m);}else dy=prefer==="bottom"?b-(vh-m):t-m;if(Math.abs(dy)>4)window.scrollBy({top:dy,behavior:"smooth"});}catch(e){}}
 /* Player */
 function lessonPlayer(u,box,les,idx){
   const vocab=lessonVocab(u);
@@ -1838,21 +1840,21 @@ function lessonPlayer(u,box,les,idx){
   const back=h("button",{cls:"btn",on:{click:()=>go(k-1)}},h("span",{cls:"l1"},h("span",{},"◀"),h("span",{},"Atrás")),h("span",{cls:"l2"},"Back"));
   const again=h("button",{cls:"btn",on:{click:()=>{primeSpeech();go(k);}}},h("span",{cls:"l1"},h("span",{},"🔁"),h("span",{},"Repetir")),h("span",{cls:"l2"},"Again"));
   const next=h("button",{cls:"btn primary",on:{click:()=>{primeSpeech();go(k+1);}}},h("span",{cls:"l1"},h("span",{},"Siguiente"),h("span",{},"▶")),h("span",{cls:"l2"},"Next"));
-  box.append(h("div",{cls:"lesson"},board,h("div",{cls:"stagebot"},teacherEl,bubble),h("div",{cls:"lnav"},back,again,next)));
+  box.append(h("div",{cls:"lesson"},board,h("div",{cls:"lnav"},back,again,next),h("div",{cls:"stagebot"},teacherEl,bubble)));let firstGo=true;
 
   const praise=()=>{teacherMood("happy",1500);cheer();talk(segs(pick(TL.praise)));};
   const oops=()=>{teacherMood("oops",900);buzz();talk(segs(pick(TL.oops)));};
-  function say(text,extra,onDone){bubble.innerHTML="";bubble.append(richText(text));talk(segs(text).map(x=>Object.assign(x,{b:1})).concat(extra||[]),onDone);}
+  function say(text,extra,onDone){bubble.innerHTML="";bubble.append(richText(text));if(!firstGo)reveal(bubble,bubble,"bottom");talk(segs(text).map(x=>Object.assign(x,{b:1})).concat(extra||[]),onDone);}
   function inView(el){const r=el.getBoundingClientRect(),sr=screen.getBoundingClientRect();if(r.top<sr.top||r.bottom>sr.bottom)screen.scrollTo({top:screen.scrollTop+(r.top-sr.top)-sr.height/2+r.height/2,behavior:"smooth"});}
-  function mark(el){screen.querySelectorAll(".on").forEach(x=>x.classList.remove("on"));if(el){el.classList.add("on");inView(el);poke();}}
+  function mark(el){screen.querySelectorAll(".on").forEach(x=>x.classList.remove("on"));if(el){el.classList.add("on");inView(el);{const r=board.getBoundingClientRect(),vis=Math.min(r.bottom,window.innerHeight)-Math.max(r.top,0);if(vis<r.height*.5)reveal(board,board);}poke();}}
   function rows(list){const box2=h("div",{cls:"blist"});const els=list.map(([es,en])=>{const r=h("button",{cls:"brow",on:{click:()=>{mark(r);talk([{t:es,l:"es"}]);}}},h("span",{cls:"bes"},es),h("span",{cls:"ben"},en));box2.append(r);return r;});return[box2,els];}
 
   function go(n){
     if(n<0||n>=S.length)return;k=n;hush();teacherEl.classList.remove("dance");screen.innerHTML="";screen.scrollTop=0;
-    {const bt=board.getBoundingClientRect().top;if(bt<0||bt>window.innerHeight*.5)board.scrollIntoView({block:"start",behavior:"smooth"});}
+    if(!firstGo)requestAnimationFrame(()=>reveal(board,bubble,"bottom"));
     dots.innerHTML="";S.forEach((_,i)=>dots.append(h("i",{cls:i===k?"cur":i<k?"past":""})));
     back.disabled=k===0;next.disabled=k===S.length-1;
-    const s=S[k];({title,tip,present,practice,produce,vocab:vocabS,pat,song,game1,dlg,game2,end})[s.t](s);
+    const s=S[k];({title,tip,present,practice,produce,vocab:vocabS,pat,song,game1,dlg,game2,end})[s.t](s);firstGo=false;
   }
   function title(){
     const start=h("button",{cls:"bigstart",on:{click:async()=>{
@@ -3787,6 +3789,7 @@ function openUnit(idx,t){
   cur=idx;tab=t||(hasLesson(idx)&&isUnlocked(idx)?"lesson":"cards");render();window.scrollTo(0,0);
   try{loadAudio("unit-"+pad2(idx+1));}catch(e){}
 }
+function tabFocus(){requestAnimationFrame(()=>{const t=document.querySelector(".tabs");if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-8),behavior:"smooth"});});}
 function render(){
   hush();teacherEl=null;
   const u=ALL[cur];app.innerHTML="";
@@ -3798,9 +3801,9 @@ function render(){
   const body=h("div",{});
   app.append(...[topbar(true),
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
-    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();}}},
+    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();tabFocus();}}},
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();tabFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
