@@ -179,7 +179,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ltab[aria-selected="true"] small{color:#5a4200}
 .lesson{display:grid;gap:.7rem}
 .board{background:linear-gradient(#3a4452,#262e38);border-radius:20px;padding:.4rem .55rem .55rem;box-shadow:0 6px 0 #161b21,0 10px 18px rgba(0,0,0,.18)}
-.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}.endpick{display:grid!important;grid-template-columns:1fr 1fr;gap:.5rem}.endpick{align-items:stretch}.endpick .btn{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .4rem}.endpick .l1{display:flex;align-items:center;justify-content:center;gap:.4em;font-size:1.05rem}.endpick .l2{display:block;font-size:.78rem;opacity:.8}.nextbox{margin:1rem auto .5rem;max-width:430px;text-align:center}.nexth{margin:0 0 .45rem;font-weight:700;color:var(--muted,#5a6470)}.nextpick:has(>.btn:only-child){grid-template-columns:1fr;max-width:220px;margin:0 auto}
+.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}input.secret{-webkit-text-security:disc;text-security:disc;font-family:inherit;letter-spacing:.08em}.endpick{display:grid!important;grid-template-columns:1fr 1fr;gap:.5rem}.endpick{align-items:stretch}.endpick .btn{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .4rem}.endpick .l1{display:flex;align-items:center;justify-content:center;gap:.4em;font-size:1.05rem}.endpick .l2{display:block;font-size:.78rem;opacity:.8}.nextbox{margin:1rem auto .5rem;max-width:430px;text-align:center}.nexth{margin:0 0 .45rem;font-weight:700;color:var(--muted,#5a6470)}.nextpick:has(>.btn:only-child){grid-template-columns:1fr;max-width:220px;margin:0 auto}
 .bbar{display:flex;flex-direction:column;align-items:stretch;gap:.35rem;flex-wrap:nowrap;color:#cfe3ea;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:.85rem;padding:0 .35rem .35rem}
 .bfoot{display:flex;align-items:center;gap:.6rem;min-height:22px;padding:.5rem .35rem 0}
 .bfoot .dots{flex:1 1 auto;justify-content:flex-start}
@@ -1434,7 +1434,7 @@ function expiryNote(i){
     h("button",{cls:"tkey",on:{click:()=>renewDialog(i)}},"🔑 Renovar · Renew"));
 }
 function renewDialog(i){
-  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});const dp=durPicker();const msg=h("p",{cls:"tmsg","aria-live":"polite"});
+  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});const dp=durPicker();const msg=h("p",{cls:"tmsg","aria-live":"polite"});
   overlay("Renew",close=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🔑"),h("h2",{},"Renovar · Renew")),h("p",{},U[i].i+" "+(i+1)+". "+U[i].t),dp.el,
     h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{msg.textContent="…";try{const kek=await teacherKey(pw.value);unlocked[i]=await unwrapKey(kek,i);saveUnlocked();setUnlockExp(i,dp.days);pw.value="";close();render();}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";}}}},"Renovar · Renew")),msg,
     h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
@@ -1837,7 +1837,7 @@ function viewLesson(u,box){
 function lockScreen(u,box,idx,unitTab){
   const form=h("div",{cls:"tform",hidden:"true"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});
-  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password","aria-label":"Contraseña del maestro · Teacher password"});
+  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password","aria-label":"Contraseña del maestro · Teacher password"});
   const go=h("button",{cls:"btn primary"},"Desbloquear · Unlock");
   const after=h("div",{cls:"tafter",hidden:"true"});
   const dp=durPicker();
@@ -2377,7 +2377,7 @@ function rewardsPanel(){
 }
 function redeemCoupon(){
   if(RW.couponUsed||totalStars()<50){overlay("Coupon",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎁"),h("h2",{},"Cupón · Coupon")),h("p",{},RW.couponUsed?"Este cupón ya se usó. Solo se puede usar una vez. · This coupon was already used. It can only be used once.":"Todavía no hay cupón. · No coupon yet."),h("button",{cls:"btn primary",on:{click:c}},"OK")]);return;}
-  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});const list=h("div",{cls:"rlist"});const dp=durPicker();
   overlay("Redeem coupon",close=>[
     h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🎁"),h("h2",{},"Canjear cupón · Redeem coupon")),
@@ -2588,7 +2588,7 @@ function nameInfo(){
     h("button",{cls:"btn primary",on:{click:close}},"OK")]);
 }
 function teacherRename(){
-  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const nv=h("input",{type:"text",maxlength:"40",placeholder:"Nombre y apellido · Full name",value:RW.name||""});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});
   overlay("Fix name",close=>[
@@ -2723,7 +2723,7 @@ function avatarBtn(){
 /* ---------- Teacher's rewards (bonus stars) ---------- */
 const BONUS_REASONS=["🌟 Excelente trabajo · Excellent work","🙋 Participación · Participation","📒 Tarea · Homework","🗣️ Hablar español · Speaking Spanish","😊 Buen comportamiento · Good behaviour","🤝 Ayudar a un compañero · Helping a classmate"];
 function teacherRewards(){
-  const pw=h("input",{type:"password",autocomplete:"off",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});const area=h("div",{});
   let n=1,reason="";
   const nBtns=[1,2,3,5,10].map(v=>h("button",{cls:"dur"+(v===n?" on":""),on:{click:e=>{n=v;nBtns.forEach(b=>b.classList.toggle("on",+b.dataset.v===v));}}},"+"+v+" ⭐"));
