@@ -2091,31 +2091,23 @@ function lessonPlayer(u,box,les,idx){
     say(TL.game2,[],round);
   }
   function end(){
-    if(!(g1Done&&g2Done)){
-      const gi1=S.findIndex(x=>x.t==="game1"),gi2=S.findIndex(x=>x.t==="game2");
-      screen.append(h("div",{cls:"btitle"},h("div",{cls:"bic"},"⏳"),h("div",{cls:"bh"},"¡Casi terminas!"),h("div",{cls:"bsub"},"Almost there!"),
-        h("p",{cls:"incomplete"},"Para completar la lección, juega los dos juegos.",h("br",{}),h("i",{},"To complete the lesson, play both games.")),
-        h("div",{cls:"controls sm"},
-          g1Done?null:h("button",{cls:"btn primary",on:{click:()=>go(gi1)}},"🎮 Juego 1 · Game 1"),
-          g2Done?null:h("button",{cls:"btn primary",on:{click:()=>go(gi2)}},"🎮 Juego 2 · Game 2"))));
-      teacherMood("oops",900);bubble.innerHTML="";bubble.append(richText("Almost! Play the games to finish the lesson."));
-      talk(segs("Almost! Try again!"));
-      return;
-    }
+    /* the lesson always moves forward: reaching the last step completes it (no sending back to the games) */
     doneL[idx]=1;saveDone();
     if(idx===DEMO_IDX){
       screen.append(h("div",{cls:"demoend"},
         h("div",{cls:"mini"},h("div",{cls:"mtop"},"🎓"),h("div",{cls:"mt"},"¡Completé mi primera clase!"),h("div",{cls:"ms"},"I finished my first lesson!"),
           rounds?h("div",{cls:"mstars"},"⭐ "+score+" / "+rounds):null,h("div",{cls:"mfoot"},"Basic Spanish · Free demo")),
+        h("p",{cls:"bsub"},"¿Qué quieres hacer ahora? · What do you want to do now?"),
+        h("div",{cls:"controls sm endpick"},
+          h("button",{cls:"btn primary",on:{click:()=>{tab="cards";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"📇"),h("span",{},"Repasar")),h("span",{cls:"l2"},"Review")),
+          h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),
         curSkin()==="normal"?h("div",{cls:"demogift alb"},"📒 ¡Ganaste tu primer sticker! Hay "+(STK.length-1)+" más en las clases.",h("span",{},"You won your first sticker! There are "+(STK.length-1)+" more in the lessons.")):null,
         curSkin()==="lady"?h("div",{cls:"demogift"},"🎁 ¡Ganaste tu primer regalo! Hay "+(ACCS.length-1)+" más en las clases.",h("span",{},"You won your first gift! There are "+(ACCS.length-1)+" more in the lessons.")):null,
         h("div",{cls:"next"},h("div",{cls:"nl"},"👉 Ahora sigue con · Next:"),h("div",{cls:"nt"},U[0].i+" 1. "+U[0].t),h("div",{cls:"ne"},U[0].e),
           h("div",{cls:"nk"},"🔒 Pídele a tu maestro que la desbloquee · Ask your teacher to unlock it")),
         h("div",{cls:"controls sm"},
-          h("button",{cls:"btn primary",on:{click:()=>showPath()}},"🗺️ Mi camino · My path"),
-          h("button",{cls:"btn",on:{click:()=>openUnit(0,"lesson")}},"👀 Lección 1 · Lesson 1"),
-          h("button",{cls:"btn",on:{click:()=>{tab="cards";render();unitFocus();}}},"📇 Repasar · Review"),
-          h("button",{cls:"btn",on:{click:()=>{tab="quiz";render();unitFocus();}}},"⭐ Prueba · Quiz"))));
+          h("button",{cls:"btn",on:{click:()=>showPath()}},"🗺️ Mi camino · My path"),
+          h("button",{cls:"btn",on:{click:()=>openUnit(0,"lesson")}},"👀 Lección 1 · Lesson 1"))));
       confetti(screen);cheer();teacherEl.classList.add("dance");
       say(TL.end(les),[],()=>teacherEl&&teacherEl.classList.remove("dance"));
       return;
