@@ -174,6 +174,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ltab[aria-selected="true"] small{color:#5a4200}
 .lesson{display:grid;gap:.7rem}
 .board{background:linear-gradient(#3a4452,#262e38);border-radius:20px;padding:.55rem .55rem .7rem;box-shadow:0 6px 0 #161b21,0 10px 18px rgba(0,0,0,.18)}
+.board{position:relative}.bpage{position:absolute;top:.45rem;right:.8rem;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}
 .bbar{display:flex;flex-direction:column;align-items:stretch;gap:.35rem;flex-wrap:nowrap;color:#cfe3ea;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:.85rem;padding:.1rem .35rem .45rem}
 .bbar>span{flex:0 0 auto;white-space:nowrap}
 .dots{display:flex;gap:5px;flex-wrap:nowrap;justify-content:center;align-items:center;min-width:0;overflow:hidden;padding:2px 0}
@@ -784,7 +785,7 @@ body{padding-bottom:50px}
 .chips button[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal);color:var(--ink);font-weight:700}
 
 /* Flashcard */
-.stage{perspective:1200px;max-width:360px;margin:0 auto}
+.stage{perspective:1200px;max-width:360px;max-width:min(360px,calc((100vh - 290px)/1.1));max-width:min(360px,calc((100svh - 290px)/1.1));margin:0 auto}
 .card{position:relative;width:100%;aspect-ratio:4/4.4;border:none;background:none;padding:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
 .card.flipped{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;background:var(--surface);border:3px solid var(--line);box-shadow:var(--shadow);padding:1rem;text-align:center}
@@ -1898,12 +1899,13 @@ function lessonPlayer(u,box,les,idx){
   const screen=h("div",{cls:"screen"});
   const dots=h("div",{cls:"dots"});
   const board=h("div",{cls:"board"},h("div",{cls:"bbar"},h("span",{},(idx===DEMO_IDX?"Demo · Clase de prueba":"Lección "+(idx+1)+" · Lesson "+(idx+1))+" ",infoBtn("dark")),dots),screen);
+  const bpage=h("span",{cls:"bpage","aria-label":"Pizarra · Board"});bpage.hidden=true;board.append(bpage);
   teacherEl=teacherSVG();teacherEl.classList.add("arm-rest");
   const bubble=h("button",{cls:"bubble","aria-live":"polite",title:"Tap to hear again",on:{click:()=>{primeSpeech();go(k);}}});
   const back=h("button",{cls:"btn",on:{click:()=>go(k-1)}},h("span",{cls:"l1"},h("span",{},"◀"),h("span",{},"Atrás")),h("span",{cls:"l2"},"Back"));
   const again=h("button",{cls:"btn",on:{click:()=>{primeSpeech();go(k);}}},h("span",{cls:"l1"},h("span",{},"🔁"),h("span",{},"Repetir")),h("span",{cls:"l2"},"Again"));
   const next=h("button",{cls:"btn primary",on:{click:()=>{primeSpeech();go(k+1);}}},h("span",{cls:"l1"},h("span",{},"Siguiente"),h("span",{},"▶")),h("span",{cls:"l2"},"Next"));
-  box.append(h("div",{cls:"lesson"},board,h("div",{cls:"lnav"},back,again,next),h("div",{cls:"stagebot"},teacherEl,bubble)));let firstGo=true;
+  const stagebot=h("div",{cls:"stagebot"},teacherEl,bubble);box.append(h("div",{cls:"lesson"},board,h("div",{cls:"lnav"},back,again,next),stagebot));let firstGo=true;if(window.__focusLesson){window.__focusLesson=false;setTimeout(()=>reveal(board,stagebot,"bottom"),60);}
 
   const praise=()=>{teacherMood("happy",1500);cheer();talk(segs(pick(TL.praise)));};
   const oops=()=>{teacherMood("oops",900);buzz();talk(segs(pick(TL.oops)));};
@@ -1913,7 +1915,7 @@ function lessonPlayer(u,box,les,idx){
   function rows(list){const box2=h("div",{cls:"blist"});const els=list.map(([es,en])=>{const r=h("button",{cls:"brow",on:{click:()=>{mark(r);talk([{t:es,l:"es"}]);}}},h("span",{cls:"bes"},es),h("span",{cls:"ben"},en));box2.append(r);return r;});return[box2,els];}
 
   function go(n){
-    if(n<0||n>=S.length)return;k=n;hush();teacherEl.classList.remove("dance");screen.innerHTML="";screen.scrollTop=0;
+    if(n<0||n>=S.length)return;k=n;hush();bpage.hidden=true;teacherEl.classList.remove("dance");screen.innerHTML="";screen.scrollTop=0;
     if(!firstGo)requestAnimationFrame(()=>reveal(board,bubble,"bottom"));
     dots.innerHTML="";S.forEach((_,i)=>dots.append(h("i",{cls:i===k?"cur":i<k?"past":""})));
     back.disabled=k===0;next.disabled=k===S.length-1;
@@ -1954,7 +1956,7 @@ function lessonPlayer(u,box,les,idx){
     let i=0;
     const step=()=>{
       if(i>=p.steps.length){teacherMood("happy",1200);return;}
-      const st=p.steps[i++];const[el,items]=boardEl(st.board);screen.append(el);inView(el);
+      const st=p.steps[i++];if(p.steps.length>1){bpage.textContent=i+"/"+p.steps.length;bpage.hidden=false;}const[el,items]=boardEl(st.board);screen.append(el);inView(el);
       const nrm=x=>x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[{}¿?¡!.,:;·()]/g," ").split(/\s+/).filter(Boolean);
       const txt=el=>Array.from(el.childNodes).map(n=>n.nodeType===3?n.textContent:(n.tagName==="B"||n.tagName==="I"?n.textContent:" "+txt(n)+" ")).join("");
       const pickItem=t=>{const rt=nrm(t);let best=null,bs=0;items.forEach(it=>{const tt=new Set(nrm(txt(it)));const sc=rt.filter(w=>tt.has(w)).length/rt.length;if(sc>bs){bs=sc;best=it;}});return bs>=.6?best:null;};
@@ -2244,6 +2246,8 @@ function rewardCard(g,emoji,ms){
     g.classList.add("gout");setTimeout(()=>g.remove(),450);rewardFly(emoji,rr);};
   g.addEventListener("click",go);document.body.append(g);const t=setTimeout(go,ms||3000);
 }
+/* Tap on an information window closes it (buttons still work; windows where you type stay open) */
+document.addEventListener("click",e=>{try{const box=e.target.closest&&e.target.closest(".ovl .ovbox");if(!box)return;if(box.querySelector("input,textarea,select"))return;if(e.target.closest("button,a,input,label,select,textarea,summary,[contenteditable],.noclose"))return;const ov=box.closest(".ovl");if(ov&&ov.isConnected)ov.click();}catch(_){}});
 function overlay(label,build,onClose){
   const close=()=>{if(!ov.isConnected)return;if(onClose){try{onClose(ov);}catch(e){}}ov.remove();document.removeEventListener("keydown",esc);};const esc=e=>{if(e.key==="Escape")close();};
   const box=h("div",{cls:"ovbox"},...build(close));
@@ -2634,10 +2638,10 @@ function teacherRewards(){
 }
 function celebrateBonus(n,r){
   refreshTop();
-  const _d=chestBurst("🍎")?1000:0;setTimeout(()=>overlay("Teacher reward",close=>[h("div",{cls:"celebrate"},h("div",{cls:"cic"},"🍎"),
+  const _d=chestBurst("🍎")?1000:0;setTimeout(()=>{const cl=overlay("Teacher reward",close=>[h("div",{cls:"celebrate"},h("div",{cls:"cic"},"🍎"),
       h("h2",{},"¡Tu maestro te dio +"+n+" ⭐! · Your teacher gave you +"+n+" ⭐!"),r?h("p",{cls:"cgift"},r):null,
       h("p",{},"Ahora tienes · Now you have ⭐ "+totalStars())),
-    h("button",{cls:"btn primary",on:{click:()=>{close();setTimeout(checkRewards,300);}}},"¡Gracias! · Thank you!")].filter(Boolean)),_d);
+    h("button",{cls:"btn primary",on:{click:()=>close()}},"¡Gracias! · Thank you!")].filter(Boolean),()=>{clearTimeout(tm);setTimeout(checkRewards,300);});const tm=setTimeout(cl,3000);},_d);
   try{cheer();}catch(e){}
 }
 function bonusList(){
@@ -2759,7 +2763,7 @@ function dailyGreeting(){
       tip&&tip.go?h("button",{cls:"gogo",on:{click:()=>{close();tip.go();}}},"▶ Vamos · Let's go"):null),
     h("button",{cls:"gx","aria-label":"Cerrar · Close",on:{click:()=>close()}},"✕"));
   let gone=false;const close=()=>{if(gone)return;gone=true;card.classList.add("out");setTimeout(()=>card.remove(),400);if(COCO_WELCOME_WAIT){COCO_WELCOME_WAIT=false;setTimeout(()=>{try{Coco.event("welcome");}catch(e){}},900);}};
-  document.body.append(card);setTimeout(close,12000);try{setTimeout(()=>Coco.event("hi"),600);}catch(e){}
+  card.addEventListener("click",e=>{if(!e.target.closest("button"))close();});card.style.cursor="pointer";document.body.append(card);setTimeout(close,3000);try{setTimeout(()=>Coco.event("hi"),600);}catch(e){}
 }
 
 function backArrow(){const sp=document.createElement("span");sp.className="barrow";sp.setAttribute("aria-hidden","true");
@@ -3894,9 +3898,16 @@ function openUnit(idx,t){
   try{if(idx===DEMO_IDX)localStorage.setItem("bs-demoopen","1");}catch(e){}
   try{magicDust();}catch(e){}
   checkExpiry(false);
-  cur=idx;tab=t||(hasLesson(idx)&&isUnlocked(idx)?"lesson":"cards");render();window.scrollTo(0,0);
+  cur=idx;tab=t||(hasLesson(idx)&&isUnlocked(idx)?"lesson":"cards");render();window.scrollTo(0,0);unitFocus();
   try{loadAudio("unit-"+pad2(idx+1));}catch(e){}
 }
+function unitFocus(){setTimeout(()=>{try{
+  const t=document.querySelector(".tabs");if(!t)return;
+  if(tab==="lesson"){const b=document.querySelector(".lesson .board"),sb=document.querySelector(".lesson .stagebot");if(b&&sb)reveal(b,sb,"bottom");else{window.__focusLesson=true;const lr=document.querySelector(".lrow");if(lr)window.scrollTo({top:Math.max(0,lr.getBoundingClientRect().top+scrollY-8),behavior:"smooth"});}return;}
+  if(tab==="quiz")return;
+  if(tab==="cards"){const n=document.querySelector(".cardcount")||document.querySelector(".cardnav");if(n){reveal(t,n,"bottom");return;}}
+  tabFocus();
+}catch(e){}},80);}
 function tabFocus(){requestAnimationFrame(()=>{const t=document.querySelector(".tabs");if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-8),behavior:"smooth"});});}
 function render(){
   hush();teacherEl=null;
@@ -3909,9 +3920,9 @@ function render(){
   const body=h("div",{});
   app.append(...[topbar(true),
     h("div",{cls:"uhead"},h("div",{cls:"ic","aria-hidden":"true"},u.i),h("div",{},h("h1",{},u.t),h("p",{},u.e))),
-    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();tabFocus();}}},
+    hasLesson(cur)?h("div",{cls:"lrow"},h("button",{cls:"ltab",role:"tab","aria-selected":String(tab==="lesson"),on:{click:()=>{if(tab==="lesson")return;tab="lesson";render();unitFocus();}}},
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),infoBtn("big")):null,
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();tabFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();unitFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
@@ -3965,7 +3976,7 @@ function viewDialogue(u,box){
     if(playing){speechSynthesis.cancel();playing=false;bubs.forEach(b=>b.classList.remove("on"));play.textContent="▶ Escuchar · Listen";return;}
     playing=true;play.textContent="■ Parar · Stop";let k=0;
     const next=()=>{bubs.forEach(b=>b.classList.remove("on"));if(!playing||k>=lines.length){playing=false;play.textContent="▶ Escuchar · Listen";return;}
-      const[who,txt]=lines[k];bubs[k].classList.add("on");k++;speak(txt,{queue:true,pitch:who===first?1.15:.85,v:dlgVoice(who),end:()=>setTimeout(next,350)});};
+      const[who,txt]=lines[k];bubs[k].classList.add("on");reveal(bubs[k],bubs[k]);k++;speak(txt,{queue:true,pitch:who===first?1.15:.85,v:dlgVoice(who),end:()=>setTimeout(next,350)});};
     speechSynthesis.cancel();next();}}},"▶ Escuchar · Listen");
   box.append(bi("Escucha y luego practica el diálogo con un amigo. Toca una línea para oírla otra vez.","Listen, then act it out with a friend. Tap a line to hear it again."),
     h("div",{cls:"controls",style:"margin:0 0 1rem"},play),h("div",{cls:"chat"},bubs));
@@ -4151,6 +4162,7 @@ function viewQuiz(u,box){
   function next(){qi++;show();}
   function show(){
     bar.style.width=(qi/qs.length*100)+"%";area.innerHTML="";upd();
+    setTimeout(()=>{const top=area.querySelector(".pitch")?area:(live.isConnected?live:area);reveal(top,area);},90);
     if(qi<qs.length&&penOK){const pt=pitchEl(score,qi-score);if(pt)area.append(pt);}
     if(qi>=qs.length){
       const pct=score/qs.length,st=pct>=.9?3:pct>=.7?2:pct>=.4?1:0;
