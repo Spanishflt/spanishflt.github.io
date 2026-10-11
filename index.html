@@ -156,7 +156,8 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .infob.dark{color:#cfe3ea;font-size:.75rem}
 .ovl{position:fixed;inset:0;background:rgba(10,25,30,.55);display:grid;place-items:center;padding:1rem;z-index:50}
 .ovbox{background:var(--surface);color:var(--ink);border-radius:20px;padding:1.2rem 1.2rem 1rem;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.3)}
-.ovh{display:flex;align-items:center;gap:.5rem}
+.ovh{display:flex;align-items:center;gap:.5rem;padding-right:1.6rem}
+.ovbox{position:relative}.ovx{position:absolute;top:.55rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font:700 16px/1 sans-serif;cursor:pointer;z-index:2}
 .ovh h2{font-family:"Atkinson Hyperlegible",sans-serif;margin:0;color:var(--teal);font-size:1.3rem}
 .ovi{font-size:1.5rem}
 .ovbox p{margin:.6rem 0}
@@ -449,7 +450,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 @keyframes shine{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 @keyframes pbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .sharebtn{display:block;width:100%;margin:.2rem 0 .8rem;border:none;background:linear-gradient(120deg,#7B4FD6,#B04FD6);color:#fff;box-shadow:0 4px 0 #5a35a8;border-radius:14px;padding:.6rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;font-size:1rem}
-.shareprev{display:block;width:100%;max-width:300px;margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.shareprev{display:block;width:auto;max-width:min(300px,100%);max-height:calc(100vh - 380px);max-height:calc(100svh - 380px);margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 .toprow1{justify-content:space-between!important;gap:.45rem;flex-wrap:wrap}
 .toprow1 .topr{margin-left:auto}
 .namechip{flex:1 1 auto;min-width:0;max-width:100%;text-align:left;border:2px solid #7B4FD6;background:#F3EEFF;color:#2A1B4F;border-radius:999px;padding:.3rem .7rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -777,6 +778,8 @@ body{padding-bottom:50px}
   #printroot .dfoot{font-size:12pt;margin:.9in 8% 0;gap:1in}
   #printroot .dline{min-width:2.6in}
   #printroot .guide{border:none;box-shadow:none}
+.guide-win{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:2px solid var(--line);border-radius:18px;background:var(--surface);margin-bottom:.6rem}.guide-win .guide{margin-bottom:0}
+@media print{.guide-win{height:auto!important;overflow:visible;border:0}}
 }
 #printroot{display:none}
 .hint{color:var(--muted);margin:0 0 1rem}
@@ -2250,9 +2253,9 @@ function rewardCard(g,emoji,ms){
 document.addEventListener("click",e=>{try{const box=e.target.closest&&e.target.closest(".ovl .ovbox");if(!box)return;if(box.querySelector("input,textarea,select"))return;if(e.target.closest("button,a,input,label,select,textarea,summary,[contenteditable],.noclose"))return;const ov=box.closest(".ovl");if(ov&&ov.isConnected)ov.click();}catch(_){}});
 function overlay(label,build,onClose){
   const close=()=>{if(!ov.isConnected)return;if(onClose){try{onClose(ov);}catch(e){}}ov.remove();document.removeEventListener("keydown",esc);};const esc=e=>{if(e.key==="Escape")close();};
-  const box=h("div",{cls:"ovbox"},...build(close));
+  const box=h("div",{cls:"ovbox"},h("button",{cls:"ovx","aria-label":"Cerrar · Close",on:{click:()=>close()}},"✕"),...build(close));
   const ov=h("div",{cls:"ovl",role:"dialog","aria-modal":"true","aria-label":label,on:{click:e=>{if(e.target===ov)close();}}},box);
-  document.addEventListener("keydown",esc);document.body.append(ov);const b=box.querySelector("button");b&&b.focus({preventScroll:true});return close;
+  document.addEventListener("keydown",esc);document.body.append(ov);const b=box.querySelector("button:not(.ovx)");b&&b.focus({preventScroll:true});return close;
 }
 /* ---------- Cofre mágico · Magic chest ---------- */
 function chestSVG(){
@@ -2678,8 +2681,13 @@ function guideArticle(){
 }
 function showGuide(){
   cur=null;hush&&hush();app.innerHTML="";
-  app.append(topbar(true),guideArticle(),h("div",{cls:"controls sm noprint"},h("button",{cls:"btn",on:{click:()=>printOnly(document.querySelector(".guide"))}},"🖨️ Imprimir · Print"),h("button",{cls:"btn primary",on:{click:()=>home()}},"← Home")));
+  const win=h("div",{cls:"guide-win"},guideArticle());
+  const ctr=h("div",{cls:"controls sm noprint"},h("button",{cls:"btn",on:{click:()=>printOnly(document.querySelector(".guide"))}},"🖨️ Imprimir · Print"),h("button",{cls:"btn primary",on:{click:()=>home()}},"← Home"));
+  app.append(topbar(true),win,ctr);
   window.scrollTo(0,0);
+  /* the guide lives in its own window: you slide inside it, and Print / Home stay on screen */
+  const fit=()=>{if(!win.isConnected){window.removeEventListener("resize",fit);return;}const top=win.getBoundingClientRect().top+window.scrollY;win.style.height=Math.max(260,window.innerHeight-top-ctr.offsetHeight-28)+"px";};
+  fit();setTimeout(fit,300);window.addEventListener("resize",fit);
 }
 
 /* Icon + text: when the text wraps, the second line starts under the first letter (not under the icon) */
