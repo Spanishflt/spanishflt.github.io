@@ -1698,13 +1698,27 @@ function rigTick(now){
   });
   if(any)requestAnimationFrame(rigTick);else rigOn=false;
 }
-function teacherSVG(){
+/* a different outfit for each class: shirt, jacket/vest, buttons, tie colour, trousers, neck style */
+const OUTFITS=[
+ {s:"#CFE8FF",j:"#1F4E79",b:"#FFB627",t:"#E0405A",p:"#C9A66B",n:"tie"},
+ {s:"#FFFFFF",j:"#7A2E3A",b:"#F2D16B",t:"#1F4E79",p:"#3E4A5C",n:"bow"},
+ {s:"#FFF1C9",j:"#2E7D5B",b:"#FFFFFF",t:"#F28C28",p:"#6B4F3A",n:"tie"},
+ {s:"#E8F7EE",j:"#5B3F8C",b:"#FFD34D",t:"#FFD34D",p:"#2F3A4A",n:"bow"},
+ {s:"#DDF3FF",j:"#0E6E78",b:"#FFB627",t:"#0E6E78",p:"#C9A66B",n:"none"},
+ {s:"#FFE6EA",j:"#3D3D46",b:"#E0405A",t:"#E0405A",p:"#8A8A93",n:"tie"},
+ {s:"#FFFFFF",j:"#B5522A",b:"#FFE3B0",t:"#2F6FB3",p:"#4A3B2F",n:"bow"},
+ {s:"#F3E9FF",j:"#23395B",b:"#E9E9E9",t:"#E0405A",p:"#9C7A4D",n:"none"}];
+function teacherSVG(idx){
+  const o=OUTFITS[((idx|0)%OUTFITS.length+OUTFITS.length)%OUTFITS.length];
+  const neck=o.n==="bow"?`<path d="M52.5 97 L60 101 L52.5 105.5 Q51 101 52.5 97Z M67.5 97 L60 101 L67.5 105.5 Q69 101 67.5 97Z" fill="${o.t}"/><circle cx="60" cy="101" r="2.3" fill="${o.t}" stroke="rgba(0,0,0,.18)" stroke-width=".6"/>`
+    :o.n==="tie"?`<path d="M60 99 L55.5 104 L60 110 L64.5 104Z" fill="${o.t}"/><path d="M54 99 L60 103 L54 107Z M66 99 L60 103 L66 107Z" fill="${o.t}"/>`
+    :`<path d="M56 93 L60 99 L64 93Z" fill="#F0BE98"/><circle cx="60" cy="108" r="1.4" fill="${o.b}"/>`;
   const wrap=h("div",{cls:"teacher","aria-hidden":"true"});
   wrap.innerHTML=`<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg">
   <ellipse class="shadow" cx="60" cy="195" rx="32" ry="4" fill="rgba(0,0,0,.14)"/>
   <g class="tbody"><g class="rg-all">
    <g class="legs2">
-    <g class="rg-lth"><rect x="46" y="146" width="12" height="23" rx="6" fill="#C9A66B"/></g><g class="rg-lsh"><rect x="46" y="163" width="12" height="23" rx="6" fill="#C9A66B"/></g><g class="rg-rth"><rect x="62" y="146" width="12" height="23" rx="6" fill="#C9A66B"/></g><g class="rg-rsh"><rect x="62" y="163" width="12" height="23" rx="6" fill="#C9A66B"/></g>
+    <g class="rg-lth"><rect x="46" y="146" width="12" height="23" rx="6" fill="${o.p}"/></g><g class="rg-lsh"><rect x="46" y="163" width="12" height="23" rx="6" fill="${o.p}"/></g><g class="rg-rth"><rect x="62" y="146" width="12" height="23" rx="6" fill="${o.p}"/></g><g class="rg-rsh"><rect x="62" y="163" width="12" height="23" rx="6" fill="${o.p}"/></g>
     <g class="shoes">
      <path d="M39 191.5 Q39 185 46 184 L55 183.5 Q58.5 183.5 58.5 187 L58.5 191.5Z" fill="#5C3A21"/>
      <path d="M39 191.5 Q39 187.5 44 186.5 Q46 190 39 191.5Z" fill="#4A2E19"/>
@@ -1719,24 +1733,25 @@ function teacherSVG(){
     </g>
    </g>
    <g class="rg-torso">
-   <rect x="37" y="92" width="46" height="60" rx="16" fill="#CFE8FF"/>
-   <path d="M41 104 Q41 94 50 93 L60 116 L70 93 Q79 94 79 104 L79 144 Q79 152 71 152 L49 152 Q41 152 41 144Z" fill="#1F4E79"/>
-   <circle cx="60" cy="126" r="1.8" fill="#FFB627"/><circle cx="60" cy="136" r="1.8" fill="#FFB627"/>
+   <rect x="37" y="92" width="46" height="60" rx="16" fill="${o.s}"/>
+   <path d="M41 104 Q41 94 50 93 L60 116 L70 93 Q79 94 79 104 L79 144 Q79 152 71 152 L49 152 Q41 152 41 144Z" fill="${o.j}"/>
+   <circle cx="60" cy="126" r="1.8" fill="${o.b}"/><circle cx="60" cy="136" r="1.8" fill="${o.b}"/>
    <path d="M52 92 L60 101 L68 92Z" fill="#fff"/>
-   <path d="M60 99 L55.5 104 L60 110 L64.5 104Z" fill="#E0405A"/><path d="M54 99 L60 103 L54 107Z M66 99 L60 103 L66 107Z" fill="#E0405A"/>
+   ${neck}
    <g class="rg-lup">
-    <line x1="42" y1="104" x2="38.5" y2="121" stroke="#CFE8FF" stroke-width="11" stroke-linecap="round"/>
-    <g class="rg-lfo"><line x1="38.5" y1="121" x2="35" y2="138" stroke="#CFE8FF" stroke-width="11" stroke-linecap="round"/>
+    <line x1="42" y1="104" x2="38.5" y2="121" stroke="${o.s}" stroke-width="11" stroke-linecap="round"/>
+    <g class="rg-lfo"><line x1="38.5" y1="121" x2="35" y2="138" stroke="${o.s}" stroke-width="11" stroke-linecap="round"/>
     <rect x="29.5" y="134" width="11" height="5" rx="2" fill="#fff"/>
     <g class="lhand" stroke="#D9A07A" stroke-width=".7" stroke-linejoin="round">
      <path d="M31.2 138.2 Q31.4 136.6 33.4 136.4 L37.2 136.4 Q39.2 136.8 39.3 139 L39.6 145.6 Q39.8 150.6 36.4 151.6 Q33.4 152.2 32.3 149.3 Q31.4 146.4 31.2 142Z" fill="#F5CBA7"/>
      <path d="M32.4 145.2 Q34.6 146 36.4 145.3 M32.6 148.2 Q34.6 149 36.6 148.3" fill="none" stroke-width=".6"/>
      <path d="M38.6 139.4 Q41.6 140.2 41.4 143.4 Q41.2 145.4 39.6 145.2 Q38.9 143.2 38.4 141.6Z" fill="#F5CBA7"/>
-    </g></g>
+    </g>
+    <g class="watch"><rect x="30.6" y="137.6" width="9.4" height="3.4" rx="1.5" fill="#3B2A1E"/><circle cx="35.3" cy="139.3" r="3.3" fill="#E8B23A" stroke="#9C6B12" stroke-width=".6"/><circle cx="35.3" cy="139.3" r="2.3" fill="#fff"/><path d="M35.3 139.3 L35.3 137.7 M35.3 139.3 L36.5 139.9" stroke="#222" stroke-width=".55" stroke-linecap="round"/></g></g>
    </g>
    <g class="rg-rup">
-    <line x1="78" y1="103" x2="89.5" y2="90" stroke="#CFE8FF" stroke-width="11" stroke-linecap="round"/>
-    <g class="rg-rfo"><line x1="89.5" y1="90" x2="101" y2="77" stroke="#CFE8FF" stroke-width="11" stroke-linecap="round"/>
+    <line x1="78" y1="103" x2="89.5" y2="90" stroke="${o.s}" stroke-width="11" stroke-linecap="round"/>
+    <g class="rg-rfo"><line x1="89.5" y1="90" x2="101" y2="77" stroke="${o.s}" stroke-width="11" stroke-linecap="round"/>
     <g class="stick"><line x1="102.3" y1="78" x2="115" y2="11" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/><circle cx="115" cy="11" r="3.5" fill="#FFB627"/></g>
     <g class="rhand" stroke="#D9A07A" stroke-width=".7">
      <path d="M97.5 71 Q97 66.5 101.5 66 L106.5 66.5 Q110 67.5 109.5 71.5 L109 77 Q108 80.5 104 80 L100 79.5 Q97 78.5 97.5 75Z" fill="#F5CBA7"/>
@@ -1907,7 +1922,7 @@ function lessonPlayer(u,box,les,idx){
   const dots=h("div",{cls:"dots"});
   const board=h("div",{cls:"board"},h("div",{cls:"bbar"},h("span",{},(idx===DEMO_IDX?"Demo · Clase de prueba":"Lección "+(idx+1)+" · Lesson "+(idx+1))+" ",infoBtn("dark")),dots),screen);
   const bpage=h("span",{cls:"bpage","aria-label":"Pizarra · Board"});bpage.hidden=true;board.append(bpage);
-  teacherEl=teacherSVG();teacherEl.classList.add("arm-rest");
+  teacherEl=teacherSVG(idx);teacherEl.classList.add("arm-rest");
   const bubble=h("button",{cls:"bubble","aria-live":"polite",title:"Tap to hear again",on:{click:()=>{primeSpeech();go(k);}}});
   const back=h("button",{cls:"btn",on:{click:()=>go(k-1)}},h("span",{cls:"l1"},h("span",{},"◀"),h("span",{},"Atrás")),h("span",{cls:"l2"},"Back"));
   const again=h("button",{cls:"btn",on:{click:()=>{primeSpeech();go(k);}}},h("span",{cls:"l1"},h("span",{},"🔁"),h("span",{},"Repetir")),h("span",{cls:"l2"},"Again"));
