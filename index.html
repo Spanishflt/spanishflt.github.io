@@ -158,6 +158,8 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ovbox{background:var(--surface);color:var(--ink);border-radius:20px;padding:1.2rem 1.2rem 1rem;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.3)}
 .ovh{display:flex;align-items:center;gap:.5rem;padding-right:1.6rem}
 .ovbox{position:relative}
+.gearbtn{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:2px solid #7B4FD6;background:var(--surface);font-size:1.15rem;line-height:1;padding:0;cursor:pointer}
+.setsec{border-top:2px solid var(--line);padding-top:.6rem;margin-top:.6rem}.setsec h3{margin:.1rem 0 .4rem;font-size:1.05rem;color:var(--teal)}.setsec p{margin:.25rem 0}.xwarn{background:#FFF4D6;border-radius:12px;padding:.45rem .6rem;font-weight:700;font-size:.9rem}.xsteps{margin:.4rem 0 .6rem;padding-left:1.2rem}.xsteps li{margin:.2rem 0}.xok{color:#14532D;font-weight:700}.xagain{border:0;background:none;color:var(--teal);text-decoration:underline;font:inherit;font-size:.88rem;padding:.2rem 0;cursor:pointer}.xbad{color:#B42318;font-weight:700}.xpaste{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:12px;padding:.5rem;font:inherit;margin:.4rem 0}
 /* share window: everything fits on one screen, the card picture shrinks to make room for the Share button */
 .ovbox.sharebox{display:flex;flex-direction:column;max-height:calc(100vh - 2rem);max-height:calc(100svh - 2rem);overflow:hidden}.ovbox.sharebox>*{flex:none}.ovbox.sharebox .shareprev{flex:1 1 auto;min-height:120px;max-height:none;width:100%;height:auto;object-fit:contain;box-shadow:none;margin:.4rem auto}.ovbox.sharebox .rintro{margin:.3rem 0}.ovbox.sharebox .controls{margin-top:.4rem}.ovx{position:absolute;top:.55rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font:700 16px/1 sans-serif;cursor:pointer;z-index:2}
 .ovh h2{font-family:"Atkinson Hyperlegible",sans-serif;margin:0;color:var(--teal);font-size:1.3rem}
@@ -2252,7 +2254,7 @@ function rewardCard(g,emoji,ms){
   g.addEventListener("click",go);document.body.append(g);const t=setTimeout(go,ms||3000);
 }
 /* Tap on an information window closes it (buttons still work; windows where you type stay open) */
-document.addEventListener("click",e=>{try{const box=e.target.closest&&e.target.closest(".ovl .ovbox");if(!box)return;if(box.querySelector("input,textarea,select"))return;if(e.target.closest("button,a,input,label,select,textarea,summary,[contenteditable],.noclose"))return;const ov=box.closest(".ovl");if(ov&&ov.isConnected)ov.click();}catch(_){}});
+document.addEventListener("click",e=>{try{const box=e.target.closest&&e.target.closest(".ovl .ovbox");if(!box||box.classList.contains("noclose"))return;if(box.querySelector("input,textarea,select"))return;if(e.target.closest("button,a,input,label,select,textarea,summary,[contenteditable],.noclose"))return;const ov=box.closest(".ovl");if(ov&&ov.isConnected)ov.click();}catch(_){}});
 function overlay(label,build,onClose){
   const close=()=>{if(!ov.isConnected)return;if(onClose){try{onClose(ov);}catch(e){}}ov.remove();document.removeEventListener("keydown",esc);};const esc=e=>{if(e.key==="Escape")close();};
   const box=h("div",{cls:"ovbox"},h("button",{cls:"ovx","aria-label":"Cerrar · Close",on:{click:()=>close()}},"✕"),...build(close));
@@ -2588,7 +2590,93 @@ function teacherRename(){
 function nameChip(){
   return h("div",{cls:"namewrap"},avatarBtn(),
     RW.name?h("button",{cls:"namechip",title:RW.name,on:{click:nameInfo}},RW.name)
-           :h("button",{cls:"namechip empty",on:{click:()=>askName()}},"✏️ Tu nombre · Your name"));
+           :h("button",{cls:"namechip empty",on:{click:()=>askName()}},"✏️ Tu nombre · Your name"),
+    h("button",{cls:"gearbtn","aria-label":"Ajustes · Settings",on:{click:openSettings}},"⚙️"));
+}
+
+/* ---------- Settings: About + move my progress from the old app to the new app (same phone only) ---------- */
+const XFER_MIN=10;
+async function phonePrint(){
+  const ua=navigator.userAgent;let model="",ver="";
+  const m=/Android\s+([\d.]+);\s*([^;)]*?)(?:\s+Build\/[^;)]*)?(?:;|\))/.exec(ua);
+  if(m){ver=m[1].split(".")[0];model=m[2];}
+  try{if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){const v=await navigator.userAgentData.getHighEntropyValues(["model","platformVersion"]);if(v.model)model=v.model;if(v.platformVersion)ver=String(v.platformVersion).split(".")[0];}}catch(e){}
+  if(/^k$/i.test(model.trim()))model="";
+  const dpr=window.devicePixelRatio||1,a=Math.round(screen.width*dpr),b=Math.round(screen.height*dpr);
+  let tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){}
+  return{model:model.trim().toUpperCase(),ver,scr:Math.min(a,b)+"x"+Math.max(a,b),tz,cpu:navigator.hardwareConcurrency||0};
+}
+function samePhone(a,b){
+  if(!a||!b)return false;
+  if(a.model&&b.model&&a.model!==b.model)return false;
+  if(a.ver&&b.ver&&a.ver!==b.ver)return false;
+  return a.scr===b.scr&&a.tz===b.tz&&a.cpu===b.cpu;
+}
+function appIsEmpty(){try{return !RW.name&&totalStars()===0&&!hasAnyProgress()&&!U.some((u,i)=>unlocked[i]);}catch(e){return false;}}
+async function copyText(t){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(t);return true;}}catch(e){}
+  try{const ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.cssText="position:fixed;left:-9999px;top:0";document.body.append(ta);ta.select();const ok=document.execCommand("copy");ta.remove();return ok;}catch(e){return false;}
+}
+async function makeXferCode(){
+  const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k);}
+  return "BSX1:"+btoa(unescape(encodeURIComponent(JSON.stringify({t:Date.now(),fp:await phonePrint(),d}))));
+}
+function openSettings(){
+  const isNew=newApp();
+  overlay("Settings",close=>{
+    const msg=h("div",{cls:"xmsg"});
+    const about=h("div",{cls:"setsec"},h("h3",{},"ℹ️ Acerca de · About"),
+      h("p",{},h("b",{},"Basic Spanish – Extra Lessons")),
+      h("p",{},"Versión · Version ",h("b",{},APP_VERSION)),
+      h("p",{cls:"rintro"},"Alberto Garrido Hernández · Spanish teacher · Old Harbour Primary School"));
+    const intro=[h("p",{},"Sirve para pasar tu progreso de la app vieja a la ",h("b",{},"app nueva, en este mismo teléfono"),"."),
+      h("p",{cls:"rintro"},"Use it to move your progress from the old app to the new app, on this same phone."),
+      h("p",{cls:"xwarn"},"📱 Solo funciona en el mismo teléfono. No se puede pasar a otro teléfono. · It only works on the same phone. It can't be moved to another phone.")];
+    let sec;
+    if(!isNew){
+      const copied=(()=>{try{return !!localStorage.getItem("bs-xfer-copied");}catch(e){return false;}})();
+      const XFER_DAYS=30;
+      const firstAt=()=>{try{return +(localStorage.getItem("bs-xfer-first")||localStorage.getItem("bs-xfer-copied")||0);}catch(e){return 0;}};
+      const expired=()=>{const f=firstAt();return f>0&&Date.now()-f>XFER_DAYS*864e5;};
+      const doCopy=async bt=>{if(expired())return drawOld(false);if(bt)bt.disabled=true;const code=await makeXferCode();const ok=await copyText(code);if(bt)bt.disabled=false;
+        if(ok){try{const now=String(Date.now());if(!localStorage.getItem("bs-xfer-first"))localStorage.setItem("bs-xfer-first",localStorage.getItem("bs-xfer-copied")||now);localStorage.setItem("bs-xfer-copied",now);}catch(e){}drawOld(true);}
+        else{msg.innerHTML="";msg.append(h("p",{cls:"xbad"},"No se pudo copiar. Inténtalo otra vez. · Could not copy. Try again."));}};
+      const box=h("div",{});
+      const drawOld=justNow=>{box.innerHTML="";msg.innerHTML="";
+        if(expired()){
+          box.append(h("p",{cls:"xbad"},"⏰ El tiempo para pasar tu progreso terminó (1 mes desde que copiaste). Usa la app nueva. · The time to move your progress has ended (1 month after you copied). Use the new app."));
+        }else if(justNow||copied){
+          const left=Math.max(1,Math.ceil((firstAt()+XFER_DAYS*864e5-Date.now())/864e5));
+          box.append(h("p",{cls:"xok"},justNow?"✅ ¡Copiado! Ahora abre la app nueva en este teléfono y toca ⚙️ → Pegar mi progreso. · Copied! Now open the new app on this phone → ⚙️ → Paste my progress.":"✅ Ya copiaste tu progreso. Pégalo en la app nueva de este teléfono (⚙️ → Pegar mi progreso). · You already copied your progress."),
+            h("button",{cls:"xagain",on:{click:e=>doCopy(e.currentTarget)}},"Copiar otra vez · Copy again"),
+            h("p",{cls:"rintro"},"Puedes copiar durante "+left+(left===1?" día más":" días más")+". · You can copy for "+left+(left===1?" more day.":" more days.")));
+        }else{
+          box.append(h("ol",{cls:"xsteps"},h("li",{},"Toca ",h("b",{},"Copiar mi progreso"),". · Tap Copy my progress."),h("li",{},"Abre la ",h("b",{},"app nueva")," en este teléfono → ⚙️ → ",h("b",{},"Pegar mi progreso"),". · Open the new app → ⚙️ → Paste my progress."),h("li",{},"Tienes "+XFER_MIN+" minutos. · You have "+XFER_MIN+" minutes.")),
+            h("button",{cls:"btn primary",on:{click:e=>doCopy(e.currentTarget)}},"📤 Copiar mi progreso · Copy my progress"));
+        }};
+      drawOld(false);
+      sec=h("div",{cls:"setsec"},h("h3",{},"📲 Pasar mi progreso · Move my progress"),...intro,box,msg);
+    }else{
+      const ta=h("textarea",{cls:"xpaste",rows:"3",placeholder:"Mantén presionado aquí y toca Pegar · Press and hold here, then Paste"});
+      const load=async raw=>{msg.innerHTML="";const bad=t=>msg.append(h("p",{cls:"xbad"},t));
+        raw=(raw||"").trim();if(!raw.startsWith("BSX1:"))return bad("No encuentro un código de progreso. Primero cópialo en la app vieja. · No progress code found. Copy it in the old app first.");
+        let o;try{o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))));}catch(e){return bad("El código no está completo. Cópialo otra vez. · The code is not complete. Copy it again.");}
+        if(!o||!o.d||!o.t)return bad("El código no sirve. · The code is not valid.");
+        if(Date.now()-o.t>XFER_MIN*60000||o.t-Date.now()>60000)return bad("El código ya caducó ("+XFER_MIN+" minutos). Cópialo otra vez en la app vieja. · The code expired. Copy it again.");
+        if(!samePhone(o.fp,await phonePrint()))return bad("📱 Este código es de otro teléfono. El progreso solo se puede pasar en el mismo teléfono. · This code is from another phone. Progress can only be moved on the same phone.");
+        if(!appIsEmpty())return bad("Esta app ya tiene progreso, así que no se puede pegar encima. · This app already has progress, so it can't be pasted.");
+        try{Object.keys(o.d).forEach(k=>{if(k!=="bs-xfer-copied"&&k!=="bs-xfer-first")localStorage.setItem(k,o.d[k]);});localStorage.setItem("bs-xfer-done","1");}catch(e){return bad("No se pudo guardar. · Could not save.");}
+        msg.append(h("p",{cls:"xok"},"✅ ¡Listo! Ya tienes todo tu progreso. · Done! You have all your progress."));
+        setTimeout(()=>location.reload(),1600);};
+      sec=h("div",{cls:"setsec"},h("h3",{},"📲 Pasar mi progreso · Move my progress"),...intro,
+        h("ol",{cls:"xsteps"},h("li",{},"En la ",h("b",{},"app vieja"),": ⚙️ → ",h("b",{},"Copiar mi progreso"),". · In the old app: ⚙️ → Copy my progress."),h("li",{},"Vuelve aquí y toca ",h("b",{},"Pegar mi progreso"),". · Come back here and tap Paste my progress.")),
+        h("button",{cls:"btn primary",on:{click:async()=>{let t="";try{if(navigator.clipboard&&navigator.clipboard.readText)t=await navigator.clipboard.readText();}catch(e){}
+          if(t)return load(t);msg.innerHTML="";msg.append(h("p",{cls:"rintro"},"Mantén presionado el recuadro, toca Pegar y luego Cargar. · Press and hold the box, tap Paste, then Load."),ta,h("button",{cls:"btn",on:{click:()=>load(ta.value)}},"📥 Cargar · Load"));}}},"📥 Pegar mi progreso · Paste my progress"),msg);
+    }
+    let done=false;try{done=isNew&&localStorage.getItem("bs-xfer-done")==="1";}catch(e){}
+    return[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"⚙️"),h("h2",{},"Ajustes · Settings")),about,done?null:sec].filter(Boolean);
+  });
+  {const o=[...document.querySelectorAll(".ovl .ovbox")].pop();if(o)o.classList.add("noclose");}
 }
 
 /* ---------- Student photo (stays on the phone) ---------- */
