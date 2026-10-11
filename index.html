@@ -179,7 +179,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ltab[aria-selected="true"] small{color:#5a4200}
 .lesson{display:grid;gap:.7rem}
 .board{background:linear-gradient(#3a4452,#262e38);border-radius:20px;padding:.4rem .55rem .55rem;box-shadow:0 6px 0 #161b21,0 10px 18px rgba(0,0,0,.18)}
-.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}
+.board{position:relative}.bpage{flex:0 0 auto;background:#FFB627;color:#3A2A00;font:800 12px/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:4px 9px;pointer-events:none}.bpage[hidden]{display:none}.endpick{display:grid!important;grid-template-columns:1fr 1fr;gap:.5rem}.endpick{align-items:stretch}.endpick .btn{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .4rem}.endpick .l1{display:flex;align-items:center;justify-content:center;gap:.4em;font-size:1.05rem}.endpick .l2{display:block;font-size:.78rem;opacity:.8}.nextbox{margin:1rem auto .5rem;max-width:430px;text-align:center}.nexth{margin:0 0 .45rem;font-weight:700;color:var(--muted,#5a6470)}.nextpick:has(>.btn:only-child){grid-template-columns:1fr;max-width:220px;margin:0 auto}
 .bbar{display:flex;flex-direction:column;align-items:stretch;gap:.35rem;flex-wrap:nowrap;color:#cfe3ea;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:.85rem;padding:0 .35rem .35rem}
 .bfoot{display:flex;align-items:center;gap:.6rem;min-height:22px;padding:.5rem .35rem 0}
 .bfoot .dots{flex:1 1 auto;justify-content:flex-start}
@@ -2114,14 +2114,17 @@ function lessonPlayer(u,box,les,idx){
         h("div",{cls:"controls sm"},
           h("button",{cls:"btn primary",on:{click:()=>showPath()}},"🗺️ Mi camino · My path"),
           h("button",{cls:"btn",on:{click:()=>openUnit(0,"lesson")}},"👀 Lección 1 · Lesson 1"),
-          h("button",{cls:"btn",on:{click:()=>{tab="quiz";render();}}},"📝 Prueba · Quiz"))));
+          h("button",{cls:"btn",on:{click:()=>{tab="cards";render();unitFocus();}}},"📇 Repasar · Review"),
+          h("button",{cls:"btn",on:{click:()=>{tab="quiz";render();unitFocus();}}},"⭐ Prueba · Quiz"))));
       confetti(screen);cheer();teacherEl.classList.add("dance");
       say(TL.end(les),[],()=>teacherEl&&teacherEl.classList.remove("dance"));
       return;
     }
     screen.append(h("div",{cls:"btitle"},h("div",{cls:"bic"},"🏆"),h("div",{cls:"bh"},"¡Lección completada!"),h("div",{cls:"bsub"},"Lesson complete!"),
       rounds?h("div",{cls:"big"},"⭐ "+score+" / "+rounds):null,
-      h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:()=>{score=0;rounds=0;g1Done=false;g2Done=false;go(0);}}},"🔁 Otra vez · Again"),h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();}}},"📝 Prueba · Quiz"))));
+      h("p",{cls:"bsub"},"¿Qué quieres hacer ahora? · What do you want to do now?"),
+      h("div",{cls:"controls sm endpick"},h("button",{cls:"btn primary",on:{click:()=>{tab="cards";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"📇"),h("span",{},"Repasar")),h("span",{cls:"l2"},"Review")),h("button",{cls:"btn primary",on:{click:()=>{tab="quiz";render();unitFocus();}}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"))),
+      h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:()=>{score=0;rounds=0;g1Done=false;g2Done=false;go(0);}}},"🔁 Otra vez · Again"))));
     confetti(screen);cheer();teacherEl.classList.add("dance");
     say(TL.end(les),[],()=>teacherEl&&teacherEl.classList.remove("dance"));
   }
@@ -4116,6 +4119,16 @@ function render(){
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
   ({lesson:viewLesson,cards:viewCards,phr:viewPhrases,dlg:viewDialogue,match:viewMatch,quiz:viewQuiz})[tab](u,body);
+  /* review tabs: keep reviewing (next tab) or go to the quiz */
+  if(tab!=="lesson"&&tab!=="quiz"){
+    const ti=tabs.findIndex(x=>x[0]===tab),nx=tabs[ti+1];
+    const goTab=k=>{tab=k;render();unitFocus();};
+    const quizBtn=h("button",{cls:"btn primary",on:{click:()=>goTab("quiz")}},h("span",{cls:"l1"},h("span",{},"⭐"),h("span",{},"Prueba")),h("span",{cls:"l2"},"Quiz"));
+    const pick=h("div",{cls:"controls sm endpick nextpick"});
+    if(nx&&nx[0]!=="quiz")pick.append(h("button",{cls:"btn primary",on:{click:()=>goTab(nx[0])}},h("span",{cls:"l1"},h("span",{},"Seguir"),h("span",{},"▶")),h("span",{cls:"l2"},nx[1].replace(/^(🔒|⭐) /,"")+" · "+nx[2])));
+    pick.append(quizBtn);
+    body.append(h("div",{cls:"nextbox"},h("p",{cls:"nexth"},"¿Y ahora? · What next?"),pick));
+  }
 }
 
 /* Cards */
