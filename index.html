@@ -158,7 +158,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ovbox{background:var(--surface);color:var(--ink);border-radius:20px;padding:1.2rem 1.2rem 1rem;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.3)}
 .ovh{display:flex;align-items:center;gap:.5rem;padding-right:1.6rem}
 .ovbox{position:relative}
-.gearbtn{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:2px solid #7B4FD6;background:var(--surface);font-size:1.15rem;line-height:1;padding:0;cursor:pointer}
+.gearbtn{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:0;background:none;box-shadow:none;font-size:1.15rem;line-height:1;padding:0;cursor:pointer}
 .setsec{border-top:2px solid var(--line);padding-top:.6rem;margin-top:.6rem}.setsec h3{margin:.1rem 0 .4rem;font-size:1.05rem;color:var(--teal)}.setsec p{margin:.25rem 0}.xwarn{background:#FFF4D6;border-radius:12px;padding:.45rem .6rem;font-weight:700;font-size:.9rem}.xsteps{margin:.4rem 0 .6rem;padding-left:1.2rem}.xsteps li{margin:.2rem 0}.xok{color:#14532D;font-weight:700}.xagain{border:0;background:none;color:var(--teal);text-decoration:underline;font:inherit;font-size:.88rem;padding:.2rem 0;cursor:pointer}.xbad{color:#B42318;font-weight:700}.xpaste{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:12px;padding:.5rem;font:inherit;margin:.4rem 0}
 /* share window: everything fits on one screen, the card picture shrinks to make room for the Share button */
 .ovbox.sharebox{display:flex;flex-direction:column;max-height:calc(100vh - 2rem);max-height:calc(100svh - 2rem);overflow:hidden}.ovbox.sharebox>*{flex:none}.ovbox.sharebox .shareprev{flex:1 1 auto;min-height:120px;max-height:none;width:100%;height:auto;object-fit:contain;box-shadow:none;margin:.4rem auto}.ovbox.sharebox .rintro{margin:.3rem 0}.ovbox.sharebox .controls{margin-top:.4rem}.ovx{position:absolute;top:.55rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font:700 16px/1 sans-serif;cursor:pointer;z-index:2}
@@ -2666,15 +2666,18 @@ function openSettings(){
         if(!samePhone(o.fp,await phonePrint()))return bad("📱 Este código es de otro teléfono. El progreso solo se puede pasar en el mismo teléfono. · This code is from another phone. Progress can only be moved on the same phone.");
         if(!appIsEmpty())return bad("Esta app ya tiene progreso, así que no se puede pegar encima. · This app already has progress, so it can't be pasted.");
         try{Object.keys(o.d).forEach(k=>{if(k!=="bs-xfer-copied"&&k!=="bs-xfer-first")localStorage.setItem(k,o.d[k]);});localStorage.setItem("bs-xfer-done","1");}catch(e){return bad("No se pudo guardar. · Could not save.");}
-        msg.append(h("p",{cls:"xok"},"✅ ¡Listo! Ya tienes todo tu progreso. · Done! You have all your progress."));
-        setTimeout(()=>location.reload(),1600);};
+        msg.append(h("p",{cls:"xok"},"✅ ¡Listo! Ya tienes todo tu progreso. · Done! You have all your progress."),h("p",{cls:"xwarn"},"🗑️ Ya puedes desinstalar la app vieja (la de Chrome). Tu progreso está aquí. · You can now uninstall the old app. Your progress is here."));
+        setTimeout(()=>location.reload(),5000);};
       sec=h("div",{cls:"setsec"},h("h3",{},"📲 Pasar mi progreso · Move my progress"),...intro,
-        h("ol",{cls:"xsteps"},h("li",{},"En la ",h("b",{},"app vieja"),": ⚙️ → ",h("b",{},"Copiar mi progreso"),". · In the old app: ⚙️ → Copy my progress."),h("li",{},"Vuelve aquí y toca ",h("b",{},"Pegar mi progreso"),". · Come back here and tap Paste my progress.")),
+        h("ol",{cls:"xsteps"},h("li",{},"En la ",h("b",{},"app vieja"),": ⚙️ → ",h("b",{},"Copiar mi progreso"),". · In the old app: ⚙️ → Copy my progress."),h("li",{},"Vuelve aquí y toca ",h("b",{},"Pegar mi progreso"),". · Come back here and tap Paste my progress."),h("li",{},"Cuando veas tu progreso aquí, ",h("b",{},"desinstala la app vieja"),". · When you see your progress here, uninstall the old app.")),
         h("button",{cls:"btn primary",on:{click:async()=>{let t="";try{if(navigator.clipboard&&navigator.clipboard.readText)t=await navigator.clipboard.readText();}catch(e){}
           if(t)return load(t);msg.innerHTML="";msg.append(h("p",{cls:"rintro"},"Mantén presionado el recuadro, toca Pegar y luego Cargar. · Press and hold the box, tap Paste, then Load."),ta,h("button",{cls:"btn",on:{click:()=>load(ta.value)}},"📥 Cargar · Load"));}}},"📥 Pegar mi progreso · Paste my progress"),msg);
     }
     let done=false;try{done=isNew&&localStorage.getItem("bs-xfer-done")==="1";}catch(e){}
-    return[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"⚙️"),h("h2",{},"Ajustes · Settings")),about,done?null:sec].filter(Boolean);
+    const doneSec=h("div",{cls:"setsec"},h("h3",{},"📲 Pasar mi progreso · Move my progress"),h("p",{cls:"xok"},"✅ Tu progreso ya está en esta app. · Your progress is already in this app."),h("p",{cls:"xwarn"},"🗑️ Ya puedes desinstalar la app vieja (la de Chrome). Tu progreso está aquí. · You can now uninstall the old app. Your progress is here."));
+    /* moving progress only exists inside the Android apps (old Chrome app and new app), never on the web */
+    const inAndroidApp=isNew||isApp();
+    return[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"⚙️"),h("h2",{},"Ajustes · Settings")),about,inAndroidApp?(done?doneSec:sec):null].filter(Boolean);
   });
   {const o=[...document.querySelectorAll(".ovl .ovbox")].pop();if(o)o.classList.add("noclose");}
 }
