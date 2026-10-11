@@ -667,7 +667,7 @@ small.hang,.gm-cta small.hang{display:flex}
 .cl-ic{font-size:1.9rem;line-height:1.2}
 .kic{width:1.15em;height:1.15em;display:inline-block;vertical-align:middle}.cl-nm{font-weight:700;font-size:.95rem}.cl-en{font-size:.8rem;color:var(--muted)}.cl-st{font-size:.78rem;font-weight:700;color:var(--teal)}
 .dust{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden}
-.dust::before{content:"";position:absolute;inset:-20%;background:linear-gradient(135deg,rgba(255,194,26,0),rgba(255,111,168,.4) 45%,rgba(255,255,255,0));animation:dustwash .85s ease-out forwards}
+.dust::before{content:none}
 @keyframes dustwash{0%{opacity:0;transform:translate(-30%,30%)}40%{opacity:1}100%{opacity:0;transform:translate(30%,-30%)}}
 .dust span{position:absolute;opacity:0;text-shadow:0 0 8px #fff;animation:dustspark .9s ease-out forwards}
 @keyframes dustspark{0%{opacity:0;transform:scale(.3) rotate(0)}35%{opacity:1;transform:scale(1.2) rotate(40deg)}100%{opacity:0;transform:translate(14px,-22px) scale(.5) rotate(120deg)}}
@@ -2991,7 +2991,6 @@ function magicDust(){
   const N=22;
   for(let i=0;i<N;i++){const t=i/(N-1);const sp=document.createElement("span");sp.textContent=i%3?"✦":"✨";sp.style.left=(4+t*92)+"%";sp.style.top=(78-t*62+Math.sin(t*9)*8)+"%";sp.style.fontSize=(14+(i%4)*5)+"px";sp.style.color=i%2?"#FF6FA8":"#FFC21A";sp.style.animationDelay=(t*.45)+"s";d.append(sp);}
   document.body.append(d);setTimeout(()=>d.remove(),1500);
-  app.classList.remove("dustin");void app.offsetWidth;app.classList.add("dustin");
 }
 const SKINS=[["normal","🏫 Escuela","#0E6E78"],["futbol","⚽ Fútbol","#17702F"],["lady","👑 Princesa","#B02D7B"]];
 function curSkin(){const v=document.documentElement.getAttribute("data-skin");return v==="futbol"||v==="lady"?v:"normal";}
