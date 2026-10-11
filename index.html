@@ -1573,6 +1573,7 @@ const TUNES={
  mary:{bpm:120,P:{A:"E4:1 D4:1 C4:1 D4:1 E4:1 E4:1 E4:2",B:"D4:1 D4:1 D4:2 E4:1 G4:1 G4:2",C:"E4:1 D4:1 C4:1 D4:1 E4:1 E4:1 E4:1 E4:1",D:"D4:1 D4:1 E4:1 D4:1 C4:4"},seq:"ABCD"},
  oldmac:{bpm:130,P:{A:"G4:1 G4:1 G4:1 D4:1 E4:1 E4:1 D4:2",B:"B4:1 B4:1 A4:1 A4:1 G4:3",C:"D4:1 G4:1 G4:1 G4:1 D4:1 E4:1 E4:1 D4:2"},seq:"ABCB"},
  row:{bpm:100,P:{A:"C4:1 C4:1 C4:.75 D4:.25 E4:1",B:"E4:.75 D4:.25 E4:.75 F4:.25 G4:2",C:"C5:.33 C5:.33 C5:.34 G4:.33 G4:.33 G4:.34 E4:.33 E4:.33 E4:.34 C4:.33 C4:.33 C4:.34",D:"G4:.75 F4:.25 E4:.75 D4:.25 C4:2"},seq:"ABCD"},
+ comida:{bpm:110,P:{A:"G4:.5 C5:1 B4:.5 A4:1 G4:.5 E4:.5 G4:1 E4:3",B:"C5:2 A4:1 G4:2 C5:3",C:"G4:.5 A4:.5 C5:1 A4:1 G4:1 E4:1 D4:1 C4:2",D:"C4:1 E4:1 G4:1 E4:1 C4:4"},seq:"ABCB"},
  mulberry:{bpm:120,P:{A:"F4:1 F4:.5 F4:.5 A4:1 C5:1 C5:.5 A4:.5 F4:1",B:"G4:1 G4:.5 G4:.5 E4:1 C4:1 C4:1",C:"G4:1 C4:.5 C4:.5 F4:1 F4:2"},seq:"ABAC"}
 };
 let _noiseBuf=null;
@@ -1944,7 +1945,7 @@ function lessonPlayer(u,box,les,idx){
     say(TL.pat,list.map(([es],i)=>({t:es,l:"es",pause:1400,onStart:()=>mark(els[i])})));
   }
   function song(){
-    const sg=Object.assign({},les.song,{lines:les.song.lines.map(fixT)});const ly=h("div",{cls:"lyrics"});const ls=sg.lines.map(l=>{const d=h("div",{cls:"lyr"},l);ly.append(d);return d;});
+    const sg=Object.assign({},les.song,{lines:les.song.lines.map(fixT)});if(sg.lines.some(l=>/Me gusta mucho el helado/.test(l))){sg.tune="comida";TUNES.comida.seq=sg.lines.map(l=>/helado/.test(l)?"A":/gusta!/.test(l)?"B":/pizza/.test(l)?"C":"D").join("");}const ly=h("div",{cls:"lyrics"});const ls=sg.lines.map(l=>{const d=h("div",{cls:"lyr"},l);ly.append(d);return d;});
     const hl=i=>{ls.forEach((d,j)=>d.classList.toggle("on",j===i));if(i>=0)inView(ls[i]);};
     const words=h("button",{cls:"btn",on:{click:()=>{teacherEl.classList.remove("dance");talk(sg.lines.map((l,i)=>({l,i})).filter(x=>!/ia, ia, o/i.test(x.l)).map(x=>({t:x.l,l:"es",pause:600,onStart:()=>hl(x.i)})),()=>{hl(-1);stopMusic();});startBeat(100);}}},"🗣️ La letra · Words");
     const sing=h("button",{cls:"btn primary",on:{click:()=>{hush();teacherEl.classList.add("dance");
