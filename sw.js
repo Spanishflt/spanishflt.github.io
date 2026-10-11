@@ -1,4 +1,4 @@
-const CACHE = "basic-spanish-v151";
+const CACHE = "basic-spanish-v152";
 const AUDIO_CACHE = "basic-spanish-audio";
 const FILES = ["./", "./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 const isAudio = url => /\/audio\/[^\/]+\.mp3$/i.test(new URL(url).pathname);
@@ -22,6 +22,8 @@ self.addEventListener("activate", e => {
       }
       await caches.delete(k);
     }
+    // dictionary audio is re-cut between versions with the same file names: drop the saved copies so the new cuts are used
+    for (const req of await audio.keys()) { if (/\/audio\/dic-[^\/]+\.mp3$/i.test(new URL(req.url).pathname)) await audio.delete(req); }
     await self.clients.claim();
   })());
 });
