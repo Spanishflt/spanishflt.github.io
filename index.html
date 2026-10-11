@@ -450,7 +450,7 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 @keyframes shine{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 @keyframes pbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .sharebtn{display:block;width:100%;margin:.2rem 0 .8rem;border:none;background:linear-gradient(120deg,#7B4FD6,#B04FD6);color:#fff;box-shadow:0 4px 0 #5a35a8;border-radius:14px;padding:.6rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;font-size:1rem}
-.shareprev{display:block;width:auto;max-width:min(300px,100%);max-height:calc(100vh - 380px);max-height:calc(100svh - 380px);margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.shareprev{display:block;width:auto;max-width:min(300px,100%);max-height:calc(100vh - 360px);max-height:calc(100svh - 360px);margin:.5rem auto;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 .toprow1{justify-content:space-between!important;gap:.45rem;flex-wrap:wrap}
 .toprow1 .topr{margin-left:auto}
 .namechip{flex:1 1 auto;min-width:0;max-width:100%;text-align:left;border:2px solid #7B4FD6;background:#F3EEFF;color:#2A1B4F;border-radius:999px;padding:.3rem .7rem;font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -927,7 +927,7 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 .gm-hard .hn{margin-right:2px}
 .gm-hard:has(.hn)::after{margin-left:8px}
 .gt .gt-guide::after{color:var(--teal)}
-.guide-win{height:min(520px,58vh);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:3px solid var(--teal);border-radius:20px;background:var(--surface);margin:.4rem 0 .7rem;box-shadow:inset 0 -14px 14px -12px rgba(0,0,0,.18)}.guide-win .guide{margin-bottom:0}
+.guide-win{height:min(520px,58vh);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:3px solid var(--teal);border-radius:20px;background:var(--surface);margin:.4rem 0 .7rem;box-shadow:inset 0 -14px 14px -12px rgba(0,0,0,.18)}.guide-win .guide{margin-bottom:0}.appnote{text-align:center;margin:.2rem 0 .6rem}
 @media print{.guide-win{height:auto!important;overflow:visible!important;border:0!important;box-shadow:none!important}}
 .gm-win{height:min(340px,42vh);overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;border:2px solid var(--line);border-radius:20px;margin-top:8px;scrollbar-width:thin}
 .gm-path svg.gl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -2397,9 +2397,9 @@ function showDiploma(ext){
     h("div",{cls:"dtext"},"for earning 100 stars ⭐ learning Spanish."),
     h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{cls:"ddate"},date)));
   overlay("Certificate",close=>[cert,nameBox,
-    h("div",{cls:"controls sm noprint"},
-      h("button",{cls:"btn primary",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}if(inWebView()){const p=PHOTO?await smallPhoto(PHOTO):"";return appSaveHelp("cert","#c="+b64e8({n:NAME,p,d:date}));}printOnly(cert);}}},"🖨️ Imprimir · Print"),
-      h("button",{cls:"btn",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}if(inWebView()){const p=PHOTO?await smallPhoto(PHOTO):"";return appSaveHelp("cert","#c="+b64e8({n:NAME,p,d:date}));}const b=await certPNG(NAME,PHOTO,date);downloadBlob(b,"Basic-Spanish-Certificate-"+NAME.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}}},"⬇️ Descargar · Download"),
+    inWebView()?h("div",{cls:"noprint"},h("p",{cls:"rintro appnote"},"🖨️ Para imprimir o descargar, abre ",h("b",{},"spanishflt.github.io")," en Chrome. · To print or download, open spanishflt.github.io in Chrome."),h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))):h("div",{cls:"controls sm noprint"},
+      h("button",{cls:"btn primary",on:{click:()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}printOnly(cert);}}},"🖨️ Imprimir · Print"),
+      h("button",{cls:"btn",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}const b=await certPNG(NAME,PHOTO,date);downloadBlob(b,"Basic-Spanish-Certificate-"+NAME.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}}},"⬇️ Descargar · Download"),
       h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
   return cert;
 }
@@ -2533,7 +2533,7 @@ function shareProgress(){
     h("div",{cls:"ovh"},h("span",{cls:"ovi"},"📤"),h("h2",{},"Compartir mi progreso · Share my progress")),
     h("p",{cls:"rintro"},"Enséñale tu progreso a tu familia, compañeros y amigos. · Show your progress to your family, classmates and friends."),
     photoRow,prev,
-    h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>doShare(RW.name,cb.checked)}},"📤 Compartir · Share"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
+    h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>doShare(RW.name,cb.checked)}},"📤 Compartir · Share"))]);
 }
 async function doShare(name,withPhoto){
   const st=progressStats();
@@ -2688,13 +2688,13 @@ function guideArticle(){
 function showGuide(){
   cur=null;hush&&hush();app.innerHTML="";
   const win=h("div",{cls:"guide-win"},guideArticle());
-  const ctr=h("div",{cls:"controls sm noprint"},
-    h("button",{cls:"btn",on:{click:()=>{if(inWebView())return appSaveHelp("guide");printOnly(document.querySelector(".guide"));}}},"🖨️ Imprimir · Print"),
-    h("button",{cls:"btn primary",on:{click:()=>{if(inWebView())return appSaveHelp("guide");downloadBlob(guidePDF(),"Basic-Spanish-How-to-use-the-app.pdf");}}},"⬇️ Descargar · Download"));
+  const ctr=inWebView()?h("div",{cls:"noprint"},h("p",{cls:"rintro appnote"},"🖨️ Para imprimir o descargar, abre ",h("b",{},"spanishflt.github.io")," en Chrome. · To print or download, open spanishflt.github.io in Chrome.")):h("div",{cls:"controls sm noprint"},
+    h("button",{cls:"btn",on:{click:()=>printOnly(document.querySelector(".guide"))}},"🖨️ Imprimir · Print"),
+    h("button",{cls:"btn primary",on:{click:()=>downloadBlob(guidePDF(),"Basic-Spanish-How-to-use-the-app.pdf")}},"⬇️ Descargar · Download"));
   app.append(topbar(true),win,ctr);
   window.scrollTo(0,0);
   /* the guide lives in its own window: you slide inside it, and Print / Home stay on screen */
-  const fit=()=>{if(!win.isConnected){window.removeEventListener("resize",fit);return;}const top=win.getBoundingClientRect().top+window.scrollY;win.style.height=Math.max(240,Math.min(window.innerHeight*.62,window.innerHeight-top-ctr.offsetHeight-28))+"px";};
+  const fit=()=>{if(!win.isConnected){window.removeEventListener("resize",fit);return;}const top=win.getBoundingClientRect().top+window.scrollY;win.style.height=Math.max(240,inWebView()?window.innerHeight-top-ctr.offsetHeight-14:Math.min(window.innerHeight*.62,window.innerHeight-top-ctr.offsetHeight-28))+"px";};
   fit();setTimeout(fit,300);window.addEventListener("resize",fit);
 }
 
@@ -2860,9 +2860,11 @@ function cocoWelcome(){if(COCO_WELCOMED)return;COCO_WELCOMED=true;try{const n=ne
 
 
 /* ---------- Print / download (the Android app view cannot print or save files: it opens Chrome for that) ---------- */
-const inWebView=()=>/; wv\)/.test(navigator.userAgent)||(isApp()&&!/Chrome\/\d/.test(navigator.userAgent));
+const newApp=()=>{try{return typeof window.BasicSpanishApp!=="undefined"&&!!window.BasicSpanishApp.version;}catch(e){return false;}};
+const inWebView=()=>!newApp()&&(/; wv\)/.test(navigator.userAgent)||(isApp()&&!/Chrome\/\d/.test(navigator.userAgent)));
 function openInChrome(q,hash){location.href="http://spanishflt.github.io/"+q+(hash||"");}
-function downloadBlob(blob,fname){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+function downloadBlob(blob,fname){
+  if(newApp()){const r=new FileReader();r.onload=()=>{try{window.BasicSpanishApp.saveFile(String(r.result).split(",")[1],fname,blob.type||"application/octet-stream");}catch(e){}};r.readAsDataURL(blob);return;}const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 function appSaveHelp(){
   overlay("Print",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🖨️"),h("h2",{},"Imprimir o descargar · Print or download")),
     h("p",{},"Dentro de la app Android no se puede imprimir ni descargar. Abre ",h("b",{},"spanishflt.github.io")," en Chrome y toca Imprimir o Descargar allí."),
@@ -2916,6 +2918,7 @@ function printOnly(node){
   const root=document.createElement("div");root.id="printroot";root.append(node.cloneNode(true));
   document.body.append(root);document.body.classList.add("print-one");
   const done=()=>{document.body.classList.remove("print-one");root.remove();window.removeEventListener("afterprint",done);};
+  if(newApp()){window.__appPrintDone=()=>{window.__appPrintDone=null;done();};setTimeout(()=>{try{window.BasicSpanishApp.print("Basic Spanish");}catch(e){done();}},80);setTimeout(()=>{if(document.getElementById("printroot"))done();},180000);return;}
   window.addEventListener("afterprint",done);setTimeout(()=>{window.print();setTimeout(()=>{if(document.getElementById("printroot"))done();},1500);},60);
 }
 /* ---------- Views ---------- */
