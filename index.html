@@ -3683,7 +3683,7 @@ function skinWiggle(){
 }
 function skinRow(){
   const row=h("div",{cls:"skinopts"});
-  const draw=()=>{row.innerHTML="";SKINS.forEach(([k,label])=>row.append(h("button",{cls:"skinbtn","aria-pressed":String(curSkin()===k),on:{click:()=>{setSkin(k);draw();}}},label)));};
+  const draw=()=>{row.innerHTML="";SKINS.forEach(([k,label])=>row.append(h("button",{cls:"skinbtn","aria-pressed":String(curSkin()===k),on:{click:e=>{row.querySelectorAll(".skinbtn").forEach(b=>b.setAttribute("aria-pressed",String(b===e.currentTarget)));requestAnimationFrame(()=>setTimeout(()=>{setSkin(k);draw();},0));}}},label)));};
   draw();
   return h("div",{cls:"skinrow"},h("div",{cls:"skinhead"},h("span",{cls:"sk-ic","aria-hidden":"true"},"🎨"),h("span",{cls:"skinlbl"},"Tema | Theme"),h("span",{}),h("span",{cls:"skinhint"},"Choose the theme for the app.")),row);
 }
@@ -3794,9 +3794,16 @@ function wormEl(){
   return w;
 }
 addEventListener("resize",()=>{WS.P=null;try{wormDraw(performance.now());}catch(e){}});
-function fitTitle(){const t=document.querySelector(".hero h1");if(!t)return;setTimeout(()=>{try{placeHat();}catch(e){}},0);t.style.fontSize="";let fs=parseFloat(getComputedStyle(t).fontSize);while(t.scrollWidth>t.clientWidth+1&&fs>22){fs-=1;t.style.fontSize=fs+"px";}}
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitTitle());
-window.addEventListener("resize",()=>fitTitle());
+/* fit "Basic Spanish" on one line: measured once per screen width (it used to re-measure the whole page many times, which made theme changes feel stuck) */
+let FT={w:0,fs:null};
+function fitTitle(fresh){const t=document.querySelector(".hero h1");if(!t)return;setTimeout(()=>{try{placeHat();}catch(e){}},0);
+  if(fresh===true)FT.w=0;t.style.fontSize="";const w=t.clientWidth;
+  if(FT.w===w&&FT.fs!==null){if(FT.fs)t.style.fontSize=FT.fs+"px";return;}
+  let fs=parseFloat(getComputedStyle(t).fontSize),sw=t.scrollWidth,used=0;
+  if(sw>w+1){fs=Math.max(22,Math.floor(fs*w/sw));t.style.fontSize=fs+"px";used=fs;let k=0;while(t.scrollWidth>w+1&&fs>22&&k++<4){fs-=1;t.style.fontSize=fs+"px";used=fs;}}
+  FT={w,fs:used};}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitTitle(true));
+window.addEventListener("resize",()=>fitTitle(true));
 
 /* ===== Game view ===== */
 let GM_ALL=false,GM_WIG=false;
@@ -4301,6 +4308,8 @@ try{if(/[?&]demo=1/.test(location.search)){openUnit(DEMO_IDX,"lesson");history.r
 try{const mp=/[?&](print|dl)=(guide|cert)/.exec(location.search);if(mp){const act=mp[1],what=mp[2];const hm=/#c=([^&]+)/.exec(location.hash);history.replaceState(null,"",location.pathname);
   if(what==="guide"){showGuide();setTimeout(()=>{if(act==="print")printOnly(document.querySelector(".guide"));else downloadBlob(guidePDF(),"Basic-Spanish-How-to-use-the-app.pdf");},900);}
   else if(hm){const o=b64d8(hm[1]);const cert=showDiploma(o);setTimeout(async()=>{if(act==="print")printOnly(cert);else{const b=await certPNG(o.n,o.p,o.d);downloadBlob(b,"Basic-Spanish-Certificate-"+o.n.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}},900);}}}catch(e){}
+/* new Android app: Home is drawn -> the welcome screen can fade away */
+requestAnimationFrame(()=>requestAnimationFrame(()=>{try{if(window.BasicSpanishApp&&window.BasicSpanishApp.ready)window.BasicSpanishApp.ready();}catch(e){}}));
 setTimeout(()=>{try{Coco.start();}catch(e){}},400);
 setTimeout(()=>{try{dailyGreeting();}catch(e){}},1200);
 cocoWelcome();
