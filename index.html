@@ -1844,7 +1844,7 @@ function lockScreen(u,box,idx,unitTab){
     try{const kek=await teacherKey(pw.value);unlocked[idx]=await unwrapKey(kek,idx);saveUnlocked();setUnlockExp(idx,dp.days);pw.value="";msg.textContent="✅ ¡Lección desbloqueada! · Lesson unlocked!";
       form.hidden=true;after.hidden=false;
       after.innerHTML="";after.append(
-        h("button",{cls:"btn primary",on:{click:()=>{render();}}},unitTab?"▶ Abrir la unidad · Open unit":"▶ Abrir la lección · Open lesson"),
+        h("button",{cls:"btn primary",on:{click:()=>{if(hasLesson(idx))tab="lesson";render();unitFocus();}}},unitTab?"▶ Abrir la unidad · Open unit":"▶ Abrir la lección · Open lesson"),
         h("button",{cls:"btn",on:{click:async e=>{const bt=e.currentTarget;bt.disabled=true;bt.textContent="…";for(let i=0;i<LESSONS_ENC.L.length;i++){if(!unlocked[i])unlocked[i]=await unwrapKey(kek,i);setUnlockExp(i,dp.days);}saveUnlocked();bt.textContent="✅ Todas desbloqueadas · All unlocked";}}},"🔓 Desbloquear todas (28) · Unlock all"));
     }catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";go.disabled=false;pw.select();}
   }
