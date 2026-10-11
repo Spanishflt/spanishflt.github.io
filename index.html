@@ -3037,7 +3037,7 @@ function dictSay(es){
   try{
     const c=dictClip(es);
     if(c){const ctx=ac();if(!ctx)return;if("speechSynthesis" in window)speechSynthesis.cancel();stopClip();
-      loadAudio(c[0]).then(buf=>{if(!buf){sayTTS({t:es,l:"es"},()=>{});return;}const src=ctx.createBufferSource();src.buffer=buf;src.connect(voiceOut(ctx));clipNode=src;src.start(0,c[1][0],c[1][1]+0.08);});return;}
+      loadAudio(c[0]).then(buf=>{if(!buf){sayTTS({t:es,l:"es"},()=>{});return;}const src=ctx.createBufferSource();src.buffer=buf;const g=ctx.createGain();src.connect(g);g.connect(voiceOut(ctx));clipNode=src;const t=ctx.currentTime,o=Math.max(0,c[1][0]),d=c[1][1];g.gain.setValueAtTime(1,t);g.gain.setValueAtTime(1,t+Math.max(0,d-0.03));g.gain.linearRampToValueAtTime(0,t+d);src.start(t,o,d); /* exact cut, nothing extra at the end */});return;}
     if("speechSynthesis" in window)speechSynthesis.cancel();
     sayTTS({t:es.replace(/\/\w+$/,""),l:"es"},()=>{});
   }catch(e){}
