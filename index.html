@@ -4166,11 +4166,10 @@ function hardGame(){
   const all=hardLoad();
   const wrap=h("div",{cls:"hardwrap"});
   app.append(topbar(true),wrap);window.scrollTo(0,0);
-  const back=h("div",{cls:"controls"},h("button",{cls:"btn primary",on:{click:()=>home()}},"← Home"));
   if(!all.length){
     wrap.append(h("div",{cls:"qbox result"},h("div",{cls:"big","aria-hidden":"true"},"🌟"),
       h("p",{cls:"qp"},"¡No tienes palabras difíciles! Sigue con tus clases."),
-      h("p",{cls:"en2"},"You have no tricky words! Keep going with your lessons."),back));
+      h("p",{cls:"en2"},"You have no tricky words! Keep going with your lessons.")));
     try{Coco.event("good");}catch(e){}
     return;
   }
@@ -4193,7 +4192,7 @@ function hardGame(){
         h("div",{cls:"big"},right+" / "+qs.length),
         h("p",{},right===qs.length?"¡Perfecto! · Perfect!":right>0?"¡Muy bien! · Well done!":"¡Sigue practicando! · Keep practising!"),
         h("p",{cls:"qp"},left?("Te quedan "+left+(left===1?" palabra difícil":" palabras difíciles")+" · "+left+(left===1?" tricky word":" tricky words")+" left"):"🌟 ¡Ya no tienes palabras difíciles! · No more tricky words!"),
-        h("div",{cls:"controls"},left?h("button",{cls:"btn primary",on:{click:()=>hardGame()}},"Otra vez · Again"):null,h("button",{cls:"btn",on:{click:()=>home()}},"← Home"))));
+        left?h("div",{cls:"controls"},h("button",{cls:"btn primary",on:{click:()=>hardGame()}},"Otra vez · Again")):null));
       if(right)try{Coco.event("good");}catch(e){}
       return;
     }
