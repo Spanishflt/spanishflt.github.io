@@ -3417,13 +3417,13 @@ function penShot(root,ok,g,sv){
     if(d.redo.length){pn.append(h("h4",{},"Para mejorar · To improve"));d.redo.forEach(i=>pn.append(h("button",{cls:"sp-go",on:{click:()=>{setOpen(false);openUnit(i,"quiz");}}},(i+1)+". "+ALL[i].t+" · "+starStr(prog[i]))));}
     if(d.hc){pn.append(h("h4",{},"Palabras difíciles · Tricky words"),h("div",{cls:"sp-sub"},d.hc+" para repasar · to review"));}
   }
-  function setOpen(o){isOpen=o;if(o)fill();pn.classList.toggle("open",o);bk.classList.toggle("on",o);pn.style.transform="";hd.style.transform="";hd.style.opacity=o?"0":"";hd.style.pointerEvents=o?"none":"";}
-  bk.addEventListener("click",()=>setOpen(false));
+  function setOpen(o){isOpen=o;if(o)openedAt=Date.now();if(o)fill();pn.classList.toggle("open",o);bk.classList.toggle("on",o);pn.style.transform="";hd.style.transform="";hd.style.opacity=o?"0":"";hd.style.pointerEvents=o?"none":"";}
+  let openedAt=0;bk.addEventListener("click",()=>{if(Date.now()-openedAt<500)return;setOpen(false);}); /* on phones the tap that opens it also "clicks" the backdrop */
   let sx=null,moved=0,base=0,fromPanel=false;
   function down(e,fp){sx=e.clientX;moved=0;fromPanel=fp;base=isOpen?0:W();pn.classList.add("drag");if(!isOpen)fill();e.target.setPointerCapture&&e.target.setPointerCapture(e.pointerId);}
   function move(e){if(sx==null)return;moved=e.clientX-sx;const x=Math.max(0,Math.min(W(),base+moved));pn.style.transform="translateX("+x+"px)";hd.style.transform="translateX("+(x-W())+"px)";}
   function up(){if(sx==null)return;pn.classList.remove("drag");const x=Math.max(0,Math.min(W(),base+moved));const open=isOpen?x<W()*.35:x<W()*.7;sx=null;
-    if(!isOpen&&Math.abs(moved)<6){pn.style.transform="";hd.style.transform="";setOpen(true);return;} /* a simple tap opens it, like the dictionary tab */
+    if(!isOpen&&moved>-40){pn.style.transform="";hd.style.transform="";setOpen(true);return;} /* a simple tap opens it, like the dictionary tab */
     setOpen(open);}
   hd.addEventListener("pointerdown",e=>down(e,false));hd.addEventListener("pointermove",move);hd.addEventListener("pointerup",up);hd.addEventListener("pointercancel",up);
   pn.addEventListener("pointerdown",e=>{if(isOpen&&!e.target.closest("button"))down(e,true);});pn.addEventListener("pointermove",move);pn.addEventListener("pointerup",up);pn.addEventListener("pointercancel",up);
