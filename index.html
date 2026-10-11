@@ -2378,24 +2378,30 @@ function redeemCoupon(){
     }}},"Entrar · Enter")),msg,list,
     h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
 }
-function showDiploma(){
-  const nm=h("div",{cls:"dname"},RW.name||"_______________");
+function showDiploma(ext){
+  const NAME=ext?ext.n:RW.name,PHOTO=ext?ext.p:RW.photo;
+  const nm=h("div",{cls:"dname"},NAME||"_______________");
   const nameBox=h("div",{cls:"noprint dnamebox"});
   const drawName=()=>{nameBox.innerHTML="";
+    if(ext)return;
     if(RW.name){nm.textContent=RW.name;nameBox.append(h("p",{cls:"rintro"},"🔒 El nombre ya está guardado y no se puede cambiar. · The name is saved and can't be changed."));return;}
     nameBox.append(h("p",{cls:"rintro"},"Primero escribe tu nombre completo. · First write your full name."),
       h("button",{cls:"btn primary",on:{click:()=>askName(()=>drawName())}},"✏️ Escribir mi nombre · Write my name"));
   };
   drawName();
-  const d=new Date();const date=d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const d=new Date();const date=ext&&ext.d?ext.d:d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   const cert=h("div",{cls:"diploma",id:"diploma"},
     h("div",{cls:"dtop"},"🏆"),h("div",{cls:"dtitle"},"Certificate of Achievement"),h("div",{cls:"dsub"},"Certificado de logro"),
-    h("div",{cls:"dtext"},"This certificate is proudly presented to"),RW.photo?h("img",{cls:"dphoto",src:RW.photo,alt:""}):null,nm,
+    h("div",{cls:"dtext"},"This certificate is proudly presented to"),PHOTO?h("img",{cls:"dphoto",src:PHOTO,alt:""}):null,nm,
     h("div",{cls:"dbig"},"Basic Spanish – Excellent Student"),
     h("div",{cls:"dtext"},"for earning 100 stars ⭐ learning Spanish."),
     h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{cls:"ddate"},date)));
   overlay("Certificate",close=>[cert,nameBox,
-    h("div",{cls:"controls sm noprint"},h("button",{cls:"btn primary",on:{click:()=>{if(!RW.name){alert("Primero guarda tu nombre. · Save your name first.");return;}printOnly(cert);}}},"🖨️ Imprimir · Print"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
+    h("div",{cls:"controls sm noprint"},
+      h("button",{cls:"btn primary",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}if(inWebView()){const p=PHOTO?await smallPhoto(PHOTO):"";return appSaveHelp("cert","#c="+b64e8({n:NAME,p,d:date}));}printOnly(cert);}}},"🖨️ Imprimir · Print"),
+      h("button",{cls:"btn",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}if(inWebView()){const p=PHOTO?await smallPhoto(PHOTO):"";return appSaveHelp("cert","#c="+b64e8({n:NAME,p,d:date}));}const b=await certPNG(NAME,PHOTO,date);downloadBlob(b,"Basic-Spanish-Certificate-"+NAME.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}}},"⬇️ Descargar · Download"),
+      h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
+  return cert;
 }
 function checkRewards(){
   const r=rewardsState();RW.seen=RW.seen||{};let pop=null;
@@ -2682,7 +2688,9 @@ function guideArticle(){
 function showGuide(){
   cur=null;hush&&hush();app.innerHTML="";
   const win=h("div",{cls:"guide-win"},guideArticle());
-  const ctr=h("div",{cls:"controls sm noprint"},h("button",{cls:"btn",on:{click:()=>printOnly(document.querySelector(".guide"))}},"🖨️ Imprimir · Print"),h("button",{cls:"btn primary",on:{click:()=>home()}},"← Home"));
+  const ctr=h("div",{cls:"controls sm noprint"},
+    h("button",{cls:"btn",on:{click:()=>{if(inWebView())return appSaveHelp("guide");printOnly(document.querySelector(".guide"));}}},"🖨️ Imprimir · Print"),
+    h("button",{cls:"btn primary",on:{click:()=>{if(inWebView())return appSaveHelp("guide");downloadBlob(guidePDF(),"Basic-Spanish-How-to-use-the-app.pdf");}}},"⬇️ Descargar · Download"));
   app.append(topbar(true),win,ctr);
   window.scrollTo(0,0);
   /* the guide lives in its own window: you slide inside it, and Print / Home stay on screen */
@@ -2850,12 +2858,61 @@ const APP_VERSION="v1.3";
 let COCO_WELCOMED=false,COCO_WELCOME_WAIT=false;
 function cocoWelcome(){if(COCO_WELCOMED)return;COCO_WELCOMED=true;try{const n=new Date(),d=n.getFullYear()+"-"+(n.getMonth()+1)+"-"+n.getDate();if(localStorage.getItem("bs-welcomeday")===d)return;localStorage.setItem("bs-welcomeday",d);}catch(e){}try{setTimeout(()=>{if(document.querySelector(".greet")){COCO_WELCOME_WAIT=true;return;}Coco.event("welcome");},2600);}catch(e){}}
 
+
+/* ---------- Print / download (the Android app view cannot print or save files: it opens Chrome for that) ---------- */
+const inWebView=()=>/; wv\)/.test(navigator.userAgent)||(isApp()&&!/Chrome\/\d/.test(navigator.userAgent));
+function openInChrome(q,hash){location.href="http://spanishflt.github.io/"+q+(hash||"");}
+function downloadBlob(blob,fname){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+function appSaveHelp(){
+  overlay("Print",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🖨️"),h("h2",{},"Imprimir o descargar · Print or download")),
+    h("p",{},"Dentro de la app Android no se puede imprimir ni descargar. Abre ",h("b",{},"spanishflt.github.io")," en Chrome y toca Imprimir o Descargar allí."),
+    h("p",{cls:"rintro"},"You can't print or download inside the Android app. Open spanishflt.github.io in Chrome and tap Print or Download there."),
+    h("button",{cls:"btn primary",on:{click:c}},"OK")]);
+}
+/* small text PDF of the guide (no extra libraries) */
+function guidePDF(){
+  const cv=document.createElement("canvas").getContext("2d");
+  const W=595,H=842,M=50,maxW=W-2*M;
+  const clean=t=>{const d=document.createElement("div");d.innerHTML=t;return (d.textContent||"").replace(/[→]/g,"->").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x20-\x7E -ÿ–—…€]/g,"").replace(/\s+/g," ").trim();};
+  const lines=[];const push=(t,f,sz,gap)=>{cv.font=(f==="B"?"bold ":"")+sz+"px Helvetica, Arial";const words=t.split(" ");let ln="";words.forEach(w=>{const tt=ln?ln+" "+w:w;if(cv.measureText(tt).width>maxW&&ln){lines.push([ln,f,sz]);ln=w;}else ln=tt;});if(ln)lines.push([ln,f,sz]);if(gap)lines.push(["",f,gap]);};
+  push("Basic Spanish – Cómo usar la app · How to use the app","B",18,6);
+  push("Basic Spanish – Extra Lessons · "+APP_VERSION+" · Alberto Garrido Hernández · Old Harbour Primary School","",10,10);
+  GUIDE.forEach(([ic,t,items])=>{push(clean(t),"B",14,4);items.forEach(x=>push("• "+clean(x),"",11,4));lines.push(["","",8]);});
+  const enc=t=>{let o="";for(const ch of t){let c=ch.charCodeAt(0);const m={0x2013:0x96,0x2014:0x97,0x2026:0x85,0x20AC:0x80,0x2022:0x95};if(m[c])c=m[c];if(c>255)continue;const x=String.fromCharCode(c);o+=(x==="("||x===")"||x==="\\")?"\\"+x:x;}return o;};
+  const pages=[];let cur=[],y=H-M;
+  lines.forEach(([t,f,sz])=>{const lh=sz*1.35;if(y-lh<M){pages.push(cur);cur=[];y=H-M;}y-=lh;if(t)cur.push("BT /"+(f==="B"?"F2":"F1")+" "+sz+" Tf "+M+" "+y.toFixed(1)+" Td ("+enc(t)+") Tj ET");});
+  if(cur.length)pages.push(cur);
+  const objs=[];const add=o=>{objs.push(o);return objs.length;};
+  const cat=add(""),pgs=add(""),f1=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>"),f2=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+  const kids=[];pages.forEach((pg,i)=>{const st=pg.join("\n")+"\nBT /F1 9 Tf "+(W-M-30)+" 30 Td ("+(i+1)+"/"+pages.length+") Tj ET";const cs=add("<< /Length "+st.length+" >>\nstream\n"+st+"\nendstream");kids.push(add("<< /Type /Page /Parent "+pgs+" 0 R /MediaBox [0 0 "+W+" "+H+"] /Resources << /Font << /F1 "+f1+" 0 R /F2 "+f2+" 0 R >> >> /Contents "+cs+" 0 R >>"));});
+  objs[cat-1]="<< /Type /Catalog /Pages "+pgs+" 0 R >>";objs[pgs-1]="<< /Type /Pages /Kids ["+kids.map(k=>k+" 0 R").join(" ")+"] /Count "+kids.length+" >>";
+  let out="%PDF-1.4\n";const offs=[];objs.forEach((o,i)=>{offs.push(out.length);out+=(i+1)+" 0 obj\n"+o+"\nendobj\n";});
+  const xref=out.length;out+="xref\n0 "+(objs.length+1)+"\n0000000000 65535 f \n"+offs.map(o=>String(o).padStart(10,"0")+" 00000 n \n").join("")+"trailer\n<< /Size "+(objs.length+1)+" /Root "+cat+" 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+  const bytes=new Uint8Array(out.length);for(let i=0;i<out.length;i++)bytes[i]=out.charCodeAt(i)&255;
+  return new Blob([bytes],{type:"application/pdf"});
+}
+/* certificate as a picture (PNG) */
+async function certPNG(name,photo,date){
+  const W=1600,H=1130,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const g=x.createRadialGradient(W*.35,H*.3,50,W*.5,H*.5,W*.75);g.addColorStop(0,"#FFFFFF");g.addColorStop(.6,"#F7E7C6");g.addColorStop(1,"#C8A13A");x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.strokeStyle="#C8A13A";x.lineWidth=14;x.strokeRect(28,28,W-56,H-56);x.lineWidth=4;x.strokeRect(52,52,W-104,H-104);
+  x.textAlign="center";const T=(t,y,f,col)=>{x.font=f;x.fillStyle=col;x.fillText(t,W/2,y);};
+  T("🏆",170,"110px serif","#000");T("Certificate of Achievement",280,"bold 72px Georgia, serif","#0E6E78");T("Certificado de logro",340,"italic 40px Georgia, serif","#555");
+  T("This certificate is proudly presented to",410,"34px Georgia, serif","#2b2b2b");
+  let ny=520;
+  if(photo){try{const im=await new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=photo;});x.save();x.beginPath();x.arc(W/2,500,70,0,Math.PI*2);x.clip();x.drawImage(im,W/2-70,430,140,140);x.restore();x.lineWidth=5;x.strokeStyle="#C8A13A";x.beginPath();x.arc(W/2,500,70,0,Math.PI*2);x.stroke();ny=650;}catch(e){}}
+  let fs=70;x.font="bold "+fs+"px Georgia, serif";while(x.measureText(name).width>W-300&&fs>36){fs-=4;x.font="bold "+fs+"px Georgia, serif";}
+  T(name,ny,"bold "+fs+"px Georgia, serif","#2b2b2b");x.fillStyle="#C8A13A";x.fillRect(W*.2,ny+22,W*.6,4);
+  T("Basic Spanish – Excellent Student",ny+110,"bold 54px Georgia, serif","#D6284A");T("for earning 100 stars ⭐ learning Spanish.",ny+170,"34px Georgia, serif","#2b2b2b");
+  x.textAlign="left";x.fillStyle="#2b2b2b";x.fillRect(150,H-190,520,3);x.font="30px Georgia, serif";x.fillText("Alberto Garrido Hernández",150,H-150);x.font="24px Georgia, serif";x.fillText("Spanish Teacher · Old Harbour Primary School",150,H-115);
+  x.textAlign="right";x.font="30px Georgia, serif";x.fillText(date,W-150,H-150);
+  return new Promise(r=>c.toBlob(r,"image/png"));
+}
+async function smallPhoto(src){try{const im=await new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=src;});const c=document.createElement("canvas");c.width=c.height=160;const s=Math.min(im.width,im.height);c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,160,160);return c.toDataURL("image/jpeg",.7);}catch(e){return "";}}
+const b64e8=o=>encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(o)))));
+const b64d8=t=>JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(t)))));
 /* Print exactly one thing (the certificate or the guide) on its own */
 function printOnly(node){
-  if(isApp()){overlay("Print",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🖨️"),h("h2",{},"Imprimir · Print")),
-    h("p",{},"Dentro de la app Android no se puede imprimir. Abre spanishflt.github.io en Chrome y toca Imprimir allí."),
-    h("p",{cls:"rintro"},"Printing is not available inside the Android app. Open spanishflt.github.io in Chrome and tap Print there."),
-    h("button",{cls:"btn primary",on:{click:c}},"OK")]);return;}
   const root=document.createElement("div");root.id="printroot";root.append(node.cloneNode(true));
   document.body.append(root);document.body.classList.add("print-one");
   const done=()=>{document.body.classList.remove("print-one");root.remove();window.removeEventListener("afterprint",done);};
@@ -4236,6 +4293,9 @@ try{stadEver();}catch(e){}
 checkExpiry(false);
 home();
 try{if(/[?&]demo=1/.test(location.search)){openUnit(DEMO_IDX,"lesson");history.replaceState(null,"",location.pathname+(/[?&]app=1/.test(location.search)?"?app=1":""));}}catch(e){}
+try{const mp=/[?&](print|dl)=(guide|cert)/.exec(location.search);if(mp){const act=mp[1],what=mp[2];const hm=/#c=([^&]+)/.exec(location.hash);history.replaceState(null,"",location.pathname);
+  if(what==="guide"){showGuide();setTimeout(()=>{if(act==="print")printOnly(document.querySelector(".guide"));else downloadBlob(guidePDF(),"Basic-Spanish-How-to-use-the-app.pdf");},900);}
+  else if(hm){const o=b64d8(hm[1]);const cert=showDiploma(o);setTimeout(async()=>{if(act==="print")printOnly(cert);else{const b=await certPNG(o.n,o.p,o.d);downloadBlob(b,"Basic-Spanish-Certificate-"+o.n.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}},900);}}}catch(e){}
 setTimeout(()=>{try{Coco.start();}catch(e){}},400);
 setTimeout(()=>{try{dailyGreeting();}catch(e){}},1200);
 cocoWelcome();
