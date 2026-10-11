@@ -2846,7 +2846,7 @@ const Coco=(()=>{
     else if(type==="welcome"){act("wave",2200);say("¡Aprende español jugando! Elige una clase y gana premios.\nLearn Spanish by playing! Pick a lesson and win prizes.",6500);}}
   return {start(){if(!el)build();},event,act,say};
 })();
-const APP_VERSION="v1.2";
+const APP_VERSION="v1.3";
 let COCO_WELCOMED=false,COCO_WELCOME_WAIT=false;
 function cocoWelcome(){if(COCO_WELCOMED)return;COCO_WELCOMED=true;try{const n=new Date(),d=n.getFullYear()+"-"+(n.getMonth()+1)+"-"+n.getDate();if(localStorage.getItem("bs-welcomeday")===d)return;localStorage.setItem("bs-welcomeday",d);}catch(e){}try{setTimeout(()=>{if(document.querySelector(".greet")){COCO_WELCOME_WAIT=true;return;}Coco.event("welcome");},2600);}catch(e){}}
 
