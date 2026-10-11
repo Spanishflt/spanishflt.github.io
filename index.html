@@ -157,7 +157,9 @@ h2.sec{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:600;font-size:
 .ovl{position:fixed;inset:0;background:rgba(10,25,30,.55);display:grid;place-items:center;padding:1rem;z-index:50}
 .ovbox{background:var(--surface);color:var(--ink);border-radius:20px;padding:1.2rem 1.2rem 1rem;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.3)}
 .ovh{display:flex;align-items:center;gap:.5rem;padding-right:1.6rem}
-.ovbox{position:relative}.ovx{position:absolute;top:.55rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font:700 16px/1 sans-serif;cursor:pointer;z-index:2}
+.ovbox{position:relative}
+/* share window: everything fits on one screen, the card picture shrinks to make room for the Share button */
+.ovbox.sharebox{display:flex;flex-direction:column;max-height:calc(100vh - 2rem);max-height:calc(100svh - 2rem);overflow:hidden}.ovbox.sharebox>*{flex:none}.ovbox.sharebox .shareprev{flex:1 1 auto;min-height:120px;max-height:none;width:100%;height:auto;object-fit:contain;box-shadow:none;margin:.4rem auto}.ovbox.sharebox .rintro{margin:.3rem 0}.ovbox.sharebox .controls{margin-top:.4rem}.ovx{position:absolute;top:.55rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font:700 16px/1 sans-serif;cursor:pointer;z-index:2}
 .ovh h2{font-family:"Atkinson Hyperlegible",sans-serif;margin:0;color:var(--teal);font-size:1.3rem}
 .ovi{font-size:1.5rem}
 .ovbox p{margin:.6rem 0}
@@ -2534,6 +2536,7 @@ function shareProgress(){
     h("p",{cls:"rintro"},"Enséñale tu progreso a tu familia, compañeros y amigos. · Show your progress to your family, classmates and friends."),
     photoRow,prev,
     h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:()=>doShare(RW.name,cb.checked)}},"📤 Compartir · Share"))]);
+  {const o=[...document.querySelectorAll(".ovl .ovbox")].pop();if(o)o.classList.add("sharebox");}
 }
 async function doShare(name,withPhoto){
   const st=progressStats();
