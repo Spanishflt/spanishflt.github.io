@@ -814,7 +814,7 @@ body{padding-bottom:50px}
 .listen .ico{font-size:1.25em;line-height:1}
 .listen .l1{display:block;line-height:1.1}
 .listen .l2{display:block;font-size:.8em;line-height:1.1;opacity:.85}
-.cardcount{text-align:center;margin-top:.5rem}
+.cardcount{text-align:center;margin-top:.5rem;display:flex;justify-content:center;align-items:center;gap:.6rem;flex-wrap:wrap}.gcount{background:var(--teal,#0E6E78);color:#fff;font:700 .8rem/1 "Atkinson Hyperlegible",sans-serif;border-radius:99px;padding:5px 10px}.gcount[hidden]{display:none}
 .counter{font-family:"Atkinson Hyperlegible",sans-serif;color:var(--muted);min-width:4.5ch;text-align:center}
 
 /* Phrases */
@@ -4228,7 +4228,7 @@ function showNextBox(delay){setTimeout(()=>{const nb=document.querySelector(".ne
 function viewCards(u,box){
   const groups=Object.keys(u.v);let g=groups[0],i=0;
   const chips=h("div",{cls:"chips"});
-  const stage=h("div",{cls:"stage"});const count=h("span",{cls:"counter"});
+  const stage=h("div",{cls:"stage"});const count=h("span",{cls:"counter"});const gcount=h("span",{cls:"gcount"});
   function deck(){return u.v[g].map(s=>{const[es,en,e]=s.split("|");return{es,en,e};});}
   function draw(){
     chips.innerHTML="";
@@ -4240,14 +4240,15 @@ function viewCards(u,box){
     card.addEventListener("click",()=>{card.classList.toggle("flipped");if(card.classList.contains("flipped"))speak(w.es);});
     stage.innerHTML="";stage.append(card);
     count.textContent=(i+1)+"/"+d.length;
+    gcount.textContent=groups.length>1?"Grupo "+(groups.indexOf(g)+1)+"/"+groups.length+" · Group "+(groups.indexOf(g)+1)+"/"+groups.length:"";gcount.hidden=groups.length<2;
     if(i===d.length-1&&g===groups[groups.length-1])showNextBox(900);
   }
   box.append(bi("Toca la tarjeta para ver y escuchar la palabra.","Tap the card to see and hear the Spanish word."),chips,stage,
     h("div",{cls:"cardnav"},
-      h("button",{cls:"btn","aria-label":"Anterior · Previous",on:{click:()=>{const n=deck().length;i=(i-1+n)%n;draw();}}},"◀"),
+      h("button",{cls:"btn","aria-label":"Anterior · Previous",on:{click:()=>{if(i>0)i--;else{const gi=groups.indexOf(g);g=groups[(gi-1+groups.length)%groups.length];i=deck().length-1;}draw();}}},"◀"),
       h("button",{cls:"btn primary listen",on:{click:()=>speak(deck()[i].es)}},h("span",{cls:"ico","aria-hidden":"true"},"🔊"),h("span",{},h("span",{cls:"l1"},"Escuchar"),h("span",{cls:"l2"},"Listen"))),
-      h("button",{cls:"btn","aria-label":"Siguiente · Next",on:{click:()=>{i=(i+1)%deck().length;draw();}}},"▶")),
-    h("div",{cls:"cardcount"},count));
+      h("button",{cls:"btn","aria-label":"Siguiente · Next",on:{click:()=>{if(i<deck().length-1)i++;else{const gi=groups.indexOf(g);g=groups[(gi+1)%groups.length];i=0;}draw();}}},"▶")),
+    h("div",{cls:"cardcount"},count,gcount));
   draw();
 }
 
