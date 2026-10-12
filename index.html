@@ -1446,12 +1446,16 @@ async function teacherKey(pass){
   return crypto.subtle.deriveKey({name:"PBKDF2",salt:ub64(LESSONS_ENC.salt),iterations:LESSONS_ENC.iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
 }
 async function unwrapKey(kek,i){const[, ,wiv,wk]=LESSONS_ENC.L[i];return b64e(await crypto.subtle.decrypt({name:"AES-GCM",iv:ub64(wiv)},kek,ub64(wk)));}
+/* board text corrections, by lesson index (the board must say exactly what the teacher says) */
+const BOARDFIX={15:[["Yo {voy} a la escuela. ·","Yo {voy} a la escuela a aprender. ·"]]};
 async function loadLesson(i){
   if(i===DEMO_IDX)return DEMO_LESSON;
   const k=unlocked[i];if(!k)return null;
   const key=await crypto.subtle.importKey("raw",ub64(k),"AES-GCM",false,["decrypt"]);
   const[iv,ct]=LESSONS_ENC.L[i];
-  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:ub64(iv)},key,ub64(ct))));
+  let txt=new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:ub64(iv)},key,ub64(ct)));
+  (BOARDFIX[i]||[]).forEach(([a,b])=>{txt=txt.split(a).join(b);});
+  return JSON.parse(txt);
 }
 
 /* Voices: recorded teacher audio, with the phone's voice as a backup */
