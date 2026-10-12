@@ -1434,7 +1434,7 @@ function expiryNote(i){
     h("button",{cls:"tkey",on:{click:()=>renewDialog(i)}},"🔑 Renovar · Renew"));
 }
 function renewDialog(i){
-  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});const dp=durPicker();const msg=h("p",{cls:"tmsg","aria-live":"polite"});
+  const pw=h("input",{type:"password",cls:"secret",autocomplete:"new-password",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});const dp=durPicker();const msg=h("p",{cls:"tmsg","aria-live":"polite"});
   overlay("Renew",close=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🔑"),h("h2",{},"Renovar · Renew")),h("p",{},U[i].i+" "+(i+1)+". "+U[i].t),dp.el,
     h("div",{cls:"tform"},pw,h("button",{cls:"btn primary",on:{click:async()=>{msg.textContent="…";try{const kek=await teacherKey(pw.value);unlocked[i]=await unwrapKey(kek,i);saveUnlocked();setUnlockExp(i,dp.days);pw.value="";close();render();}catch(e){msg.textContent="❌ Contraseña incorrecta · Wrong password";}}}},"Renovar · Renew")),msg,
     h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")]);
@@ -1844,7 +1844,7 @@ function viewLesson(u,box){
 function lockScreen(u,box,idx,unitTab){
   const form=h("div",{cls:"tform",hidden:"true"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});
-  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password","aria-label":"Contraseña del maestro · Teacher password"});
+  const pw=h("input",{type:"password",cls:"secret",autocomplete:"new-password",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password","aria-label":"Contraseña del maestro · Teacher password"});
   const go=h("button",{cls:"btn primary"},"Desbloquear · Unlock");
   const after=h("div",{cls:"tafter",hidden:"true"});
   const dp=durPicker();
@@ -2407,7 +2407,7 @@ function rewardsPanel(){
 }
 function redeemCoupon(){
   if(RW.couponUsed||totalStars()<50){overlay("Coupon",c=>[h("div",{cls:"ovh"},h("span",{cls:"ovi"},"🎁"),h("h2",{},"Cupón · Coupon")),h("p",{},RW.couponUsed?"Este cupón ya se usó. Solo se puede usar una vez. · This coupon was already used. It can only be used once.":"Todavía no hay cupón. · No coupon yet."),h("button",{cls:"btn primary",on:{click:c}},"OK")]);return;}
-  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"password",cls:"secret",autocomplete:"new-password",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});const list=h("div",{cls:"rlist"});const dp=durPicker();
   overlay("Redeem coupon",close=>[
     h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🎁"),h("h2",{},"Canjear cupón · Redeem coupon")),
@@ -2685,7 +2685,7 @@ function nameInfo(){
     h("button",{cls:"btn primary",on:{click:close}},"OK")]);
 }
 function teacherRename(){
-  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"password",cls:"secret",autocomplete:"new-password",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const nv=h("input",{type:"text",maxlength:"40",placeholder:"Nombre y apellido · Full name",value:RW.name||""});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});
   overlay("Fix name",close=>[
@@ -2820,7 +2820,7 @@ function avatarBtn(){
 /* ---------- Teacher's rewards (bonus stars) ---------- */
 const BONUS_REASONS=["🌟 Excelente trabajo · Excellent work","🙋 Participación · Participation","📒 Tarea · Homework","🗣️ Hablar español · Speaking Spanish","😊 Buen comportamiento · Good behaviour","🤝 Ayudar a un compañero · Helping a classmate"];
 function teacherRewards(){
-  const pw=h("input",{type:"text",cls:"secret",autocomplete:"off",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
+  const pw=h("input",{type:"password",cls:"secret",autocomplete:"new-password",autocorrect:"off",autocapitalize:"off",spellcheck:"false","data-lpignore":"true","data-1p-ignore":"true",name:"bs-k",placeholder:"Contraseña · Password"});
   const msg=h("p",{cls:"tmsg","aria-live":"polite"});const area=h("div",{});
   let n=1,reason="";
   const nBtns=[1,2,3,5,10].map(v=>h("button",{cls:"dur"+(v===n?" on":""),on:{click:e=>{n=v;nBtns.forEach(b=>b.classList.toggle("on",+b.dataset.v===v));}}},"+"+v+" ⭐"));
