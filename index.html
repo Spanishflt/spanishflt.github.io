@@ -4220,7 +4220,7 @@ function render(){
 
 /* Cards */
 /* when the content of a review tab is finished, scroll just enough to show «Seguir ▶ / ⭐ Prueba» */
-function showNextBox(delay){setTimeout(()=>{const nb=document.querySelector(".nextbox");if(!nb)return;const r=nb.getBoundingClientRect();if(r.bottom>innerHeight-8||r.top<0)nb.scrollIntoView({behavior:"smooth",block:"end"});nb.classList.remove("nbpulse");void nb.offsetWidth;nb.classList.add("nbpulse");},delay||600);}
+function showNextBox(delay){setTimeout(()=>{const nb=document.querySelector(".nextbox");if(!nb)return;const r=nb.getBoundingClientRect(),m=document.querySelector(".mascot"),mr=m&&!m.hidden&&getComputedStyle(m).display!=="none"?m.getBoundingClientRect():null,gap=Math.min(150,Math.max(40,mr&&mr.top<innerHeight?innerHeight-mr.top+10:0)),need=r.bottom-(innerHeight-gap);if(need>0)window.scrollBy({top:need,behavior:"smooth"});else if(r.top<0)window.scrollBy({top:r.top-gap,behavior:"smooth"});nb.classList.remove("nbpulse");void nb.offsetWidth;nb.classList.add("nbpulse");},delay||600);}
 function viewCards(u,box){
   const groups=Object.keys(u.v);let g=groups[0],i=0;
   const chips=h("div",{cls:"chips"});
@@ -4250,14 +4250,14 @@ function viewCards(u,box){
 /* Phrases */
 function viewPhrases(u,box){
   box.append(bi("Estudia las preguntas y respuestas. Toca 🔊 para escuchar.","Study the question and answer patterns. Tap 🔊 to listen."));
-  u.p.forEach(s=>{
-    const[q,qe,a,ae]=s.split("|");
+  u.p.forEach((s,pi)=>{
+    const[q,qe,a,ae]=s.split("|");const lastP=pi===u.p.length-1;
     const pat=h("div",{cls:"pat"});
     if(q)pat.append(h("div",{cls:"row"},sayBtn(q),h("div",{},h("div",{cls:"lab"},"Pregunta · Question"),h("div",{cls:"es"},q),h("div",{cls:"en"},qe))));
-    pat.append(h("div",{cls:"row"},sayBtn(a),h("div",{},h("div",{cls:"lab"},q?"Respuesta · Answer":"Ejemplo · Example"),h("div",{cls:"es"},a),h("div",{cls:"en"},ae))));
+    pat.append(h("div",{cls:"row"},lastP?h("button",{cls:"say","aria-label":"Escuchar",on:{click:e=>{e.stopPropagation();let shown=false;const go=()=>{if(!shown){shown=true;showNextBox(150);}};speak(a,{end:go});setTimeout(go,4500);}}},"🔊"):sayBtn(a),h("div",{},h("div",{cls:"lab"},q?"Respuesta · Answer":"Ejemplo · Example"),h("div",{cls:"es"},a),h("div",{cls:"en"},ae))));
     box.append(pat);
   });
-  {const last=[...box.querySelectorAll(".pat")].pop();if(last)last.addEventListener("click",e=>{if(e.target.closest("button"))showNextBox(1500);});}
+
 }
 
 /* Dialogue */
