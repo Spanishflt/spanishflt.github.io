@@ -1997,7 +1997,8 @@ function lessonPlayer(u,box,les,idx){
       const nrm=x=>x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[{}¿?¡!.,:;·()]/g," ").split(/\s+/).filter(Boolean).map(w=>/^\d{1,2}$/.test(w)&&NUMW[+w]?NUMW[+w].normalize("NFD").replace(/[\u0300-\u036f]/g,""):w);
       const txt=el=>Array.from(el.childNodes).map(n=>n.nodeType===3?n.textContent:(n.tagName==="B"||n.tagName==="I"?n.textContent:" "+txt(n)+" ")).join("");
       const pickItem=t=>{const rt=nrm(t);let best=null,bs=0;items.forEach(it=>{const tt=new Set(nrm(txt(it)));const sc=rt.filter(w=>tt.has(w)).length/rt.length;if(sc>bs){bs=sc;best=it;}});return bs>=.6?best:null;};
-      const reads=(st.read||[]).map(t=>({t,l:"es",pause:700,onStart:()=>{const it=pickItem(t);if(!it)(window.__nohl=window.__nohl||[]).push(t);mark(it);}}));
+      let lastPos=-1;
+      const reads=(st.read||[]).map(t=>({t,_o:(()=>{const it=pickItem(t),p=it?items.indexOf(it):-1;if(p>=0)lastPos=p;return lastPos;})(),l:"es",pause:700,onStart:()=>{const it=pickItem(t);if(!it)(window.__nohl=window.__nohl||[]).push(t);mark(it);}}));
       /* Spanish lines that are on the board but missing from the lesson's reading list: if the teacher's voice
          was recorded for that line, read it and light it up too (e.g. «El rectángulo tiene cuatro lados.») */
       {const covered=new Set();(st.read||[]).forEach(t=>{const it=pickItem(t);if(it)covered.add(it);});
@@ -2011,8 +2012,9 @@ function lessonPlayer(u,box,les,idx){
               only if all of them were recorded — repetition helps */
            const parts=sp.textContent.split("·").map(x=>{if(/✔/.test(x))x=x.split("✔")[1].split("✘")[0];else if(/✘/.test(x))return "";else if(/[→=]/.test(x)){const sides=x.split(/[→=]/).flatMap(y=>[y.replace(/\(.*?\)/g,""),y.replace(/[()]/g,"")]).map(y=>clean(y.replace(/\+/g," ")));return sides.reverse().find(y=>y&&(recText(y)||recText(y.charAt(0).toUpperCase()+y.slice(1))))||sides[sides.length-1];}return clean(x);}).filter(Boolean)
              .map(x=>recText(x)||recText(x.charAt(0).toUpperCase()+x.slice(1)));
-           if(parts.length&&parts.every(Boolean))parts.forEach(r=>{(window.__autoread=window.__autoread||[]).push(r);reads.push({t:r,l:"es",pause:600,onStart:()=>mark(it)});});return;}
-         if(!said)return;(window.__autoread=window.__autoread||[]).push(said);reads.push({t:said,l:"es",pause:700,onStart:()=>mark(it)});});}
+           if(parts.length&&parts.every(Boolean))parts.forEach(r=>{(window.__autoread=window.__autoread||[]).push(r);reads.push({t:r,_o:items.indexOf(it),l:"es",pause:600,onStart:()=>mark(it)});});return;}
+         if(!said)return;(window.__autoread=window.__autoread||[]).push(said);reads.push({t:said,_o:items.indexOf(it),l:"es",pause:700,onStart:()=>mark(it)});});}
+      reads.forEach((x,n)=>{x._n=n;});reads.sort((a,b)=>(a._o-b._o)||(a._n-b._n));
       say(st.say,[{t:"",pause:300}].concat(reads),()=>setTimeout(()=>{if(S[k]===s)step();},700));
     };
     step();
