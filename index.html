@@ -3959,21 +3959,42 @@ function openAgenda(){
     /* Enter works like in any text document (new paragraph); some phone keyboards send it as a "\n" character instead */
     ed.addEventListener("beforeinput",e=>{if((e.inputType==="insertText"||e.inputType==="insertReplacementText")&&e.data&&/^\n+$/.test(e.data)){e.preventDefault();document.execCommand("insertParagraph");}});
     ed.addEventListener("paste",e=>{e.preventDefault();const tx=(e.clipboardData||window.clipboardData).getData("text");document.execCommand("insertText",false,tx);});
-    const cmd=(c,v)=>e=>{e.preventDefault();ed.focus();document.execCommand(c,false,v||null);save1(ed);state();};
-    const tb=h("div",{cls:"ag-tools"},
-      h("button",{cls:"ag-t","data-st":"bold",title:"Negrita · Bold",on:{pointerdown:e=>e.preventDefault(),click:cmd("bold")}},h("b",{},"B")),
-      h("button",{cls:"ag-t","data-st":"italic",title:"Cursiva · Italic",on:{pointerdown:e=>e.preventDefault(),click:cmd("italic")}},h("i",{},"I")),
-      h("button",{cls:"ag-t","data-st":"underline",title:"Subrayar · Underline",on:{pointerdown:e=>e.preventDefault(),click:cmd("underline")}},h("u",{},"S")),
-      h("button",{cls:"ag-t","data-st":"insertUnorderedList",title:"Lista · List",on:{pointerdown:e=>e.preventDefault(),click:cmd("insertUnorderedList")}},"• ≡"),
-      ...th.ink.map(c=>h("button",{cls:"ag-c","data-col":c,title:"Color",style:"background:"+c,on:{pointerdown:e=>e.preventDefault(),click:cmd("foreColor",c)}})),
-      ...th.emo.map(em=>h("button",{cls:"ag-t ag-e",on:{pointerdown:e=>e.preventDefault(),click:cmd("insertText",em)}},em)));
+    /* Tools work like a text editor:
+       - keyboard closed: a tool only switches on/off (it lights up) and the keyboard does NOT open;
+         when you then tap the page to write, the chosen style is used.
+       - keyboard open: the tool changes the selected text, or the text you type next. */
     const hex=v=>{const m=/rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(v||"");return m?"#"+[m[1],m[2],m[3]].map(x=>(+x).toString(16).padStart(2,"0")).join("").toUpperCase():String(v||"").toUpperCase();};
-    function state(){if(document.activeElement!==ed)return;
-      tb.querySelectorAll("[data-st]").forEach(b=>{let on=false;try{on=document.queryCommandState(b.dataset.st);}catch(e){}b.classList.toggle("on",on);b.setAttribute("aria-pressed",String(on));});
-      let col="";try{col=hex(document.queryCommandValue("foreColor"));}catch(e){}
-      tb.querySelectorAll("[data-col]").forEach(b=>b.classList.toggle("on",b.dataset.col.toUpperCase()===col));}
-    ed._state=state;["keyup","mouseup","touchend","focus","input"].forEach(ev=>ed.addEventListener(ev,()=>requestAnimationFrame(state)));
-    ed.addEventListener("blur",()=>tb.querySelectorAll(".on").forEach(b=>b.classList.remove("on")));
+    const ST=["bold","italic","underline","insertUnorderedList"];
+    const pend={bold:false,italic:false,underline:false,insertUnorderedList:false,color:th.ink[0].toUpperCase()};
+    const paint=()=>{tb.querySelectorAll("[data-st]").forEach(b=>{const on=!!pend[b.dataset.st];b.classList.toggle("on",on);b.setAttribute("aria-pressed",String(on));});
+      tb.querySelectorAll("[data-col]").forEach(b=>b.classList.toggle("on",b.dataset.col.toUpperCase()===pend.color));};
+    let dirty=false;
+    const readSel=()=>{if(document.activeElement!==ed||dirty)return;ST.forEach(k=>{try{pend[k]=document.queryCommandState(k);}catch(e){}});
+      try{const c=hex(document.queryCommandValue("foreColor"));if(/^#[0-9A-F]{6}$/.test(c))pend.color=c;}catch(e){}paint();};
+    const applyPend=()=>{if(document.activeElement!==ed)return;
+      ST.forEach(k=>{let on=false;try{on=document.queryCommandState(k);}catch(e){}if(on!==!!pend[k])document.execCommand(k,false,null);});
+      let c="";try{c=hex(document.queryCommandValue("foreColor"));}catch(e){}if(pend.color&&c!==pend.color)document.execCommand("foreColor",false,pend.color);dirty=false;paint();};
+    let wasEd=false;const down=e=>{wasEd=document.activeElement===ed;e.preventDefault();};
+    const tool=(c,v)=>e=>{e.preventDefault();e.stopPropagation();
+      if(wasEd||document.activeElement===ed){ed.focus();document.execCommand(c,false,v||null);save1(ed);
+        if(c==="foreColor")pend.color=String(v).toUpperCase();else if(ST.includes(c))pend[c]=!pend[c];requestAnimationFrame(readSel);}
+      else{ if(c==="insertText"){pend.sticker=(pend.sticker||"")+v;b4sticker();}
+            else{dirty=true;if(c==="foreColor")pend.color=String(v).toUpperCase();else pend[c]=!pend[c];}}
+      wasEd=false;paint();};
+    const b4sticker=()=>{const em=pend.sticker;pend.sticker="";const sel=window.getSelection();
+      /* keyboard closed: the sticker goes at the end of the page, without opening the keyboard */
+      const last=ed.lastChild;const tn=document.createTextNode(em);if(last&&last.nodeType===1&&/^(DIV|P|LI)$/.test(last.tagName))last.append(tn);else ed.append(tn);save1(ed);};
+    const B=(attrs,lab,c,v)=>{const b=h("button",attrs,lab);b.addEventListener("pointerdown",down);b.addEventListener("mousedown",e=>e.preventDefault());b.addEventListener("click",tool(c,v));return b;};
+    const tb=h("div",{cls:"ag-tools"},
+      B({cls:"ag-t","data-st":"bold",title:"Negrita · Bold"},h("b",{},"B"),"bold"),
+      B({cls:"ag-t","data-st":"italic",title:"Cursiva · Italic"},h("i",{},"I"),"italic"),
+      B({cls:"ag-t","data-st":"underline",title:"Subrayar · Underline"},h("u",{},"S"),"underline"),
+      B({cls:"ag-t","data-st":"insertUnorderedList",title:"Lista · List"},"• ≡","insertUnorderedList"),
+      ...th.ink.map(c=>B({cls:"ag-c","data-col":c,title:"Color",style:"background:"+c},"","foreColor",c)),
+      ...th.emo.map(em=>B({cls:"ag-t ag-e"},em,"insertText",em)));
+    ed._state=readSel;["keyup","mouseup","touchend","input"].forEach(ev=>ed.addEventListener(ev,()=>requestAnimationFrame(readSel)));
+    ed.addEventListener("focus",()=>{if(dirty)setTimeout(applyPend,60);});
+    paint();
     const pg=h("article",{cls:"ag-page"+(today?" today":"")},
       h("header",{cls:"ag-head"},h("div",{},h("div",{cls:"ag-day"},dn[0]),h("div",{cls:"ag-dayen"},dn[1])),
         h("div",{cls:"ag-date"},h("b",{},d.getDate()+" de "+mn[0]),h("small",{},mn[1]+" "+d.getDate()+" · "+d.getFullYear()))),
