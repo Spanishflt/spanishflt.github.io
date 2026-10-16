@@ -952,6 +952,7 @@ footer{margin-top:2.5rem;color:var(--muted);font-size:.85rem;text-align:center}
 .gm-more{display:block;margin:10px auto 0;font:inherit;font-weight:700;font-size:13px;background:var(--surface);color:var(--teal);border:2px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer}
 .gx{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
 .gx button{flex:1 1 28%;min-width:96px;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;font:inherit;color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;text-align:center}
+.gx .gxst{font-size:13px;letter-spacing:1px;color:var(--muted);min-height:16px;line-height:16px}
 .gx button i{font-style:normal;font-size:28px;width:56px;height:56px;border-radius:50%;background:var(--surface);border:3px solid var(--mango);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,.14)}
 
 .gm-cta .ci.hand{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;font-size:42px;flex:none;animation:gmhand 1s ease-in-out infinite}
@@ -1257,7 +1258,7 @@ const U=[
  d:["Katia|Hola.","Rafael|Hola.","Katia|¿Cuánto es cuatro más cinco?","Rafael|Cuatro más cinco es igual a nueve.","Katia|¿Cuánto es diez menos ocho?","Rafael|Diez menos ocho es igual a dos.","Katia|Adiós.","Rafael|Adiós."], s:["Ocho más diez es igual a dieciocho","Diez menos ocho es igual a dos","Seis más tres es igual a nueve"]},
 
 {i:"👕",t:"Hablar sobre vestuario",e:"Talking about clothing",
- v:{"El vestuario":["una blusa|a blouse|👚","un abrigo|a coat|🧥","un sombrero|a hat|👒","una gorra|a cap|🧢","un bolso|a handbag|👜","un vestido|a dress|👗","un anillo|a ring|💍","un reloj|a watch|⌚","un cinto|a belt","una corbata|a tie","una camisa|a shirt|👔","una licra|a pair of tights","un short|a pair of shorts|🩳","un par de aretes|a pair of earrings","un pantalón|a pair of pants|👖","un pulóver|a pullover","un par de medias|a pair of socks|🧦","una chaqueta|a jacket","un collar|a necklace|📿","una sombrilla|an umbrella|☂️","una bufanda|a scarf|🧣","un par de zapatos|a pair of shoes|👟"],
+ v:{"El vestuario":["una blusa|a blouse|👚","un abrigo|a coat|🧥","un sombrero|a hat|👒","una gorra|a cap|🧢","un bolso|a handbag|👜","un vestido|a dress|👗","un anillo|a ring|💍","un reloj|a watch|⌚","un cinto|a belt","una corbata|a tie|👔","una camisa|a shirt|👕","una licra|a pair of tights","un short|a pair of shorts|🩳","un par de aretes|a pair of earrings","un pantalón|a pair of pants|👖","un pulóver|a pullover","un par de medias|a pair of socks|🧦","una chaqueta|a jacket","un collar|a necklace|📿","una sombrilla|an umbrella|☂️","una bufanda|a scarf|🧣","un par de zapatos|a pair of shoes|👟"],
     "Tallas":["pequeño(a)|small","mediano(a)|medium-sized","grande|large"]},
  p:["¿Qué es esto?|What is this?|Esto es un pantalón.|This is a pair of pants.","¿Qué ropa llevas puesta?|What are you wearing?|Llevo puesta una camisa, un cinto y un pantalón.|I am wearing a shirt, a belt and a pair of pants.","¿De qué color es el vestido?|What color is the dress?|El vestido es rojo.|The dress is red.","¿De qué color son los aretes?|What color are the earrings?|Los aretes son azules.|The earrings are blue.","¿Qué talla es la camisa?|What size is the shirt?|La camisa es grande.|The shirt is large.","¿Qué ropa te gusta?|What clothes item do you like?|Me gusta la camisa.|I like the shirt.","¿Qué ropas no te gustan?|What clothes items do you dislike?|No me gustan ni los aretes ni la bufanda.|I don’t like the earrings or the scarf."],
  d:["Nicolás|Buenas noches.","Juana|Buenas noches.","Nicolás|¿Qué es esto?","Juana|Esto es una chaqueta.","Nicolás|¿Qué talla es?","Juana|La chaqueta es mediana.","Nicolás|¿De qué color es?","Juana|La chaqueta es azul.","Nicolás|¿Qué ropa llevas puesta?","Juana|Llevo puestas la camisa y la corbata.","Nicolás|¿Qué ropas te gustan?","Juana|Me gustan la bufanda y la blusa.","Nicolás|¿Qué ropas no te gustan?","Juana|No me gustan ni el sombrero ni el pulóver.","Nicolás|Adiós.","Juana|Adiós."],
@@ -1378,7 +1379,7 @@ function speak(text,opts={}){
         if(c.state==="suspended")c.resume();const src=c.createBufferSource();src.buffer=buf;src.connect(voiceOut(c));clipNode=src;
         src.onended=()=>{if(opts.end)opts.end();};src.start(0,m[0],m[1]+0.08);});return;}}
   if(!opts.queue&&!opts.noclip&&typeof AUDIO_IDX!=="undefined"&&AUDIO_IDX.common){const k=segKey({t:clean,l:"es"});const m=AUDIO_IDX.common[k];
-    if(m){const c=ac();loadAudio("common").then(buf=>{if(!buf||!c){speak(clean,Object.assign({},opts,{noclip:true}));return;}stopClip();const src=c.createBufferSource();src.buffer=buf;src.connect(voiceOut(c));clipNode=src;src.start(0,m[0],m[1]+0.08);});return;}}
+    if(m){const c=ac();loadAudio("common").then(buf=>{if(!buf||!c){speak(clean,Object.assign({},opts,{noclip:true}));return;}stopClip();const src=c.createBufferSource();src.buffer=buf;src.connect(voiceOut(c));clipNode=src;src.onended=()=>{if(opts.end)opts.end();};src.start(0,m[0],m[1]+0.08);});return;}}
   if(/^i griega$/i.test(clean.trim())){speak("i",Object.assign({},opts,{end:null}));speak("griega",Object.assign({},opts,{queue:true}));return;}
   const u=new SpeechSynthesisUtterance(clean.replace(/\bshort\b/gi,"chor"));u.lang="es-ES";u.rate=opts.rate||.85;u.pitch=opts.pitch||1;
   if(esVoice)u.voice=esVoice;if(opts.end)u.onend=opts.end;
@@ -1447,7 +1448,7 @@ async function teacherKey(pass){
 }
 async function unwrapKey(kek,i){const[, ,wiv,wk]=LESSONS_ENC.L[i];return b64e(await crypto.subtle.decrypt({name:"AES-GCM",iv:ub64(wiv)},kek,ub64(wk)));}
 /* board text corrections, by lesson index (the board must say exactly what the teacher says) */
-const BOARDFIX={15:[["Yo {voy} a la escuela. ·","Yo {voy} a la escuela a aprender. ·"]]};
+const BOARDFIX={15:[["Yo {voy} a la escuela. ·","Yo {voy} a la escuela a aprender. ·"]],26:[["[\"👔 shirt\",\"{una camisa}\"]","[\"👕 shirt\",\"{una camisa}\"]"],["[\"tie\",\"{una corbata}\"]","[\"👔 tie\",\"{una corbata}\"]"]]};
 async function loadLesson(i){
   if(i===DEMO_IDX)return DEMO_LESSON;
   const k=unlocked[i];if(!k)return null;
@@ -4251,7 +4252,7 @@ function gameBoard(mode){
     }
   });
   const more=h("div",{cls:"gm-win"},path);setTimeout(()=>{try{more.scrollTop=Math.max(0,ys[Math.max(0,pc-1)]-46);}catch(e){}},0);
-  const gx=h("div",{cls:"gx"},X.map((u,i)=>h("button",{on:{click:()=>openUnit(U.length+i)}},h("i",{"aria-hidden":"true"},u.i),h("span",{},u.t))));
+  const gx=h("div",{cls:"gx"},X.map((u,i)=>h("button",{on:{click:()=>openUnit(U.length+i)}},h("i",{"aria-hidden":"true"},u.i),h("span",{},u.t),h("span",{cls:"gxst","aria-label":(prog[U.length+i]||0)+" stars"},(prog[U.length+i]||0)?starStr(prog[U.length+i]):"☆☆☆"))));
   const gt=h("div",{cls:"gt"},h("button",{cls:"gt-guide",on:{click:showGuide}},h("span",{"aria-hidden":"true"},"📖"),h("span",{},h("b",{},"Cómo usar la app"),h("small",{},"How to use the app"))));
   return h("div",{cls:"gm gm"+mode},scene,upTxt,cta,demo,hardBtn(),prizeBanner(),more,
     h("h2",{cls:"sec"},"Vocabulario y gramática | Vocabulary and Grammar"),gx,h("h2",{cls:"sec"},"Más · More"),gt);
@@ -4665,7 +4666,7 @@ function viewQuiz(u,box){
       try{if(q.w&&idx<U.length){if(ok)hardRemove(idx,q.w);else hardAdd(idx,q.w);}}catch(_){}
       if(ok){e.currentTarget.classList.add("right");score++;fb.textContent="¡Correcto! · Correct! ⭐";try{Coco.event("good");}catch(_){}}
       else{try{Coco.event("bad");}catch(_){}e.currentTarget.classList.add("bad");[...opts.children].find(x=>x.textContent===q.ans).classList.add("right");fb.textContent="La respuesta es · The answer is: "+q.ans;}
-      if(q.pieces)sayPieces(q.pieces);else speak(q.say||(q.w?q.w.es:q.ans));setTimeout(next,q.pieces?3200:1600);}}},o)));
+      {const t0=Date.now();let gone=false;const go=()=>{if(gone)return;gone=true;setTimeout(next,Math.max(700,1600-(Date.now()-t0)));};if(q.pieces)sayPieces(q.pieces,go);else speak(q.say||(q.w?q.w.es:q.ans),{end:go});setTimeout(go,q.pieces?9000:7000);}}}},o)));
     b.append(opts,fb);area.append(b);
   }
   function showOrder(q){
@@ -4678,7 +4679,7 @@ function viewQuiz(u,box){
       const ans=picked.map(x=>x.w).join(" ");
       {penUse();const k2=norm(ans)===norm(q.sent),g0=score+(k2?1:0);penShot(area,k2,g0,qi+1-g0);}
       if(norm(ans)===norm(q.sent)){score++;fb.textContent="¡Correcto! · Correct! ⭐";}else fb.textContent="La respuesta es · The answer is: "+q.sent;
-      speak(q.sent);setTimeout(next,2000);}}},"Comprobar · Check");
+      {const t0=Date.now();let gone=false;const go=()=>{if(gone)return;gone=true;setTimeout(next,Math.max(700,2000-(Date.now()-t0)));};speak(q.sent,{end:go});setTimeout(go,8000);}}}},"Comprobar · Check");
     function redraw(){line.innerHTML="";picked.forEach((x,k)=>line.append(h("button",{cls:"w",on:{click:()=>{picked.splice(k,1);x.btn.classList.remove("used");redraw();}}},x.w)));
       check.disabled=picked.length!==words.length;}
     order.forEach(x=>{const b=h("button",{cls:"w",on:{click:()=>{if(b.classList.contains("used"))return;b.classList.add("used");picked.push({w:x.w,btn:b});redraw();}}},x.w);x.btn=b;bank.append(b);});
