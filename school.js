@@ -291,10 +291,28 @@
     }
   }
 
+  /* ---- replace the ℹ️ "About your lessons" popup for the school edition ---- */
+  function schoolInfoPopup() {
+    window.lessonInfo = function () {
+      overlay("About your lessons", function (close) {
+        return [
+          h("div", { cls: "ovh" }, h("span", { cls: "ovi", "aria-hidden": "true" }, "ℹ️"), h("h2", {}, "Sobre tus clases · About your lessons")),
+          h("p", {}, "Con la licencia de tu escuela, ", h("b", {}, "todas las clases, el diccionario y la agenda"), " están abiertos en este teléfono ", h("b", {}, "hasta la fecha de vencimiento"), ". · With your school's licence, everything is open on this phone until the end date."),
+          h("p", {}, "⭐ ", h("b", {}, "Estrellas · Stars: "), "estudia la lección con el profesor y haz la prueba para ganar estrellas."),
+          h("p", {}, "Tus estrellas y tu progreso se guardan ", h("b", {}, "en este teléfono"), ", y los conservas aunque termine la licencia. · Your stars and progress are saved on this phone; you keep them even when the licence ends."),
+          h("p", {}, "Solo se pierden si ", h("b", {}, "desinstalas la app"), " o ", h("b", {}, "borras sus datos"), " (Ajustes › Apps › Basic Spanish › Almacenamiento › Borrar datos)."),
+          h("p", {}, "Si tienes algún problema, habla con tu profesor de español. · If you have a problem, talk to your Spanish teacher."),
+          h("div", { cls: "controls" }, h("button", { cls: "btn primary", on: { click: close } }, "OK"))
+        ];
+      });
+    };
+  }
+
   /* ---- boot ---- */
   async function boot() {
     injectCSS();
     try { schoolGuide(); } catch (e) {}
+    try { schoolInfoPopup(); } catch (e) {}
     try { await restore(); } catch (e) {}
     wrap("home"); wrap("render");
     if (licensedNow()) {
