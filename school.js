@@ -251,7 +251,9 @@
       ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
       ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
       ".sch-ta{width:100%;font:14px var(--mono,monospace);border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:10px;background:var(--surface,#fff);color:var(--ink,#12343b)}" +
-      ".tmsg.bad{color:var(--mango-ink,#b0233b)}";
+      ".tmsg.bad{color:var(--mango-ink,#b0233b)}" +
+      /* fix scroll-chaining: inner windows must not scroll the background when they reach the end */
+      ".gm-win,.ovbox,.dict-list,.rlist,.cl-card,.sp-p,.screen,.thumbs{overscroll-behavior:contain}";
     document.head.appendChild(st);
   }
 
