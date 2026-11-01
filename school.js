@@ -255,9 +255,46 @@
     document.head.appendChild(st);
   }
 
+  /* ---- adapt the "How to use the app" guide for the offline school edition ---- */
+  function schoolGuide() {
+    if (typeof GUIDE === "undefined" || !Array.isArray(GUIDE)) return;
+    function idx(kw) { for (var i = 0; i < GUIDE.length; i++) { if (GUIDE[i] && GUIDE[i][1] && GUIDE[i][1].indexOf(kw) >= 0) return i; } return -1; }
+    var g;
+    g = idx("Getting started");
+    if (g >= 0) GUIDE[g] = ["🚀", "Primeros pasos · Getting started", [
+      "<b>Esta app funciona sin internet.</b> Todo — las lecciones, el audio, el diccionario y la agenda — está dentro de la app. <b>No necesita internet.</b> · <b>This app works fully offline.</b> Everything is inside the app.",
+      "<b>Para abrir todas las clases,</b> toca <b>📷 Escanear el QR</b> y escanea el <b>QR de licencia</b> que te da tu escuela. Mira <i>Licencia · Licence</i> aquí abajo. · Tap <b>Scan the QR</b> and scan the licence QR from your school.",
+      "Abre la app y escribe tu nombre en <b>✏️ Tu nombre · Your name</b> (mira abajo).",
+      "Sube el <b>volumen de medios</b> del teléfono para escuchar al profesor. · Turn up the media volume to hear the teacher."
+    ]];
+    g = idx("Unlocking lessons");
+    if (g >= 0) GUIDE[g] = ["🔑", "Licencia · Licence", [
+      "Sin licencia solo están abiertos la <b>🎁 clase de prueba</b> y las unidades extra. Con la licencia de tu escuela se abre <b>todo</b>: las 28 lecciones, el diccionario y la agenda, <b>hasta la fecha de vencimiento</b>. · With your school's licence everything opens until the end date.",
+      "<b>Para activar:</b> toca <b>📷 Escanear el QR</b> y escanea el <b>QR que te da tu escuela</b>. Se abre todo de una vez — <b>no hace falta un código por cada teléfono</b>. · Scan the school's QR; everything opens at once.",
+      "El nombre de la escuela aparece en el inicio como <b>Licensed to …</b>, y la misma licencia sirve en <b>cualquier teléfono</b> que escanee ese QR.",
+      "Cuando la licencia termina, <b>tus estrellas, premios y notas se quedan contigo</b>; escanea un QR nuevo para abrir todo otra vez. · When it ends, your progress is kept; scan a new QR to open everything again.",
+      "Mantén la <b>fecha y hora del teléfono correctas</b>. Si se atrasa la fecha a propósito, las lecciones se cierran hasta arreglarla."
+    ]];
+    g = idx("Move my progress"); if (g >= 0) GUIDE.splice(g, 1);
+    g = idx("Offline");
+    if (g >= 0) GUIDE[g] = ["📶", "Sin internet · Offline", [
+      "La app funciona <b>sin internet</b>: las lecciones y el audio ya vienen dentro de ella. · The app works offline; the lessons and audio are already inside it.",
+      "⚠️ Tus estrellas, premios, nombre, tema y notas se guardan <b>en este teléfono</b>. Si borras los datos de la app o la desinstalas, se pierden."
+    ]];
+    // remove any remaining item that talks about the web / downloading the app
+    for (var i = 0; i < GUIDE.length; i++) {
+      if (GUIDE[i] && Array.isArray(GUIDE[i][2])) {
+        GUIDE[i][2] = GUIDE[i][2].filter(function (it) {
+          return String(it).indexOf("spanishflt.github.io") < 0 && String(it).indexOf("Download the Android app") < 0 && String(it).indexOf("older Android app") < 0;
+        });
+      }
+    }
+  }
+
   /* ---- boot ---- */
   async function boot() {
     injectCSS();
+    try { schoolGuide(); } catch (e) {}
     try { await restore(); } catch (e) {}
     wrap("home"); wrap("render");
     if (licensedNow()) {
