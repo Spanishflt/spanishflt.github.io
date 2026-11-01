@@ -175,7 +175,8 @@
         msg.className = "tmsg"; msg.textContent = "";
         try { await loadJsQR(); } catch (e) { msg.className = "tmsg bad"; msg.textContent = "No se pudo cargar el lector de QR. Usa «Pegar código». · Could not load the QR reader — use “Paste code”."; return; }
         try {
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } });
+          try { var trk = stream.getVideoTracks()[0]; if (trk && trk.applyConstraints) trk.applyConstraints({ advanced: [{ focusMode: "continuous" }] }).catch(function () {}); } catch (e) {}
         } catch (e) { msg.className = "tmsg bad"; msg.textContent = "No se pudo abrir la cámara. Permite el acceso, o usa «Pegar código». · Could not open the camera."; return; }
         video.srcObject = stream; await video.play().catch(function () {});
         scanning = true; showScanning(true);
@@ -241,8 +242,8 @@
     if (document.getElementById("sch-css")) return;
     var st = document.createElement("style"); st.id = "sch-css";
     st.textContent =
-      ".hsub.sch-lic{font-size:16px;line-height:1.25;font-weight:700;text-align:left;overflow-wrap:anywhere}" +
-      ".sch-terms{display:block;margin:12px auto 10px;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:5px 14px;cursor:pointer}" +
+      ".hsub.sch-lic{font-size:13px;line-height:1.3;font-weight:500;color:#0E6E78;text-align:left;overflow-wrap:anywhere}" +
+      ".sch-terms{display:inline-block;margin:10px 0 10px;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:5px 14px;cursor:pointer}" +
       ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
       ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
       ".sch-ta{width:100%;font:14px var(--mono,monospace);border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:10px;background:var(--surface,#fff);color:var(--ink,#12343b)}" +
