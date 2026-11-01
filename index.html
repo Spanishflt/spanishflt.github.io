@@ -1472,12 +1472,12 @@ AUDIO_FILES["extra"]="extra-f8e84e";
 try{const X={};[["el baño pequeño",[0.1,1.125]],["la cocina pequeña",[1.605,1.346]],["los ojos azules",[3.331,1.305]],["el pelo negro",[5.016,0.988]],["los ojos negros",[6.384,1.188]],["dos años",[7.952,0.919]],["canto",[9.251,0.607]],["cantas",[10.237,0.676]],["canta",[11.293,0.548]],["esta forma",[12.221,0.949]],["la comida favorita",[13.55,1.312]],["a la",[15.242,0.535]],["el libro",[16.157,0.67]],["Tengo el pelo rojo",[17.207,1.26]],["yo estudio",[18.847,0.86]],["este libro",[20.087,0.87]],["diez menos ocho",[21.337,1.242]],["a las cuatro",[22.959,0.875]]].forEach(([t,v])=>{[t,t+".",t[0].toUpperCase()+t.slice(1),t[0].toUpperCase()+t.slice(1)+"."].forEach(c=>{X[fnv("em_alex|"+c)]=v;});});AUDIO_IDX["extra"]=X;}catch(e){}
 const audioBufs={},audioLoading={};
 const AUDIO_FILES_OLD={};
-const fetchAud=f=>fetch("audio/"+f+".mp3").then(r=>{if(!r.ok)throw 0;return r.arrayBuffer();});
+/* --- audio cifrado (clases de pago): protege los MP3 que antes iban en claro --- */const AUDIO_ENC=new Set((()=>{const a=[];for(let n=1;n<=28;n++){const nn=String(n).padStart(2,"0");a.push("unit-"+nn,"lesson-"+nn);}return a;})());const audioLessonIdx=n=>{const m=/^(?:unit|lesson)-(\d+)$/.exec(n);return m?(+m[1]-1):null;};async function decAudio(kB64,data){const raw=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("BS-AUD|"+kB64));const key=await crypto.subtle.importKey("raw",raw,"AES-GCM",false,["decrypt"]);return crypto.subtle.decrypt({name:"AES-GCM",iv:data.slice(0,12)},key,data.slice(12));}async function fetchAudName(name){const f=AUDIO_FILES[name]||name;if(AUDIO_ENC.has(name)){const i=audioLessonIdx(name),k=i!=null?unlocked[i]:null;if(!k)throw 0;const r=await fetch("audio/"+f+".bin",{cache:"no-store"});if(!r.ok)throw 0;return decAudio(k,new Uint8Array(await r.arrayBuffer()));}return fetchAud(f);}const fetchAud=f=>fetch("audio/"+f+".mp3").then(r=>{if(!r.ok)throw 0;return r.arrayBuffer();});
 function loadAudio(name){
   if(audioBufs[name])return Promise.resolve(audioBufs[name]);
   if(audioLoading[name])return audioLoading[name];
   const c=ac();if(!c||!AUDIO_IDX[name])return Promise.resolve(null);
-  audioLoading[name]=fetchAud(AUDIO_FILES[name]||name).catch(()=>{const o=AUDIO_FILES_OLD[name];if(o&&o!==AUDIO_FILES[name])return fetchAud(o);throw 0;})
+  audioLoading[name]=fetchAudName(name).catch(()=>{const o=AUDIO_FILES_OLD[name];if(o&&o!==AUDIO_FILES[name])return fetchAud(o);throw 0;})
     .then(b=>new Promise((res,rej)=>c.decodeAudioData(b,res,rej))).then(buf=>{audioBufs[name]=buf;return buf;})
     .catch(()=>{audioBufs[name]=null;return null;});
   return audioLoading[name];
@@ -1526,7 +1526,7 @@ function playCommon(text,done){
 function sayPieces(list,done){let j=0;const nx=()=>{if(j>=list.length){done&&done();return;}playCommon(list[j++],()=>setTimeout(nx,90));};nx();}
 function sayLetters(toks,done){
   const seq=[];toks.forEach(x=>seq.push(x));
-  let j=0;const nx=()=>{if(j>=seq.length){done&&done();return;}const x=seq[j++];playCommon(x,()=>setTimeout(nx,LETTERS.has(x)?450:200));};
+  let j=0;const tok=talkTok,nx=()=>{if(tok!==talkTok)return;if(j>=seq.length){done&&done();return;}const x=seq[j++];playCommon(x,()=>setTimeout(nx,LETTERS.has(x)?450:200));};
   if("speechSynthesis" in window)speechSynthesis.cancel();nx();
 }
 function talk(list,onDone){
@@ -2287,7 +2287,7 @@ async function prefetchAllAudio(){
     await navigator.serviceWorker.ready;
     if(!navigator.serviceWorker.controller){await new Promise(r=>{navigator.serviceWorker.addEventListener("controllerchange",r,{once:true});setTimeout(r,8000);});}
     if(!navigator.serviceWorker.controller)return;
-    const urls=Object.values(AUDIO_FILES).map(f=>"audio/"+f+".mp3");
+    const urls=Object.entries(AUDIO_FILES).map(([name,f])=>"audio/"+f+(AUDIO_ENC.has(name)?".bin":".mp3"));
     const missing=[];for(const u of urls){if(!(await caches.match(u,{ignoreSearch:true})))missing.push(u);}
     if(!missing.length)return;
     const total=missing.length;let done=0;
@@ -3181,7 +3181,7 @@ function printOnly(node){
 const GROUP_EN={"Saludos": "Greetings", "Despedidas": "Farewells", "Pronombres": "Pronouns", "Números": "Numbers", "Yo soy…": "I am…", "Días de la semana": "Days of the week", "Meses del año": "Months of the year", "Alfabeto": "Alphabet", "Contracciones": "Contractions", "Frases": "Phrases", "Género": "Gender", "Demostrativos": "Demonstratives", "Colores": "Colors", "El cuerpo": "The body", "Plurales": "Plurals", "Artículos": "Articles", "Familia": "Family", "Adjetivos": "Adjectives", "Posesivos": "Possessives", "Partes de la casa": "Parts of the house", "Muebles": "Furniture", "Tamaño": "Size", "Objetos del aula": "Classroom objects", "Verbos: presente": "Verbs: present", "Figuras": "Shapes", "Comida": "Food", "Verbos de acción": "Action verbs", "Yo…": "I…", "¿Cuándo?": "When?", "Actividades diarias": "Daily activities", "Verbos irregulares": "Irregular verbs", "Quehaceres del hogar": "Housework", "Animales": "Animals", "Sonidos": "Sounds", "Profesiones": "Professions", "Edificaciones": "Buildings", "Países": "Countries", "El tiempo": "Weather", "Puntos cardinales": "Cardinal points", "Deportes": "Sports", "La hora": "Time", "Vocabulario": "Vocabulary", "El vestuario": "Clothing", "Tallas": "Sizes", "Tiempo libre": "Spare time", "Futuro": "Future", "Verbos -ar": "-ar verbs", "Verbos -er": "-er verbs", "Verbos -ir": "-ir verbs", "Preposiciones": "Prepositions", "Adverbios": "Adverbs", "Expresiones": "Expressions", "Conjunciones": "Conjunctions", "Preguntas": "Questions", "hablar": "to speak", "perder": "to lose", "salir": "to get out"};
 const bi=(es,en)=>h("p",{cls:"hint bi"},h("span",{cls:"es2"},es),h("span",{cls:"en2"},en));
 
-const credits=()=>h("footer",{cls:"ownerfoot"},h("div",{cls:"ownerline"},"©\u00a0Alberto Garrido Hernández"),h("div",{cls:"role"},"Spanish teacher at Old Harbour Primary School · Region 6 · Jamaica"));
+const credits=()=>h("footer",{cls:"ownerfoot"},h("div",{cls:"ownerline"},"©\u00a0Alberto Garrido Hernández"),h("div",{cls:"role"},"Spanish teacher at Old Harbour Primary School · Region 6 · St. Catherine"),h("div",{cls:"role"},"Jamaica"));
 const app=$("#app");
 let cur=null, tab="cards";
 
@@ -4347,7 +4347,7 @@ function openUnit(idx,t){
   try{magicDust();}catch(e){}
   checkExpiry(false);
   cur=idx;tab=t||(hasLesson(idx)&&isUnlocked(idx)?"lesson":"cards");render();window.scrollTo(0,0);unitFocus();
-  try{loadAudio("unit-"+pad2(idx+1));}catch(e){}
+  try{loadAudio("unit-"+pad2(idx+1));loadAudio("lesson-"+pad2(idx+1));loadAudio("common");}catch(e){}
 }
 function unitFocus(){setTimeout(()=>{try{
   const t=document.querySelector(".tabs");if(!t)return;
@@ -4372,7 +4372,7 @@ function render(){
       h("span",{cls:"lti","aria-hidden":"true"},isUnlocked(cur)?"👨‍🏫":"🔒"),h("span",{},h("b",{},"Lección con el profe"),h("small",{},"Lesson with the teacher")),h("span",{cls:"ltarrow","aria-hidden":"true"},isUnlocked(cur)?"▶":"")),
       canShowFamily(cur)?famIcon(cur):null,
       infoBtn("big")):null,
-    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;tab=k;render();unitFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
+    h("div",{cls:"tabs",role:"tablist"},tabs.map(([k,l,en])=>h("button",{role:"tab","aria-selected":String(k===tab),on:{click:()=>{if(tab===k)return;hush();tab=k;render();unitFocus();}}},(unitLocked(cur)||/^🔒/.test(l)?h("span",{cls:"tlk","aria-hidden":"true"},"🔒"):null),l.replace(/^(🔒|⭐) /,""),h("small",{},en)))),
     body, unitBooks(cur), credits()].filter(Boolean));
   {const n=expiryNote(cur);if(n)body.append(n);}
   if(tab!=="lesson"&&unitLocked(cur)){lockScreen(u,body,cur,true);return;}
