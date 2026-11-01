@@ -159,6 +159,17 @@
       var video = document.createElement("video"); video.setAttribute("playsinline", ""); video.muted = true;
       var canvas = document.createElement("canvas");
       videoWrap.append(video);
+      var scanHint = h("p", { cls: "rintro", style: "display:none;margin-top:8px" }, "Apunta la cámara al código QR. · Point the camera at the QR code.");
+      var intro = h("p", { cls: "rintro" }, expired
+        ? "El tiempo de esta licencia terminó. Escanea una licencia nueva para abrir todo otra vez. · This licence has ended. Scan a new one to open everything again."
+        : "Escanea el QR que te dio tu escuela para abrir todas las clases. · Scan the QR from your school to open all the lessons.");
+
+      function showScanning(on) {
+        videoWrap.style.display = on ? "block" : "none";
+        scanHint.style.display = on ? "block" : "none";
+        intro.style.display = on ? "none" : "block";
+        if (scanBtn) scanBtn.style.display = on ? "none" : "block";
+      }
 
       async function startCam() {
         msg.className = "tmsg"; msg.textContent = "";
@@ -167,7 +178,7 @@
           stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         } catch (e) { msg.className = "tmsg bad"; msg.textContent = "No se pudo abrir la cámara. Permite el acceso, o usa «Pegar código». · Could not open the camera."; return; }
         video.srcObject = stream; await video.play().catch(function () {});
-        videoWrap.style.display = "block"; scanning = true;
+        scanning = true; showScanning(true);
         var ctx = canvas.getContext("2d", { willReadFrequently: true });
         (function tick() {
           if (!scanning) return;
@@ -187,14 +198,11 @@
       var ta = h("textarea", { cls: "sch-ta", rows: "3", placeholder: "Pega aquí la licencia · Paste the licence here", spellcheck: "false" });
       var pasteGo = h("button", { cls: "btn", on: { click: function () { finishActivation(ta.value, msg, close); } } }, "Activar · Activate");
       pasteWrap.append(ta, pasteGo);
-      var pasteToggle = h("button", { cls: "tkey", on: { click: function () { stopCam(); videoWrap.style.display = "none"; pasteWrap.style.display = pasteWrap.style.display === "none" ? "block" : "none"; } } }, "⌨️ Pegar código · Paste code");
+      var pasteToggle = h("button", { cls: "tkey", on: { click: function () { stopCam(); showScanning(false); pasteWrap.style.display = pasteWrap.style.display === "none" ? "block" : "none"; } } }, "⌨️ Pegar código · Paste code");
 
       return [
         h("div", { cls: "ovh" }, h("span", { cls: "ovi" }, "🔑"), h("h2", {}, expired ? "⏰ Licencia vencida · Licence ended" : "Activate app")),
-        h("p", { cls: "rintro" }, expired
-          ? "El tiempo de esta licencia terminó. Escanea una licencia nueva para abrir todo otra vez. · This licence has ended. Scan a new one to open everything again."
-          : "Escanea el QR que te dio tu escuela para abrir todas las clases. · Scan the QR from your school to open all the lessons."),
-        scanBtn, videoWrap, pasteToggle, pasteWrap, msg
+        videoWrap, scanHint, intro, scanBtn, pasteToggle, pasteWrap, msg
       ];
     }, function () { stopCam(); });
   }
@@ -232,8 +240,8 @@
     var st = document.createElement("style"); st.id = "sch-css";
     st.textContent =
       ".sch-terms{display:inline-block;margin:6px auto 0;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:4px 12px;cursor:pointer}" +
-      ".sch-scan{margin:12px 0;border-radius:14px;overflow:hidden;background:#000;max-width:320px}" +
-      ".sch-scan video{width:100%;display:block}" +
+      ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
+      ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
       ".sch-ta{width:100%;font:14px var(--mono,monospace);border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:10px;background:var(--surface,#fff);color:var(--ink,#12343b)}" +
       ".tmsg.bad{color:var(--mango-ink,#b0233b)}";
     document.head.appendChild(st);
