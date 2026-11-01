@@ -4703,6 +4703,6 @@ cocoWelcome();
 setTimeout(()=>{prefetchAllAudio();syncServerTime();},3000);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
 </script>
-<script>/* school edition: load extra logic only when opened with ?edition=school */try{if(/[?&]edition=school/.test(location.search)||sessionStorage.getItem("bsEdition")==="school"){sessionStorage.setItem("bsEdition","school");var _sch=document.createElement("script");_sch.src="school.js?v=1";document.body.appendChild(_sch);}}catch(e){}</script>
+<script>/* school edition: load extra logic only when opened with ?edition=school */try{if(/[?&]edition=school/.test(location.search)||sessionStorage.getItem("bsEdition")==="school"){sessionStorage.setItem("bsEdition","school");var _sch=document.createElement("script");_sch.src="school.js?v=2";document.body.appendChild(_sch);}}catch(e){}</script>
 </body>
 </html>

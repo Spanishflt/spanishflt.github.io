@@ -120,7 +120,7 @@
     if (jsqrLoading) return jsqrLoading;
     jsqrLoading = new Promise(function (res, rej) {
       var s = document.createElement("script");
-      s.src = "https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js";
+      s.src = "jsQR.js?v=1";
       s.onload = res; s.onerror = function () { rej(new Error("qr lib")); };
       document.head.appendChild(s);
     });
