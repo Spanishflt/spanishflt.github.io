@@ -246,7 +246,7 @@
     if (document.getElementById("sch-css")) return;
     var st = document.createElement("style"); st.id = "sch-css";
     st.textContent =
-      ".hsub.sch-lic{font-size:13px;line-height:1.3;font-weight:500;color:#0E6E78;text-align:left;overflow-wrap:anywhere}" +
+      ".hsub.sch-lic{font-size:13px;line-height:1.3;font-weight:500;color:#1565C0;text-align:left;overflow-wrap:anywhere;margin-top:7px}" +
       ".sch-terms{display:inline-block;margin:3px 0 10px;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:5px 14px;cursor:pointer}" +
       ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
       ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
