@@ -218,12 +218,14 @@
     var m = licensedNow();
     if (m && m.s) {
       sub.textContent = "Licensed to " + m.s;
+      sub.classList.add("sch-lic");
       if (!sub.parentNode.querySelector(".sch-terms")) {
         var bt = h("button", { cls: "sch-terms", on: { click: licenceTerms } }, "Licence Terms");
         sub.insertAdjacentElement("afterend", bt);
       }
     } else {
       sub.textContent = "Extra Lessons";
+      sub.classList.remove("sch-lic");
     }
   }
 
@@ -239,7 +241,8 @@
     if (document.getElementById("sch-css")) return;
     var st = document.createElement("style"); st.id = "sch-css";
     st.textContent =
-      ".sch-terms{display:inline-block;margin:6px auto 0;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:4px 12px;cursor:pointer}" +
+      ".hsub.sch-lic{font-size:16px;line-height:1.25;font-weight:700;max-width:92%;margin:2px auto 0;overflow-wrap:anywhere;text-align:center}" +
+      ".sch-terms{display:block;margin:14px auto 2px;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:5px 14px;cursor:pointer}" +
       ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
       ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
       ".sch-ta{width:100%;font:14px var(--mono,monospace);border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:10px;background:var(--surface,#fff);color:var(--ink,#12343b)}" +
