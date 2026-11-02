@@ -16,11 +16,14 @@
   "use strict";
   // make sure the flag sticks for the whole session
   try { if (/[?&]edition=school/.test(location.search)) sessionStorage.setItem("bsEdition", "school"); } catch (e) {}
+  // a global flag index.html checks to drop the public web link / QR in the school edition
+  try { window.BS_SCHOOL = true; } catch (e) {}
 
   /* ---- same public key as the generator (SIGPUB) : only Alberto can sign ---- */
   var SIGPUB_HEX = "04abf5c19cbad17da59a7228832995878f51854c00de79643d8390626e3c24735eb67e5c124b08688eece1fe5b88c2145153ee4417d2cce4c4a2254e6ac1146ee6";
   var LS_LIC = "bs-school-lic";   // the licence string (so we can re-apply keys on reload)
   var LS_META = "bs-school";       // {s:school, x:expiryMs}
+  var LS_TEACHER = "bs-school-teacher";  // the school's own teacher name (typed in Settings), for the certificate
 
   var te = new TextEncoder(), td = new TextDecoder();
   function hexToBytes(h) { return new Uint8Array(h.match(/../g).map(function (x) { return parseInt(x, 16); })); }
@@ -211,6 +214,16 @@
   /* ---- patch the home screen for school edition ---- */
   function patchHome() {
     var app = document.getElementById("app"); if (!app) return;
+    // re-bind the ⚙️ gear to the wrapped openSettings (it was captured before school.js loaded, so demo kept the old menu)
+    try {
+      var gear = document.querySelector(".gearbtn");
+      if (gear && !gear.getAttribute("data-sch")) {
+        var ng = gear.cloneNode(true);           // cloning drops the old click listener
+        ng.setAttribute("data-sch", "1");
+        ng.addEventListener("click", function () { try { window.openSettings(); } catch (e) {} });
+        gear.parentNode.replaceChild(ng, gear);
+      }
+    } catch (e) {}
     // only when the home hero is on screen
     var sub = app.querySelector(".hero .hsub");
     var books = document.getElementById("books");
@@ -234,12 +247,120 @@
     }
   }
 
-  /* ---- wrap home()/render() so the patch runs after every draw ---- */
-  function wrap(name) {
+  /* ---- a locked lesson: tell the student to scan the school QR (no teacher-password unlock here) ---- */
+  function schoolLockScreen(u, box, idx, unitTab) {
+    box.append(h("div", { cls: "lockcard" },
+      h("div", { cls: "lockic", "aria-hidden": "true" }, "🔒"),
+      h("h2", {}, unitTab ? "Unidad bloqueada " : "Lección bloqueada "),
+      h("p", { cls: "en2" }, unitTab ? "This unit is locked" : "This lesson is locked"),
+      h("p", {}, "Escanea el QR de licencia de tu escuela para abrir todas las clases."),
+      h("p", { cls: "en2" }, "Scan your school's licence QR to open all the lessons."),
+      h("div", { cls: "inl" }, h("span", {}, "👨‍🏫 El profe explica · The teacher explains"), h("span", {}, "🎵 Una canción · A song"), h("span", {}, "🎮 Juegos · Games"), h("span", {}, "⭐ La prueba con estrellas · The quiz with stars")),
+      h("button", { cls: "btn primary", on: { click: function () { try { activateScreen(); } catch (e) {} } } }, "📷 Escanear el QR · Scan the QR")));
+  }
+
+  /* ---- licence ended: one school-wide message (not a 28-item "ask your teacher to renew" list) ---- */
+  function schoolCheckExpiry(rerender) {
+    var now = trustedNow(), closed = [];
+    for (var k in UEXP) { if (UEXP[k] && now > UEXP[k]) { delete unlocked[k]; delete UEXP[k]; closed.push(+k); } }
+    if (closed.length) {
+      saveUnlocked(); saveExp();
+      try { cleanupExpired(); } catch (e) {}   // drop the licence meta so Home shows "Extra Lessons" again
+      if (rerender) { try { if (typeof cur === "undefined" || cur == null) home(); else render(); } catch (e) {} }
+      setTimeout(function () {
+        overlay("Licence ended", function (c) {
+          return [
+            h("div", { cls: "ovh" }, h("span", { cls: "ovi" }, "⏰"), h("h2", {}, "Licencia vencida · Licence ended")),
+            h("p", {}, "La licencia de tu escuela terminó. Tus estrellas y premios se quedan contigo. · Your school's licence has ended. You keep your stars and rewards."),
+            h("p", {}, "Escanea un QR de licencia nuevo para abrir todo otra vez. · Scan a new licence QR to open everything again."),
+            h("div", { cls: "controls" },
+              h("button", { cls: "btn primary", on: { click: function () { c(); try { activateScreen(); } catch (e) {} } } }, "📷 Escanear QR · Scan QR"),
+              h("button", { cls: "btn", on: { click: c } }, "OK"))
+          ];
+        });
+      }, 300);
+    }
+    return closed;
+  }
+
+  /* ---- share without any public web link (text + share url) for the school edition ---- */
+  function stripLink(text) {
+    if (typeof text !== "string") return text;
+    return text
+      .replace(/https?:\/\/spanishflt\.github\.io\/?/gi, "")
+      .replace(/\s*·?\s*(¡Aprende conmigo!\s*·\s*Learn with me:|Learn with me:|Basic Spanish:)\s*$/i, "")
+      .replace(/\s+$/, "");
+  }
+  function schoolShareNow(P, fname, text, bt) {
+    text = stripLink(text);
+    if (bt) { if (bt.dataset.busy) return; bt.dataset.busy = "1"; setTimeout(function () { delete bt.dataset.busy; }, 1500); }
+    if (!P.blob || (hasAppShare() && !P.b64)) { P.ready.then(function () { if (bt) delete bt.dataset.busy; schoolShareNow(P, fname, text, null); }); return; }
+    if (hasAppShare()) { try { BasicSpanishApp.shareFile(P.b64, fname, "image/png", text); return; } catch (e) {} }
+    var file = new File([P.blob], fname, { type: "image/png" });
+    var fallback = function () { try { if (window.BasicSpanishApp && typeof BasicSpanishApp.saveFile === "function") { blobB64(P.blob).then(function (b) { BasicSpanishApp.saveFile(b, fname, "image/png"); }); return; } } catch (e) {} downloadPic(P.blob, fname); };
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], text: text, title: "Basic Spanish" }).catch(function (e) { if (e && (e.name === "AbortError" || e.name === "InvalidStateError")) return; fallback(); }); return; }
+    if (navigator.share) { navigator.share({ text: text, title: "Basic Spanish" }).catch(function () {}); return; }  // no url in the school edition
+    fallback();
+  }
+
+  /* ---- adapt ⚙️ Settings: add the licence, drop "Move my progress", rename the app ---- */
+  function patchSettings() {
+    var secs = document.querySelectorAll(".setsec");
+    for (var j = 0; j < secs.length; j++) {
+      var h3 = secs[j].querySelector("h3");
+      if (!h3) continue;
+      // remove the student-only "Move my progress" migration section
+      if (h3.textContent.indexOf("Pasar mi progreso") >= 0 || h3.textContent.indexOf("Move my progress") >= 0) { secs[j].remove(); continue; }
+      // rename "Basic Spanish – Extra Lessons" -> "Basic Spanish School" in the About section
+      if (h3.textContent.indexOf("Acerca") >= 0) {
+        var ps = secs[j].querySelectorAll("p");
+        for (var p = 0; p < ps.length; p++) { var b = ps[p].querySelector("b"); if (b && b.textContent.indexOf("Extra Lessons") >= 0) b.textContent = "Basic Spanish School"; }
+      }
+    }
+    var m = licensedNow();
+    var about = null, s2 = document.querySelectorAll(".setsec");
+    for (var i = 0; i < s2.length; i++) { var hd = s2[i].querySelector("h3"); if (hd && hd.textContent.indexOf("Acerca") >= 0) { about = s2[i]; break; } }
+    if (!about) about = s2[0];
+    if (!about || about.querySelector(".sch-lic-set") || about.querySelector(".sch-act-set")) return;
+
+    // no licence yet (demo): give a way back to the Activate screen without closing the app
+    if (!m || !m.s) {
+      var boxA = h("div", { cls: "sch-act-set sch-lic-set" });
+      boxA.appendChild(h("p", { cls: "rintro" }, "Escanea el QR de licencia de tu escuela para abrir todas las clases. · Scan your school's licence QR to open all the lessons."));
+      boxA.appendChild(h("button", { cls: "btn primary", on: { click: function () { try { activateScreen(); } catch (e) {} } } }, "📷 Activar · Escanear licencia"));
+      about.appendChild(boxA);
+      return;
+    }
+
+    var boxL = h("div", { cls: "sch-lic-set" });
+    boxL.appendChild(h("p", {}, h("b", {}, "🏫 Licence")));
+    boxL.appendChild(h("p", {}, "Licensed to ", h("b", {}, m.s)));
+    if (m.x && m.x > 0) {
+      var fmt = new Date(m.x).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+      boxL.appendChild(h("p", {}, "Valid until ", h("b", {}, fmt)));
+    }
+    about.appendChild(boxL);
+
+    // the school types their own teacher name here; it appears on the students' certificates
+    var boxT = h("div", { cls: "sch-lic-set" });
+    boxT.appendChild(h("p", {}, h("b", {}, "🧑‍🏫 Teacher's name · Nombre del profesor")));
+    boxT.appendChild(h("p", { cls: "rintro" }, "Sale en los certificados de tus alumnos. · Appears on your students' certificates."));
+    var inp = h("input", { cls: "sch-inp", type: "text", placeholder: "Ej.: Mrs. Jane Brown", spellcheck: "false" });
+    try { inp.value = (window.bsTeacherName ? bsTeacherName() : ""); } catch (e) {}
+    var msg = h("span", { cls: "rintro", style: "margin-left:8px" });
+    var sv = h("button", { cls: "sch-terms", on: { click: function () { try { localStorage.setItem(LS_TEACHER, (inp.value || "").trim()); msg.textContent = "✓"; setTimeout(function () { msg.textContent = ""; }, 1500); } catch (e) {} } } }, "Guardar · Save");
+    boxT.appendChild(inp);
+    boxT.appendChild(h("div", {}, sv, msg));
+    about.appendChild(boxT);
+  }
+
+  /* ---- wrap a global fn so a patch runs after every call ---- */
+  function wrapAfter(name, fn) {
     if (typeof window[name] !== "function") return;
     var orig = window[name];
-    window[name] = function () { var r = orig.apply(this, arguments); try { patchHome(); } catch (e) {} return r; };
+    window[name] = function () { var r = orig.apply(this, arguments); try { fn(); } catch (e) {} setTimeout(function () { try { fn(); } catch (e) {} }, 0); return r; };
   }
+  function wrap(name) { wrapAfter(name, patchHome); }
 
   /* ---- styles (injected, so index.html CSS is untouched) ---- */
   function injectCSS() {
@@ -248,6 +369,8 @@
     st.textContent =
       ".hsub.sch-lic{font-size:13px;line-height:1.3;font-weight:500;color:#1565C0;text-align:left;overflow-wrap:anywhere;margin-top:7px}" +
       ".sch-terms{display:inline-block;margin:3px 0 10px;font:inherit;font-weight:700;font-size:12px;background:var(--surface,#fff);color:var(--teal,#0E6E78);border:2px solid var(--line,#cfe5e2);border-radius:99px;padding:5px 14px;cursor:pointer}" +
+      ".sch-lic-set{margin-top:8px;border-top:1px solid var(--line,#e3efed);padding-top:8px}" +
+      ".sch-inp{width:100%;box-sizing:border-box;border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:8px;font:inherit;margin:4px 0}" +
       ".sch-scan{margin:4px auto 12px;border-radius:14px;overflow:hidden;background:#000;width:100%;max-width:340px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}" +
       ".sch-scan video{width:100%;height:100%;object-fit:cover}" +
       ".sch-ta{width:100%;font:14px var(--mono,monospace);border:2px solid var(--line,#cfe5e2);border-radius:10px;padding:10px;background:var(--surface,#fff);color:var(--ink,#12343b)}" +
@@ -315,8 +438,25 @@
     injectCSS();
     try { schoolGuide(); } catch (e) {}
     try { schoolInfoPopup(); } catch (e) {}
+    // one licence opens everything, so per-lesson "open until / renew" notes don't fit the school model
+    try { window.expiryNote = function () { return null; }; } catch (e) {}
+    // a locked lesson in the school model means "no valid licence" -> scan the school QR, not a teacher password
+    try { window.lockScreen = schoolLockScreen; } catch (e) {}
+    // when the licence ends, everything closes at once -> one school message, not a per-lesson "ask your teacher to renew" list
+    try { window.checkExpiry = schoolCheckExpiry; } catch (e) {}
+    // the in-unit "buy the workbook at Old Harbour Primary School" cross-sell doesn't fit a school that bought a licence
+    try { window.unitBooks = function () { return null; }; } catch (e) {}
+    // share without the public web link (image watermark/QR handled in index.html via window.BS_SCHOOL)
+    try { window.shareNow = schoolShareNow; } catch (e) {}
+    // the licensee school name, taken from the licence (never typed by the student) -> drawn as a trace on the shared cards + certificate
+    try { window.bsSchoolName = function () { try { var m = licensedNow(); return (m && m.s) ? String(m.s) : ""; } catch (e) { return ""; } }; } catch (e) {}
+    // the school's OWN teacher name (typed by them in Settings) -> shown as the signing teacher on the certificate, instead of the author's
+    try { window.bsTeacherName = function () { try { return (localStorage.getItem(LS_TEACHER) || "").trim(); } catch (e) { return ""; } }; } catch (e) {}
+    // student name: written ONCE (the app's normal askName with its confirm); once saved it is locked.
+    // No "teacher: fix name" button here (that needs the author's password, which schools don't have).
+    try { window.nameInfo = schoolNameInfo; } catch (e) {}
     try { await restore(); } catch (e) {}
-    wrap("home"); wrap("render");
+    wrap("home"); wrap("render"); wrapAfter("openSettings", patchSettings);
     if (licensedNow()) {
       // re-draw home so the now-open lessons + "Licensed to" show
       try { if (typeof cur === "undefined" || cur == null) home(); else patchHome(); } catch (e) { try { patchHome(); } catch (_) {} }
@@ -324,6 +464,40 @@
       try { patchHome(); } catch (e) {}
       try { activateScreen(); } catch (e) {}
     }
+  }
+
+  /* ---- locked name (school): shows the saved name, photo button, no editing ---- */
+  function schoolNameInfo() {
+    overlay("Your name", function (close) {
+      return [
+        h("div", { cls: "ovh" }, h("span", { cls: "ovi" }, "👤"), h("h2", {}, (typeof RW !== "undefined" && RW && RW.name) ? RW.name : "")),
+        h("p", {}, "🔒 Este nombre aparece en tu progreso y en tu certificado. No se puede cambiar. · This name appears on your progress card and certificate. It can't be changed."),
+        h("button", { cls: "btn", on: { click: function () { close(); try { photoMenu(); } catch (e) {} } } }, (typeof RW !== "undefined" && RW && RW.photo) ? "📷 Mi foto · My photo" : "📷 Poner foto · Add photo"),
+        h("button", { cls: "btn primary", on: { click: close } }, "OK")
+      ];
+    });
+  }
+
+  /* ---- (old) editable name — no longer used ---- */
+  function schoolAskName(onDone) {
+    var inp = h("input", { type: "text", maxlength: "40", placeholder: "Nombre y apellido · First and last name", autocomplete: "name" });
+    try { inp.value = (typeof RW !== "undefined" && RW && RW.name) ? RW.name : ""; } catch (e) {}
+    var msg = h("p", { cls: "tmsg", "aria-live": "polite" });
+    overlay("Your name", function (close) {
+      return [
+        h("div", { cls: "ovh" }, h("span", { cls: "ovi" }, "👤"), h("h2", {}, "Tu nombre · Your name")),
+        h("p", {}, "Escribe tu nombre y apellido. Sale en tu progreso y en tu certificado. · Write your first and last name. It appears on your progress and certificate."),
+        h("div", { cls: "tform" }, inp, h("button", { cls: "btn primary", on: { click: function () {
+          var v = (inp.value || "").trim().replace(/\s+/g, " ");
+          if (v.length < 2) { msg.textContent = "✏️ Escribe tu nombre · Write your name"; try { inp.focus(); } catch (e) {} return; }
+          RW.name = v; try { saveRW(); } catch (e) {} close(); try { refreshTop(); } catch (e) {} if (onDone) onDone();
+        } } }, "💾 Guardar · Save")),
+        msg,
+        h("button", { cls: "btn", on: { click: function () { close(); try { photoMenu(); } catch (e) {} } } }, (typeof RW !== "undefined" && RW && RW.photo) ? "📷 Mi foto · My photo" : "📷 Poner foto · Add photo"),
+        h("button", { cls: "btn", on: { click: close } }, "OK")
+      ];
+    });
+    setTimeout(function () { try { inp.focus(); } catch (e) {} }, 50);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

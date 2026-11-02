@@ -2492,9 +2492,9 @@ function showDiploma(ext){
     h("div",{cls:"dtext"},"This certificate is proudly presented to"),PHOTO?h("img",{cls:"dphoto",src:PHOTO,alt:""}):null,nm,
     h("div",{cls:"dbig"},"Basic Spanish – Excellent Student"),
     h("div",{cls:"dtext"},"for earning 100 stars ⭐ learning Spanish."),
-    h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),"Alberto Garrido Hernández",h("br",{}),"Spanish Teacher · Old Harbour Primary School"),h("div",{cls:"ddate"},date)));
+    h("div",{cls:"dfoot"},h("div",{},h("div",{cls:"dline"}),window.BS_SCHOOL?((window.bsTeacherName&&bsTeacherName())||" "):"Alberto Garrido Hernández",h("br",{}),window.BS_SCHOOL?("Spanish Teacher"+((window.bsSchoolName&&bsSchoolName())?" · "+bsSchoolName():"")):"Spanish Teacher · Old Harbour Primary School"),h("div",{cls:"ddate"},date)));
   overlay("Certificate",close=>[cert,nameBox,
-    inWebView()?h("div",{cls:"noprint"},h("p",{cls:"rintro appnote"},"🖨️ Para imprimir o descargar, abre ",h("b",{},"spanishflt.github.io")," en Chrome. · To print or download, open spanishflt.github.io in Chrome."),h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))):h("div",{cls:"controls sm noprint"},
+    inWebView()?(window.BS_SCHOOL?h("div",{cls:"controls sm"},h("button",{cls:"btn primary",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}const _b=await certPNG(NAME,PHOTO,date);const _fn="Basic-Spanish-Certificate-"+NAME.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png";try{if(window.BasicSpanishApp&&typeof BasicSpanishApp.saveFile==="function"){const _r=new FileReader();_r.onload=()=>{try{BasicSpanishApp.saveFile(String(_r.result).split(",")[1],_fn,"image/png");}catch(e){downloadBlob(_b,_fn);}};_r.readAsDataURL(_b);return;}}catch(e){}downloadBlob(_b,_fn);}}},"⬇️ Guardar · Save"),h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")):h("div",{cls:"noprint"},h("p",{cls:"rintro appnote"},"🖨️ Para imprimir o descargar, abre ",h("b",{},"spanishflt.github.io")," en Chrome. · To print or download, open spanishflt.github.io in Chrome."),h("div",{cls:"controls sm"},h("button",{cls:"btn",on:{click:close}},"Cerrar · Close")))):h("div",{cls:"controls sm noprint"},
       h("button",{cls:"btn primary",on:{click:()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}printOnly(cert);}}},"🖨️ Imprimir · Print"),
       h("button",{cls:"btn",on:{click:async()=>{if(!NAME){alert("Primero guarda tu nombre. · Save your name first.");return;}const b=await certPNG(NAME,PHOTO,date);downloadBlob(b,"Basic-Spanish-Certificate-"+NAME.replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"-")+".png");}}},"⬇️ Descargar · Download"),
       h("button",{cls:"btn",on:{click:close}},"Cerrar · Close"))]);
@@ -2612,11 +2612,26 @@ async function progressCanvas(name,withPhoto){
   rr(70,1010,W-140,110,30,"#FFF4D6");x.fillStyle="#7a5200";x.font="bold 32px "+F;
   const nx=st.next==null?"🏆 ¡Terminé todas las lecciones! · All lessons done!":"👉 Próxima · Next: "+(st.next+1)+". "+U[st.next].t;
   let f2=32;while(x.measureText(nx).width>W-180&&f2>20){f2-=2;x.font="bold "+f2+"px "+F;}x.fillText(nx,W/2,1065);
-  const q=await loadImg(QR_WEB);rr(70,1150,W-140,170,30,"#ffffff");
+  const q=window.BS_SCHOOL?null:await loadImg(QR_WEB);rr(70,1150,W-140,170,30,"#ffffff");
   if(q)x.drawImage(q,95,1162,146,146);
-  x.textAlign="left";x.fillStyle="#12343B";x.font="bold 40px "+F;x.fillText("¡Aprende conmigo! · Learn with me!",270,1205);
-  x.fillStyle="#0E6E78";x.font="bold 36px "+F;x.fillText("spanishflt.github.io",270,1255);
-  x.fillStyle="#4F6D72";x.font="24px "+F;x.fillText("Teacher Alberto Garrido Hernández · Old Harbour Primary School",270,1298);
+  if(window.BS_SCHOOL){
+    const sn=(window.bsSchoolName&&bsSchoolName())||"",tn=(window.bsTeacherName&&bsTeacherName())||"";
+    const mw=W-200,cx=W/2;x.textAlign="center";
+    const lines=[];let lf=0;
+    if(sn){const words=("Licensed to "+sn).split(" ");
+      for(lf=38;lf>=24;lf-=2){x.font="bold "+lf+"px "+F;lines.length=0;let cur="";
+        for(const w of words){const tt=cur?cur+" "+w:w;if(x.measureText(tt).width<=mw||!cur)cur=tt;else{lines.push(cur);cur=w;}}
+        if(cur)lines.push(cur);if(lines.length<=2&&lines.every(l=>x.measureText(l).width<=mw))break;}}
+    const tl=tn?"Profesor \u00b7 Teacher: "+tn:"";
+    const blockH=lines.length*(lf+8)+(tl?44:0);let y=1235-blockH/2+(lf+8)/2;
+    x.fillStyle="#12343B";lines.forEach(l=>{x.font="bold "+lf+"px "+F;x.fillText(l,cx,y);y+=lf+8;});
+    if(tl){y+=8;let tf=32;x.font="600 "+tf+"px "+F;while(x.measureText(tl).width>mw&&tf>22){tf-=2;x.font="600 "+tf+"px "+F;}x.fillStyle="#4F6D72";x.fillText(tl,cx,y);}
+    x.textAlign="left";
+  }else{
+    x.textAlign="left";x.fillStyle="#12343B";x.font="bold 40px "+F;x.fillText("\u00a1Aprende conmigo! \u00b7 Learn with me!",270,1205);
+    x.fillStyle="#0E6E78";x.font="bold 36px "+F;x.fillText("spanishflt.github.io",270,1255);
+    x.fillStyle="#4F6D72";x.font="24px "+F;x.fillText("Teacher Alberto Garrido Hern\u00e1ndez \u00b7 Old Harbour Primary School",270,1298);
+  }
   return c;
 }
 /* ---------- Sharing pictures ----------
@@ -2686,8 +2701,8 @@ async function lessonCanvas(name,idx,score,total,stars){
   const u=ALL[idx],lt=(idx===DEMO_IDX?"Clase de prueba":"Lección "+(idx+1))+(u&&u.t?" · "+u.t:"");
   x.fillStyle="#1d2b36";fit(lt,"700",44,28);x.fillText(lt,W/2,665);
   x.fillStyle="#E8A100";x.font="800 64px "+F;x.fillText("⭐".repeat(Math.max(1,stars||1))+(total?"  "+score+" / "+total:""),W/2,770);
-  x.fillStyle="#55606b";fit("Basic Spanish · Prof. Alberto Garrido Hernández","600",32,22);x.fillText("Basic Spanish · Prof. Alberto Garrido Hernández",W/2,880);
-  x.fillStyle="#0E6E78";x.font="700 34px "+F;x.fillText("spanishflt.github.io",W/2,935);
+  x.fillStyle="#55606b";var _lc=window.BS_SCHOOL?(((window.bsTeacherName&&bsTeacherName()))?"Profesor \u00b7 Teacher: "+bsTeacherName():"Basic Spanish"):"Basic Spanish · Prof. Alberto Garrido Hernández";fit(_lc,"600",32,22);x.fillText(_lc,W/2,880);
+  x.fillStyle="#0E6E78";if(window.BS_SCHOOL){const _sn=(window.bsSchoolName&&bsSchoolName())||"";if(_sn){fit("Licensed to "+_sn,"700",34,20);x.fillText("Licensed to "+_sn,W/2,935);}}else{x.font="700 34px "+F;x.fillText("spanishflt.github.io",W/2,935);}
   return c;
 }
 /* first shows the card (so it can also be shown on the screen), then the yellow Share button */
@@ -3162,7 +3177,7 @@ async function certPNG(name,photo,date){
   let fs=70;x.font="bold "+fs+"px Georgia, serif";while(x.measureText(name).width>W-300&&fs>36){fs-=4;x.font="bold "+fs+"px Georgia, serif";}
   T(name,ny,"bold "+fs+"px Georgia, serif","#2b2b2b");x.fillStyle="#C8A13A";x.fillRect(W*.2,ny+22,W*.6,4);
   T("Basic Spanish – Excellent Student",ny+110,"bold 54px Georgia, serif","#D6284A");T("for earning 100 stars ⭐ learning Spanish.",ny+170,"34px Georgia, serif","#2b2b2b");
-  x.textAlign="left";x.fillStyle="#2b2b2b";x.fillRect(150,H-190,520,3);x.font="30px Georgia, serif";x.fillText("Alberto Garrido Hernández",150,H-150);x.font="24px Georgia, serif";x.fillText("Spanish Teacher · Old Harbour Primary School",150,H-115);
+  x.textAlign="left";x.fillStyle="#2b2b2b";x.fillRect(150,H-190,520,3);x.font="30px Georgia, serif";x.fillText(window.BS_SCHOOL?((window.bsTeacherName&&bsTeacherName())||""):"Alberto Garrido Hernández",150,H-150);x.font="24px Georgia, serif";x.fillText(window.BS_SCHOOL?("Spanish Teacher"+((window.bsSchoolName&&bsSchoolName())?" · "+bsSchoolName():"")):"Spanish Teacher · Old Harbour Primary School",150,H-115);
   x.textAlign="right";x.font="30px Georgia, serif";x.fillText(date,W-150,H-150);
   return new Promise(r=>c.toBlob(r,"image/png"));
 }
@@ -3913,8 +3928,8 @@ function penShot(root,ok,g,sv){
   dk.addEventListener("click",()=>{sync();
     if(isOpenD()){openDictionary();return;}
     overlay("Diccionario · Dictionary",close=>[h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🔒"),h("h2",{},"Diccionario · Dictionary")),
-      h("p",{},"El diccionario se abre cuando tienes tu primera clase. Pídele a tu maestro de español que te la abra."),
-      h("p",{cls:"rintro"},"The dictionary opens when you have your first lesson. Ask your Spanish teacher to unlock it."),
+      h("p",{},window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir el diccionario y todas las clases.":window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir el diccionario y todas las clases.":window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir el diccionario y todas las clases.":"El diccionario se abre cuando tienes tu primera clase. Pídele a tu maestro de español que te la abra."),
+      h("p",{cls:"rintro"},window.BS_SCHOOL?"Scan your school's licence QR to open the dictionary and all the lessons.":window.BS_SCHOOL?"Scan your school's licence QR to open the dictionary and all the lessons.":window.BS_SCHOOL?"Scan your school's licence QR to open the dictionary and all the lessons.":"The dictionary opens when you have your first lesson. Ask your Spanish teacher to unlock it."),
       h("button",{cls:"btn primary",on:{click:close}},"OK")]);});
 })();
 /* ---------- Mi agenda (right edge, under Diccionario) — opens when 2 lessons are unlocked ---------- */
@@ -4025,8 +4040,8 @@ function openAgenda(){
   ag.addEventListener("click",()=>{sync();
     if(agOpenCount()>=2){openAgenda();return;}
     overlay("Agenda",close=>[h("div",{cls:"ovh"},h("span",{cls:"ovi","aria-hidden":"true"},"🔒"),h("h2",{},"Mi agenda · My planner")),
-      h("p",{},"Tu agenda se abre cuando tienes 2 clases abiertas. Pídele a tu maestro de español que te las abra."),
-      h("p",{cls:"rintro"},"Your planner opens when you have 2 lessons unlocked. Ask your Spanish teacher to unlock them."),
+      h("p",{},window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir la agenda y todas las clases.":window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir la agenda y todas las clases.":window.BS_SCHOOL?"Escanea el QR de licencia de tu escuela para abrir la agenda y todas las clases.":"Tu agenda se abre cuando tienes 2 clases abiertas. Pídele a tu maestro de español que te las abra."),
+      h("p",{cls:"rintro"},window.BS_SCHOOL?"Scan your school's licence QR to open the planner and all the lessons.":window.BS_SCHOOL?"Scan your school's licence QR to open the planner and all the lessons.":window.BS_SCHOOL?"Scan your school's licence QR to open the planner and all the lessons.":"Your planner opens when you have 2 lessons unlocked. Ask your Spanish teacher to unlock them."),
       h("button",{cls:"btn primary",on:{click:close}},"OK")]);});
 })();
 function skinPop(t){const e=document.createElement("div");e.className="skinpop";e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),1200);}
@@ -4703,6 +4718,6 @@ cocoWelcome();
 setTimeout(()=>{prefetchAllAudio();syncServerTime();},3000);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
 </script>
-<script>/* school edition: load extra logic only when opened with ?edition=school */try{if(/[?&]edition=school/.test(location.search)||sessionStorage.getItem("bsEdition")==="school"){sessionStorage.setItem("bsEdition","school");var _sch=document.createElement("script");_sch.src="school.js?v=12";document.body.appendChild(_sch);}}catch(e){}</script>
+<script>/* school edition: load extra logic only when opened with ?edition=school */try{if(/[?&]edition=school/.test(location.search)||sessionStorage.getItem("bsEdition")==="school"){sessionStorage.setItem("bsEdition","school");var _sch=document.createElement("script");_sch.src="school.js?v=19";document.body.appendChild(_sch);}}catch(e){}</script>
 </body>
 </html>
